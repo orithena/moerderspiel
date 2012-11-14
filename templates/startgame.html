@@ -1,0 +1,14 @@
+<div xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:py="http://genshi.edgewall.org/"
+	lang="en">
+	<h2>Spiel ${utils.htmlescape(game.name)} wurde gestartet!</h2>
+	<p>Hallo Game Master! Jetzt müssen die Aufträge ausgedruckt und verteilt werden. 
+	Bevor du jetzt auf den Knopf klickst, vergewissere dich, dass dir kein
+	Mitspieler auf den Bildschirm gucken kann.</p>
+	<form action="admin" method="get" accept-charset="utf8">
+		<input type="hidden" name="id" value="${game.id}"/>
+		<input type="hidden" name="mastercode" value="${game.mastercode}"/>
+		<input type="submit" value="Zur Game Master Seite"/>
+	</form>
+	<p>Alle Mitspieler kannst du auf folgende Seite verweisen: <a href="${viewurl}">${viewurl}</a></p>
+</div>

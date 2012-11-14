@@ -1,0 +1,41 @@
+Hallo ${player}
+
+Dies ist eine Nachricht vom Mörderbot.
+
+Es geht um das Mörderspiel "${game.name}". Du kannst dir den aktuellen Stand 
+des Spiels unter ${game.url} ansehen.
+Das Spiel ist im Gange und du spielst mit!
+
+{% if len(game.rounds) > 1 %}
+Deine aktuellen Aufträge:
+{% end %}
+{% if len(game.rounds) <= 1 %}
+Dein aktueller Auftrag:
+{% end %}
+
+{% for rnd in game.rounds.values() %}
+{% if len(game.rounds) > 1 %}
+---  Auftrag in Runde ${rnd.name}  ---
+{% end %}
+{% if rnd.getParticipant(player).alive() %}
+    ${rnd.getParticipant(player).getCurrentVictim().player}
+    
+    Signaturcode: ${rnd.getParticipant(player).getCurrentVictim().id}
+{% end %}
+{% if not rnd.getParticipant(player).alive() %}
+    Kein Auftrag. Du bist tot.
+{% end %}
+
+{% end %}
+
+Zeige den Auftrag nach einem Mord deinem Opfer zum Beweis und melde den 
+Mord unter Angabe des Signaturcodes auf der Webseite des Spiels:
+${game.url}
+
+Im Anhang findest du noch ein PDF mit den gleichen Angaben.
+
+
+Viel Spaß und Erfolg!
+   Dein Mörderbot
+
+

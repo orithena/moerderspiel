@@ -1,0 +1,79 @@
+<div xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:py="http://genshi.edgewall.org/"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	lang="en">
+	<div class="box left half">
+		<h2>WTF is this?</h2>
+		<p>
+			Das Mörderspiel ist ein Nebenbei-Spiel im Real Life für größere 
+			Gruppen (6 bis 166 Spieler/innen) über mehrere Tage mit min. drei Auswirkungen:
+		</p>
+		<ul>
+			<li>Man lernt sich untereinander besser kennen</li>
+			<li>Man entwickelt ein gehöriges Maß Paranoia</li>
+			<li>Man lernt, eine versteckte Agenda mit kreativen Mitteln zu verfolgen</li>
+		</ul>
+		<p>
+			Alle Mitspielenden erhalten zum Start zufällig einen (nach Gusto 
+			auch mehrere) Mordaufträge; z.B. "Erledige Bertram". Man zieht also 
+			los und sucht Bertram, den man erst mal erkennen und dann <em>durch 
+			Übergabe eines beliebigen Gegenstandes umbringen soll</em>. Es muss 
+			schon eine freiwillige, unbeobachtete Übergabe sein, andernfalls 
+			gilt der Mord nicht. Ziel ist es, das Opfer in eine Situation zu
+			bringen, bei der er nicht aufs Spiel achtet und einfach einen
+			Gegenstand annimmt. Zuwerfen gilt nicht, aufzwängen auch nicht.
+		</p>
+		<p>
+			Hat man jemanden erfolgreich ermordet, muss man ihm dies sofort 
+			sagen und erhält vom Opfer dessen Mordauftrag, mit dem man weiter
+			spielen kann. Das Opfer ist dann raus aus dem Spiel (es sei denn,
+			man spielt mit mehreren Leben ... und in dem Falle sollte der Mörder
+			aufpassen, nicht mit der Übergabe des Mordauftrags umgebracht 
+			zu werden).
+		</p>
+		<h3>Geeignete Gelegenheiten zum Spielen</h3>
+		<ul>
+			<li>Auf Konferenzen. Entstanden in seiner derzeitigen Form ist es
+				auf der Konferenz der Informatik-Fachschaften.</li>
+			<li>Im Urlaub, wenn man mit einigen Freunden verreist.</li>
+			<li>In der Uni/Schule</li>
+			<li>... im Grunde immer, wenn 6 oder mehr Leute sich über mehr als zwei Tage öfter mal über den Weg laufen.</li>
+		</ul>
+	</div>
+	<div class="box right half">
+		<h2>Ein eröffnetes Spiel ansehen</h2>
+		<form action="view" method="get" accept-charset="utf8">
+			<table>
+				<tr>
+					<th>ID des Spiels</th>
+					<td><input type="text" size="8" name="id"/></td>
+				</tr><tr>
+					<th></th>
+					<td><input type="submit" value="Zum Spiel"/></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<div class="box right half">
+		<h2>Ein neues Spiel eröffnen!</h2>
+		<xi:include href="newgameform.html"/>
+	</div>
+	<div class="box right half">
+		<h2>Ein eröffnetes Spiel administrieren</h2>
+		<p>Stelle sicher, dass dir nie ein Spieler über die Schulter guckt, wenn du das Spiel administrierst!</p>
+		<form action="admin" method="post" accept-charset="utf8">
+			<table>
+				<tr>
+					<th>ID des Spiels</th>
+					<td><input type="text" size="8" name="id"/></td>
+				</tr><tr>
+					<th>Game Master Code</th>
+					<td><input type="password" size="8" name="mastercode"/></td>
+				</tr><tr>
+					<th></th>
+					<td><input type="submit" value="Zum Spiel"/></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>

@@ -1,0 +1,41 @@
+<form action="/moerderspiel/creategame" method="post" accept-charset="utf8">
+	<input type="hidden" name="action" value="create"/> 
+  	<table>
+  		<tr>
+			<th>Name des Spiels</th>
+			<td><input type="text" name="rundenname" maxlength="30" size="30"/></td>
+		</tr><tr>
+			<th>Spiel-ID (optional)</th>
+			<td><input type="text" name="rundenid" maxlength="10" size="10"/></td>
+		</tr><tr>
+  			<th>Anzahl der Kreise</th>
+  			<td> 
+  				<select size="1" name="kreiszahl"> 
+                                  <option value="1">1 Kreis</option> 
+                                  <option value="2">2 Kreise</option> 
+                                  <option value="3" selected="">3 Kreise</option> 
+                                  <option value="4">4 Kreise</option> 
+                                  <option value="5">5 Kreise</option> 
+                                </select> 
+                        </td>
+		</tr><tr>
+			<th>Spielende</th>
+			<td><input type="text" id="enddate" name="enddate" maxlength="18" size="18" value="${utils.future(days=4)}"/><button id="f_trigger_b">...</button></td>
+		</tr><tr>
+			<th></th>
+			<td><input type="submit" value="Spiel eröffnen!"/></td>
+		</tr>
+	</table>
+	<script type="text/javascript">
+    Calendar.setup({
+        inputField     :    "enddate",      // id of the input field
+        ifFormat       :    "%d.%m.%Y %H:%M",       // format of the input field
+        showsTime      :    true,            // will display a time selector
+		timeFormat     :    24,
+        button         :    "f_trigger_b",   // trigger for the calendar (button ID)
+        singleClick    :    false,           // double-click mode
+		firstDay       :    1,
+        step           :    1                // show all years in drop-down boxes (instead of every other year as default)
+        });
+    </script>
+</form> 

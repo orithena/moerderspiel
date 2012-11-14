@@ -1,0 +1,47 @@
+*** more stars = higher priority
+
+Feature Wishlist
+================
+
+	*** Latex Text export filter (or: how to tell latex to accept verbatim unicode?) (DONE)
+	* i18n support
+	* port to WSGI-compatible framework (instead of mod_python)
+	* optional stand-alone python webserver (w/o apache)
+	** Setting game-specific text for kill assignments/for all texts
+		- maybe additional: complete themeing of a Game
+	*** "kick player" button for admin (DONE)
+	** "edit kill" button for admin
+	*** "revert kill" button only for last kill in a chain (add canRevert() to Kill or Participant) (DONE)
+	*** AJAX: modify multiple page elements per response (DONE)
+	*** better error handling (also via ajax, needs multiple elements per response) (LOOKS GOOD, BUT DOES NOT FEEL COMPLETE)
+		- refactor #errormsg to #message
+	** replace _loadgame and _savegame by real persistence: http://www.python.org/workshops/1997-10/proceedings/shprentz.html
+	*** check if a game id exists before overwriting with new game (DONE)
+	** info window informing about the consequences of a button click (DONE)
+	* send user codes and kill assignments via email (DONE, BUT NEEDS COSMETICS)
+	* Fallunterscheidung beim Eintragen:
+		- Mörder hat MordCode -> Vertrauen in Mörder notwendig, den nicht zu missbrauchen
+		- Mörder hat MordCode und benötigt des Opfers Auftrags-Mordcode -> Opfer muss eigenen Auftrag immer dabei haben, sonst kann Mörder nicht direkt weiter spielen
+		- Opfer hat MordCode -> Opfer muss zusätzlichen Zettel mit dem Code immer dabei haben; aber Vorteil: Opfer kann selbst Selbstmord begehen
+		- Mörder hat Spieler-Code + Opfer hat MordCode -> jetzt wirds aber zu viel mit den ganzen Codes
+	** Date handling 
+		- parse on input, use datetime thoroughly
+		- accept nearly everything as date (including s.th. like '18h' as "the last time it was 18:00" -- dateutil?)
+		- add start time and time zone handling to Game and UI
+		- reject dates not in game runtime span
+		- output format according to runtime span (remove redundant info like year, month)
+		- check date formats of picker
+	** restyle/reimplement date picker
+	*** shorter friendly url for view game (+ revisit req.construct_url() and _url()) (DONE)
+	*** restructurize moerderspiel.py (outsource any non-Web-API calls to lib) 
+	*** remove hardcoded stuff
+		- add constants for game.status
+		- add server config
+	** modularize templates more
+
+Bugs
+====
+
+	*** yapgvb does not escape double quotes up until an unknown version. 
+		Graphs may have crazy text or additional nodes show up. 
+		Maybe switch to a different binding module for graphviz?
