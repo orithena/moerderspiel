@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      lang="en">
+<head>
+<link rel="stylesheet" type="text/css" media="all" href="css?css=auftrag" />
+<link rel="stylesheet" type="text/css" media="print" href="css?css=auftrag-print" />
+<title>Mörderspiel</title>
+</head>
+<body>
+	<py:for each="round in game.rounds.values()" py:if="game.status == 'RUNNING'">
+		<py:for each="participant in round.participants">
+			<div class="auftrag">
+				<div class="moerdername">
+					${participant.player.name}<br/>${participant.player.info}
+				</div>
+				<div class="auftragsbox">
+					<h3 class="headline">Runde: ${utils.htmlescape(game.name)} <span py:if="len(game.rounds) > 1">-- Kreis: ${game.rounds[round]}</span></h3>
+					<h2>Mordauftrag</h2>
+					<h1 class="opfername">
+						${round.getInitialVictim(participant).player.name}<br />${round.getInitialVictim(participant).player.info}
+					</h1>
+					<div class="infotext">
+						Nachdem man selbst regelkonform ermordet wurde, muss dieser Mordauftrag an den eigenen Mörder übergeben werden.<br/>
+						<em>Trage diesen Mordauftrag immer bei dir</em>, zeige ihn nach dem Mord deinem Opfer zum Beweis und vermerke den Mord in der Mordliste.
+					</div>
+					<div class="url">
+						http://kif.fsinf.de/wiki/Moerderspiel
+					</div>
+				</div>
+			</div>
+		</py:for>
+	</py:for>
+
+</body>
+</html>

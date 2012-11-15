@@ -1,0 +1,14 @@
+.auftrag, .auftrag * {
+	page-break-inside:avoid;
+}
+
+.auftrag * {
+	page-break-before:avoid;
+	page-break-after:avoid;
+}
+
+.auftrag {
+	page-break-before:auto;
+	page-break-after:auto;
+}
+

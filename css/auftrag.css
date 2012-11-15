@@ -1,0 +1,51 @@
+.auftragsbox {
+	display: block;
+	border:1px solid black;
+	padding:0.8em;
+}
+
+.auftrag {
+	display:block;
+	max-width:30em;
+	height: 28em;
+	clear:none;
+	float:left;
+	margin:0 2em 4em 2em;
+	border-top: 1px black dotted;
+}
+
+body {
+	font: 8pt sans-serif;
+}
+
+h1 {
+	text-align:center;
+	font-size: 170%;
+	white-space:nowrap;
+	overflow:hidden;
+}
+
+h2 {
+	text-align:center;
+	font-size: 150%;
+}
+
+h3 {
+	text-align:center;
+	font-size: 115%;
+}
+
+.auftragsbox > h3 {
+	margin-top:0;
+}
+
+.url {
+	font-family: monospace;
+	text-align:center;
+	margin-top: 0.5em;
+}
+
+.moerdername {
+	text-align:center;
+	margin: 0 0 2em 0;
+}
