@@ -80,7 +80,7 @@
 	<div id="gamestart" class="box right half clear" py:if="game.status == 'OPEN'">
 		<h3>Spiel starten</h3>
 		<p>Dies beendet die Registrierungsphase, generiert die Aufträge und startet das Spiel. Danach können keine weiteren Mitspieler einsteigen.</p>
-		<form action="startgame" method="post" accept-charset="utf8">
+		<form action="startgame" method="post" accept-charset="utf8" onsubmit="this.style.display='none'">
 			<input type="hidden" name="gameid" value="${game.id}"/>
 			<table>
 				<tr>
@@ -90,9 +90,10 @@
 				</tr>
 			</table>
 		</form>
+		<p>Die Generierung der PDFs kann mehrere Minuten dauern. Bitte habe Geduld!</p>
 	</div>
 	<div id="rules" class="box right half clear">
-		<h3><a href="/moerderspielregeln-kif.pdf">Regeln</a> (PDF)</h3>
+		<h3><a href="../documents/moerderspielregeln.pdf">Regeln</a> (PDF)</h3>
 	</div>
 	<div id="addplayer" class="box right half clear" py:if="game.status == 'OPEN'">
 		<h3>Spieler anmelden</h3>
@@ -146,7 +147,7 @@
 				</py:for>
 			</table>
 		</py:if>
-		<py:for each="round in sorted(game.rounds)" py:if="game.status == 'RUNNING' or game.status == 'OVER'">
+		<py:for each="round in sorted(game.rounds)" py:if="(game.status == 'RUNNING' and len(game.rounds) > 1) or game.status == 'OVER'">
 			<div class="box collapsed full white">
 			<h3 py:if="len(game.rounds) > 1">Kreis: ${round}</h3>
 			<table py:if="game.status == 'RUNNING'">
