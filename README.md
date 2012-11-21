@@ -29,13 +29,39 @@ Geeignete Gelegenheiten zum Spielen:
 * In der Uni/Schule
 * ... im Grunde immer, wenn 6 oder mehr Leute sich über mehr als zwei Tage öfter mal über den Weg laufen.
 
+
+Zweck dieser Software
+=====================
+Diese Software ist eine Webapplikation, um das oben beschriebene Mörderspiel per Software zu unterstützen.
+
+Die Software begleitet den Spielleiter und die Spieler durch das gesamte Spiel hindurch. Mordaufträge und
+Druckvorlagen werden generiert, alle Spieler werden per Email benachrichtigt und zum Schluss bekommen die 
+Spieler eine schöne Übersicht über das gesamte Spiel.
+
+Der grobe Ablauf:
+1. Spielleiter eröffnet ein Spiel
+  - er erhält seinen Mastercode und die URL des Spiels -- letztere gibt er an alle potentiellen Spieler
+2. Spieler besuchen die URL des Spiels und melden sich an
+3. Spielleiter startet das Spiel
+  - Die Spieler werden in einen oder mehrere Kreise randomisiert
+  - Alle Spieler kriegen eine Email mit ihren Aufträgen
+  - Spielleiter kriegt ein PDF mit den Aufträgen zum ausdrucken und verteilen
+4. Morde werden eingetragen
+  - Benötigt wird der Signaturcode vom Auftrag
+  - Alle Spieler, deren Aufträge sich geändert haben, bekommen eine neue Mail
+  - Der Mord wird getwittert
+  - Spieler können den aktuellen Stand unter der URL des Spiels ansehen
+5. Spielleiter beendet das Spiel
+  - Unter der URL des Spiels kann nun die gesamte Auftragsliste für alle Spieler eingesehen werden
+
+
 Installation
 ============
 Siehe https://github.com/orithena/moerderspiel/wiki
 
+
 Dependencies
 ============
-
 Python Modules: genshi, yapgvb, twython, dateutil, email, smtplib
 
 Sonstiges: texlive-xetex ttf-sil-gentium graphviz
