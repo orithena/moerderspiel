@@ -39,6 +39,7 @@ Druckvorlagen werden generiert, alle Spieler werden per Email benachrichtigt und
 Spieler eine schöne Übersicht über das gesamte Spiel.
 
 Der grobe Ablauf:
+
 1. Spielleiter eröffnet ein Spiel
   - er erhält seinen Mastercode und die URL des Spiels -- letztere gibt er an alle potentiellen Spieler
 2. Spieler besuchen die URL des Spiels und melden sich an
