@@ -2,7 +2,7 @@
       xmlns:py="http://genshi.edgewall.org/"
       lang="en">
     <div id="inner-content">
-	<h2>Spiel: ${utils.htmlescape(game.name)}</h2>
+	<h2>Spiel: ${game.name}</h2>
 	<div id="makeakill" class="box half right" py:if="game.status == 'RUNNING' or game.status =='OVER'">
 		<h3>Erfolgreichen Mord eintragen!</h3>
 		<form action="admin" method="post" onsubmit="return ajaxsubmit(this);" accept-charset="utf8">
@@ -81,17 +81,20 @@
 			<dt>Massenmörder</dt><dd>${game.getMassMurdererString()}</dd>
 		</dl>
 	</div>
-	<div id="gamestart" class="box right half" py:if="game.status == 'OPEN'">
+	<div id="gamestart" class="box right half clear" py:if="game.status == 'OPEN'">
 		<h3>Spiel starten</h3>
 		<p>Dies beendet die Registrierungsphase, generiert die Aufträge und startet das Spiel. Danach können keine weiteren Mitspieler einsteigen.</p>
-		<form action="startgame" method="post" accept-charset="utf8">
+		<form action="startgame" method="post" accept-charset="utf8" onsubmit="showloadinganimation(this); this.style.display='none';">
 			<input type="hidden" name="gameid" value="${game.id}"/>
-			<table><tr><th>Game Master Code:</th><td>
-			<input type="password" name="mastercode" size="7"/>
-			</td><td>
-			<input type="submit" value="Spiel starten!"/>
-			</td></tr></table>
+			<table>
+				<tr>
+					<th>Game Master Code:</th>
+					<td><input type="password" name="mastercode" size="7"/></td>
+					<td><input type="submit" value="Spiel starten!"/></td>
+				</tr>
+			</table>
 		</form>
+		<p>Die Generierung der PDFs kann mehrere Minuten dauern. Bitte habe Geduld!</p>
 	</div>
 	<div id="gamestop" class="box right half clear" py:if="game.status == 'RUNNING'">
 		<h3>Spiel abschließen</h3>
@@ -156,8 +159,8 @@
 			<table>
 				<py:for each="player in sorted(game.players, key=lambda l:l.info + l.name)">
 					<tr>
-						<td>${utils.htmlescape(player.name)}</td>
-						<td>${utils.htmlescape(player.info)}</td>
+						<td>${player.name}</td>
+						<td>${player.info}</td>
 						<td class="buttons">
 							<button onclick="return askajax('admin', {'id':'${game.id}', 'mastercode':'${game.mastercode}', 'action':'removeplayer', 'victim':'${player.public_id}' }, this, 'Spieler ${player.html()} wirklich wieder aus dem Spiel rausschmeißen?');">
 								kick
@@ -173,16 +176,16 @@
 				<tr><th>Name</th><th/><th>Auftragscode</th><th>Ermordet von</th><th>Wann?</th><th>Tathergang</th><th></th></tr>
 				<py:for each="p in game.rounds[round].participants">
 					<tr>
-						<td>${p.player.html()}</td>
+						<td>${p.player}</td>
 						<td class="buttons">
 							<button onclick="return askajax('admin', {'id':'${game.id}', 'mastercode':'${game.mastercode}', 'action':'kickplayer', 'victim':'${p.player.public_id}' }, this, 'Spieler ${p.player.html()} wirklich aus allen Runden rausschmeißen?');">
 								kick
 							</button>
 						</td>
 						<td>${p.id}</td>
-						<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player.html()}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
+						<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
 						<td><py:if test="p.killedby">${p.killedby.date}</py:if></td>
-						<td><py:if test="p.killedby">${utils.htmlescape(p.killedby.reason)}</py:if></td>
+						<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
 						<td class="buttons">
 							<py:if test="p.killedby">
 								<button onclick="return ajax('admin', {'id':'${game.id}', 'mastercode':'${game.mastercode}', 'action':'editkill', 'victim':'${p.id}' }, this);">

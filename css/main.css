@@ -250,7 +250,7 @@ dd {
 	color: white;
 }
 
-.box a:link {
+.box a:link, .box a:visited {
 	color:white;
 }
 

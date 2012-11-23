@@ -20,7 +20,7 @@
 					<td>
 						<select name="killerpublicid">
 							<py:for each="player in sorted(game.players, key=lambda p: p.name + p.info)">
-								<option	value="${player.public_id}">${player.html()}</option>
+								<option	value="${player.public_id}">${player}</option>
 							</py:for>
 						</select>
 					</td>
@@ -55,14 +55,14 @@
 		</script>
 	</div>
 	<div id="gameinfo" class="left half">
-		<h2>Spiel: ${utils.htmlescape(game.name)}</h2>
+		<h2>Spiel: ${game.name}</h2>
 		<dl>
 			<dt>Status</dt><dd>${game.status}</dd>
 			<dt>ID</dt><dd>${game.id}</dd>
 			<py:if test="len(game.rounds) > 1"><dt>Kreise</dt><dd>${len(game.rounds)}</dd></py:if>
 			<dt>Spieler</dt><dd>${len(game.players)}</dd>
 			<dt>Morde</dt><dd>${len(list(game.getKilled()))}</dd>
-			<py:if test="game.status != 'OPEN'"><dt>Massenmörder</dt><dd>${utils.htmlescape(game.getMassMurdererString())}</dd></py:if>
+			<py:if test="game.status != 'OPEN'"><dt>Massenmörder</dt><dd>${game.getMassMurdererString()}</dd></py:if>
 		</dl>
 	</div>
 	<div id="goadmin" class="box right half clear">
@@ -80,7 +80,7 @@
 	<div id="gamestart" class="box right half clear" py:if="game.status == 'OPEN'">
 		<h3>Spiel starten</h3>
 		<p>Dies beendet die Registrierungsphase, generiert die Aufträge und startet das Spiel. Danach können keine weiteren Mitspieler einsteigen.</p>
-		<form action="startgame" method="post" accept-charset="utf8" onsubmit="this.style.display='none'">
+		<form action="startgame" method="post" accept-charset="utf8" onsubmit="showloadinganimation(this); this.style.display='none';">
 			<input type="hidden" name="gameid" value="${game.id}"/>
 			<table>
 				<tr>
@@ -128,58 +128,58 @@
 					<th>Hochschule</th>
 				</tr>
 				<py:for each="player in game.players">
-					<tr><td>${utils.htmlescape(player.name)}</td><td>${utils.htmlescape(player.info)}</td></tr>
+					<tr><td>${player.name}</td><td>${player.info}</td></tr>
 				</py:for>
 			</table>
 		</py:if>
 		<py:if test="game.status == 'RUNNING'">
 			<h3>Morde</h3>
 			<table>
-				<tr><th>Name</th><th>Ermordet von</th><th>Kreis</th><th>Wann?</th><th>Tathergang</th></tr>
+				<tr><th>Name</th><th>Ermordet von</th><th py:if="len(game.rounds) > 1">Kreis</th><th>Wann?</th><th>Tathergang</th></tr>
 				<py:for each="p in sorted(game.getKilled(), key=lambda r: r.killedby.date, reverse=True)">
 						<tr py:if="p.killedby and p.killedby.killer">
-							<td>${p.player.html()} <span class="deaths" style="width:${game.getDeathsCount(p)*9}px;">&nbsp;</span></td>
-							<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player.html()} <span class="kills" style="width:${game.getKillsCount(p.killedby.killer.player)*9}px;">&nbsp;</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
-							<td><py:if test="p.killedby">${p.round.name}</py:if></td>
+							<td>${p.player} <span class="deaths" style="width:${game.getDeathsCount(p)*9}px;">&nbsp;</span></td>
+							<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="kills" style="width:${game.getKillsCount(p.killedby.killer.player)*9}px;">&nbsp;</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
+							<td py:if="len(game.rounds) > 1"><py:if test="p.killedby">${p.round.name}</py:if></td>
 							<td><py:if test="p.killedby">${p.killedby.date}</py:if></td>
-							<td><py:if test="p.killedby">${utils.htmlescape(p.killedby.reason)}</py:if></td>
+							<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
 						</tr>
 				</py:for>
 			</table>
 		</py:if>
-		<py:for each="round in sorted(game.rounds)" py:if="(game.status == 'RUNNING' and len(game.rounds) > 1) or game.status == 'OVER'">
-			<div class="box collapsed full white">
-			<h3 py:if="len(game.rounds) > 1">Kreis: ${round}</h3>
-			<table py:if="game.status == 'RUNNING'">
-				<tr><th>Name</th><th>Ermordet von</th><th>Wann?</th><th>Tathergang</th></tr>
-				<py:for each="p in game.rounds[round].getDeadParticipants()">
-					<tr>
-						<td>${p.player.html()}</td>
-						<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player.html()}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
-						<td><py:if test="p.killedby">${p.killedby.date}</py:if></td>
-						<td><py:if test="p.killedby">${utils.htmlescape(p.killedby.reason)}</py:if></td>
-					</tr>
-				</py:for>
-<!--
-				<py:for each="p in game.rounds[round].getLivingParticipants()">
-					<tr>
-						<td>${p.player.html()}</td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</py:for>
--->
-			</table>
+		<py:for each="round in sorted(game.rounds)" py:if="game.status == 'RUNNING' or game.status == 'OVER'">
+			<div class="box collapsed full white" py:if="len(game.rounds) > 1">
+				<h3 py:if="len(game.rounds) > 1">Kreis: ${round}</h3>
+				<table py:if="game.status == 'RUNNING'">
+					<tr><th>Name</th><th>Ermordet von</th><th>Wann?</th><th>Tathergang</th></tr>
+					<py:for each="p in game.rounds[round].getDeadParticipants()">
+						<tr>
+							<td>${p.player}</td>
+							<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
+							<td><py:if test="p.killedby">${p.killedby.date}</py:if></td>
+							<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
+						</tr>
+					</py:for>
+	<!--
+					<py:for each="p in game.rounds[round].getLivingParticipants()">
+						<tr>
+							<td>${p.player.html()}</td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</py:for>
+	-->
+				</table>
 			</div>
 			<table py:if="game.status == 'OVER'">
 				<tr><th>Name</th><th>Ermordet von</th><th>Wann?</th><th>Tathergang</th></tr>
 				<py:for each="p in game.rounds[round].participants">
 					<tr>
-						<td>${p.player.html()}</td>
-						<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player.html()}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
+						<td>${p.player}</td>
+						<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
 						<td><py:if test="p.killedby">${p.killedby.date}</py:if></td>
-						<td><py:if test="p.killedby">${utils.htmlescape(p.killedby.reason)}</py:if></td>
+						<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
 					</tr>
 				</py:for>
 			</table>
