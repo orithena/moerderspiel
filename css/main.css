@@ -268,6 +268,8 @@ table {
 
 th {
 	text-align:right;
+	padding-top:1ex;
+	vertical-align:top;
 }
 
 #listplayers td > input,
@@ -346,3 +348,12 @@ span.kills {
 	opacity:0.6;
 }
 
+input + .hint, select + .hint {
+	display:none;
+	margin-top:0.5ex;
+	padding-bottom:1ex;
+}
+
+input:focus + .hint, select:focus + .hint {
+	display:block;
+}

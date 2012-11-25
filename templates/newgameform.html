@@ -1,27 +1,48 @@
-<form action="/moerderspiel/creategame" method="post" accept-charset="utf8">
+<form action="/moerderspiel/creategame" method="post" accept-charset="utf8" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:py="http://genshi.edgewall.org/"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	lang="en">
 	<input type="hidden" name="action" value="create"/> 
   	<table>
   		<tr>
 			<th>Name des Spiels</th>
-			<td><input type="text" name="rundenname" maxlength="30" size="30"/></td>
-		</tr><tr>
+			<td style="width:20em;">
+				<input type="text" name="rundenname" maxlength="30" size="30"/>
+				<p class="hint">Eine Überschrift für das Spiel. Wird auf den Aufträgen und der Übersichtsseite verwendet.</p>
+			</td>
+		</tr>
+		<tr>
 			<th>Spiel-ID (optional)</th>
-			<td><input type="text" name="rundenid" maxlength="10" size="10"/></td>
-		</tr><tr>
-  			<th>Anzahl der Kreise</th>
-  			<td> 
-  				<select size="1" name="kreiszahl"> 
-                                  <option value="1">1 Kreis</option> 
-                                  <option value="2">2 Kreise</option> 
-                                  <option value="3" selected="">3 Kreise</option> 
-                                  <option value="4">4 Kreise</option> 
-                                  <option value="5">5 Kreise</option> 
+			<td style="width:20em;">
+				<input type="text" name="rundenid" maxlength="10" size="10"/>
+				<p class="hint">
+				Eine maschinenlesbare ID für das Spiel. Darf nur Ziffern und die Kleinbuchstaben "a" bis "z" (ohne Umlaute!) enthalten.
+				Muss eindeutig sein, soll leicht zu merken sein. Wird als Twitter-Hashtag verwendet. Wird automatisch generiert, wenn nicht angegeben.
+				</p>
+			</td>
+		</tr>
+		<tr>
+  			<th>Aufträge pro Spieler</th>
+			<td style="width:20em;">
+				<select size="1" name="kreiszahl"> 
+                                        <option value="1">1 Leben, 1 Auftrag (1 Kreis)</option> 
+                                        <py:for each="x in range(2, 8)">
+                                                <option value="${x}" py:attrs="dict((('selected', ''),)) if x == 3 else None">${x} Leben, ${x} Aufträge (${x} Kreise)</option> 
+                                        </py:for>
                                 </select> 
+				<p class="hint">
+				Sollen die Spieler mehr als ein Leben haben, werden entsprechend viele "Kreise" eröffnet. Jeder Spieler ist in jedem Kreis genau 
+				einmal vertreten; man kann jeden Kreis als ein weiteres, parallel laufendes Spiel betrachten, in dem genau die gleichen Leute mitspielen.
+				In jedem Kreis hat man ein Leben; erst wenn man in allen Kreisen ermordet wurde, ist man raus aus dem ganzen Spiel.
+				</p>
                         </td>
-		</tr><tr>
+		</tr>
+		<tr>
 			<th>Spielende</th>
 			<td><input type="text" id="enddate" name="enddate" maxlength="18" size="18" value="${utils.future(days=4)}"/><button id="f_trigger_b">...</button></td>
-		</tr><tr>
+		</tr>
+		<tr>
 			<th></th>
 			<td><input type="submit" value="Spiel eröffnen!"/></td>
 		</tr>

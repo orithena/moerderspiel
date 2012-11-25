@@ -4,8 +4,7 @@
     <div id="inner-content">
 	<div id="makeakill" class="box right half" py:if="game.status == 'RUNNING'">
 		<h3>Erfolgreichen Mord melden!</h3>
-		<p>Bevor du dies tust, vergewissere dich, dass dein Opfer bereits alle seine Morde eingetragen hat! (Frag einfach eben nach).</p>
-		<p>Du solltest zu diesem Zeitpunkt bereits einen neuen
+		<p>Wenn ihr nicht komplett online spielt, solltest du zu diesem Zeitpunkt bereits einen neuen
 		Auftrag von deinem Opfer bekommen haben. Und zwar genau den
 		Auftrag aus dem gleichen Kreis, in dem du dein Opfer gerade
 		erledigt hast (siehe Auftragszettel).</p>
@@ -14,7 +13,13 @@
 			<table>
 				<tr>
 					<th>Signaturcode</th>
-					<td><input type="text" name="victimid" size="8"/></td>
+					<td>
+						<input type="text" name="victimid" size="8"/>
+						<p class="hint">
+						Auf dem soeben ausgeführten Auftrag steht ein Signaturcode, 
+						den du hier eingeben musst, um den erfolgreichen Mord zu bestätigen.
+						</p>
+					</td>
 				</tr><tr>
 					<th>Mörder</th>
 					<td>
@@ -23,15 +28,27 @@
 								<option	value="${player.public_id}">${player}</option>
 							</py:for>
 						</select>
+						<p class="hint">
+						Wer hat hier erfolgreich gemordet?
+						</p>
 					</td>
 				</tr><tr>
 					<th>Datum</th>
 					<td>
-						<input id="killdate" type="text" name="datum" value="${utils.now()}"/><button id="f_trigger_b">...</button>
+						<input id="killdate" type="text" name="datum" value="${utils.now()}"/>
+						<button id="f_trigger_b">...</button>
+						<p class="hint">
+						Wann ist der Mord geschehen?
+						</p>
 					</td>
 				</tr><tr>
 					<th>Tathergang</th>
-					<td><input type="text" name="reason" size="40"/></td>
+					<td>
+						<input type="text" name="reason" size="40"/>
+						<p class="hint">
+						Wie ist der Mord geschehen? Eine kurze Umdichtung der Realität ist hier erwünscht.
+						</p>
+					</td>
 				</tr><tr>
 					<th>&nbsp;</th>
 					<td><input type="submit" value="Auftrag erledigt!"/></td>
@@ -102,15 +119,38 @@
 			<table>
 				<tr>
 					<th>Name:</th>
-					<td><input type="text" name="spielername" size="20"/></td>
+					<td>
+						<input type="text" name="spielername" size="20"/>
+						<p class="hint">
+						Dein Name, an dem die anderen Spieler dich erkennen können. Wenn ihr Namensschilder
+						tragt, musst du den Namen von deinem Namensschild nehmen.
+						</p>
+					</td>
 				</tr>
 				<tr>
-					<th>Hochschule:</th>
-					<td><input type="text" name="zusatzinfo" size="20"/></td>
+					<th>Gruppe:</th>
+					<td>
+						<input type="text" name="zusatzinfo" size="20"/>
+						<p class="hint">
+						Der Spielleiter sollte in seiner Einladung zum Spiel geschrieben haben, was
+						ihr hier eintragen sollt.<br/>
+						Kein Spieler wird einen anderen Spieler aus der gleichen Gruppe als erstes 
+						Opfer erhalten (sofern möglich). Eine Gruppe von Spielern, die sich bereits kennen, sollen hier also
+						den gleichen Gruppennamen eintragen. <em>Das heißt nicht, dass sie ein Team bilden!</em>
+						<br/>Ist dies egal, kann das Feld beliebig genutzt werden, bspw. Nachname, Spitzname,
+						Adresse, Heimatstadt, Eigenschaften, oder einfach gar nichts. In jedem Fall wird es auf den Aufträgen vermerkt.
+						</p>
+					</td>
 				</tr>
 				<tr>
 					<th>Email-Adresse:</th>
-					<td><input type="text" name="email" size="20"/></td>
+					<td>
+						<input type="text" name="email" size="20"/>
+						<p class="hint">
+						Am besten gibst du hier eine Email-Adresse an, die du vom Smartphone aus problemlos abrufen kannst.
+						An diese Adresse werden deine Aufträge geschickt -- kein anderer Spieler darf also Zugriff auf diese Mails haben!
+						</p>
+					</td>
 				</tr>
 				<tr>
 					<th></th>
@@ -125,7 +165,7 @@
 			<table>
 				<tr>
 					<th>Name</th>
-					<th>Hochschule</th>
+					<th>Gruppe</th>
 				</tr>
 				<py:for each="player in game.players">
 					<tr><td>${player.name}</td><td>${player.info}</td></tr>
