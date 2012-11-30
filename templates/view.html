@@ -36,7 +36,7 @@
 					<th>Datum</th>
 					<td>
 						<input id="killdate" type="text" name="datum" value="${utils.now()}"/>
-						<button id="f_trigger_b">...</button>
+						<input type="button" id="f_trigger_b" value="..."/>
 						<p class="hint">
 						Wann ist der Mord geschehen?
 						</p>
@@ -76,6 +76,7 @@
 		<dl>
 			<dt>Status</dt><dd>${game.status}</dd>
 			<dt>ID</dt><dd>${game.id}</dd>
+			<dt>Twitter</dt><dd><a href="http://1favre.de/wall/?key=${game.id}">#${game.id}</a></dd>
 			<py:if test="len(game.rounds) > 1"><dt>Kreise</dt><dd>${len(game.rounds)}</dd></py:if>
 			<dt>Spieler</dt><dd>${len(game.players)}</dd>
 			<dt>Morde</dt><dd>${len(list(game.getKilled()))}</dd>
