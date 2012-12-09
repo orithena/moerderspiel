@@ -15,7 +15,7 @@ Dein aktueller Auftrag:
 
 {% for rnd in game.rounds.values() %}
 {% if len(game.rounds) > 1 %}
----  Auftrag in Runde ${rnd.name}  ---
+---  Auftrag in Kreis ${rnd.name}  ---
 {% end %}
 {% if rnd.getParticipant(player).alive() %}
     ${rnd.getParticipant(player).getCurrentVictim().player}
