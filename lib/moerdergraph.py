@@ -4,6 +4,7 @@
 import sys
 import os.path
 import yapgvb as graph
+import textwrap
 from moerderklassen import *
 
 def u8(s):
@@ -50,6 +51,11 @@ def moerdergraph(round, filename, alledges=False, nodefontsize=8.0, edgefontsize
 
 	for participant in round.participants:
 		if participant.killed():
+			# add black edges for the initial killer
+			edge = G.add_edge(nodes[participant.getInitialKiller().player.public_id], nodes[participant.player.public_id])
+			edge.color = 'black'
+			edge.weight = 1.0
+			# add red edges for the kill
 			if not participant.killedby.killer is None:
 				edge = G.add_edge(nodes[participant.killedby.killer.player.public_id], nodes[participant.player.public_id])
 			else:
@@ -61,18 +67,20 @@ def moerdergraph(round, filename, alledges=False, nodefontsize=8.0, edgefontsize
 				edge = G.add_edge(node, nodes[participant.player.public_id])
 			edge.color = 'red'
 			edge.fontcolor = 'red'
-			label = participant.killedby.date + ": " + participant.killedby.reason
-			l = len(label)
-			maxlen = 15
-			i = 0
 			edge.weight = 1.0
-			while l > maxlen:
-				i = label.find(' ', i+maxlen)
-				if i > 0:
-					label = label[:i] + "\\n" + label[i+1:]
-					l = l - i
-				else:
-					break
+			label = participant.killedby.date + ":\\n"
+			label += "\\n".join(textwrap.wrap(participant.killedby.reason, 28))
+			#l = len(label)
+			#maxlen = 25
+			#i = 0
+			## set label for kill edge
+			#while l > maxlen:
+			#	i = label.find(' ', i+maxlen)
+			#	if i >= 0:
+			#		label = label[:i] + "\\n" + label[i+1:]
+			#		l = l - i
+			#	else:
+			#		break
 			edge.label = label.encode('utf-8')
 			edge.fontsize = edgefontsize
 			edge.fontname = 'arial'

@@ -154,6 +154,11 @@ class Participant:
 		"""Returns the victim of the Participant as another Participant object.
 		"""
 		return self.round.getInitialVictim(self)
+
+	def getInitialKiller(self):
+		"""Returns the killer of the Participant as another Participant object.
+		"""
+		return self.round.getInitialKiller(self)
 	
 	def getCurrentVictim(self):
 		return self.round.getCurrentVictim(self)
@@ -282,6 +287,9 @@ class Round:
 			if p.alive():
 				return p
 		return None
+	
+	def getInitialKiller(self, participant_or_player):
+		return self.getParticipantsStartingWith(participant_or_player)[-1]		
 	
 	def canKill(self, killer, victim):
 		"""Returns true if killer.getInitialVictim() == victim or the killer is None
