@@ -11,6 +11,7 @@ from genshi.template import TemplateLoader
 from genshi import Stream
 from genshi.input import XML
 from genshi.core import QName
+import time
 import pickle
 import codecs
 import os.path
@@ -23,6 +24,8 @@ import time
 from moerderklassen import GameError
 from moerdergraph import moerdergraph
 from pprint import pformat
+os.environ['TZ'] = 'Europe/Berlin'
+time.tzset()
 
 class G:
 	@staticmethod
@@ -70,6 +73,8 @@ def _loadgame(gameid, lock=True):
 	ret.workdir = G.workdir
 	ret.templatedir = G.templatedir
 	ret.savegamedir = G.savegamedir
+	os.environ['TZ'] = ret.config.timezone
+	time.tzset()
 	return ret
 	
 def _template(filename):

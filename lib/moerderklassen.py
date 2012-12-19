@@ -348,7 +348,12 @@ class Round:
 		if len(roundstocheck)+5 < len(players):
 			while True in flatten([ [ round.canKill(k.player, self.getInitialVictim(k).player) for k in self.participants ] for round in roundstocheck ]):
 				self.participants = self.shuffle(self.participants)
-		
+
+
+class Config:
+	def __init__(self):
+		self.timezone = "Europe/Berlin"
+		self.twitter = True
 
 class Game:
 	"""Main Class and API entrance for a Moerderspiel Game. Each game on a
@@ -387,6 +392,11 @@ class Game:
 			self.rounds[str(a+1)] = Round(str(a+1))
 	def __str__(self):
 		return u'Spiel: %s\nid: %s\nstatus: %s\nmastercode: %s\nenddate: %s\nplayers: %s\nrounds: %s' % (self.name, self.id, self.status, self.mastercode, self.enddate, self.players, self.rounds)
+	def __setstate__(self, state):
+		"""Upgrade old pickles."""
+		if not state.has_key('config'):
+			state['config'] = Config()
+		self.__dict__.update(state)
 	
 	def addPlayer(self, name, info, email=''):
 		"""Add a player to the player list using the given name and info.
