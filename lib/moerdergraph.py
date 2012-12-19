@@ -5,6 +5,7 @@ import sys
 import os.path
 import yapgvb as graph
 import textwrap
+import math
 from moerderklassen import *
 
 def u8(s):
@@ -17,13 +18,18 @@ def u8(s):
 			return None
 
 def moerdergraph(round, filename, alledges=False, nodefontsize=8.0, edgefontsize=8.0):
+	# G is the main Graph object
 	G = graph.Digraph("Moerder")
-
+	# a dict for indexing all nodes
 	nodes = {}
+	# we need to keep some of the nodes in mind
 	prev_node = first_node = node = None
+	# make a copy of the participant list so we don't jumble up the original list
 	participants = round.participants[:]
 	if not alledges:
+		# if not admin/gameover view: sort nodes prior to adding them to the graph
 		participants.sort(key = lambda p: p.player.name + p.player.info)
+	# for each participant, add a node to the graph bearing his name
 	for participant in participants:
 		name = participant.player.name
 		if len(participant.player.info) > 0:
@@ -32,33 +38,35 @@ def moerdergraph(round, filename, alledges=False, nodefontsize=8.0, edgefontsize
 		node.label = name.encode('utf-8')
 		node.fontsize = nodefontsize
 		node.margin = 0.03
-		if prev_node:
-			if alledges:
-				edge = G.add_edge(prev_node, node)
-		else:
+		if not prev_node:
 			first_node = node
+		# put all the nodes into a dict so we could find them fast by the player's id (needed later)
 		nodes[participant.player.public_id] = node
+		
 		prev_node = node
 		node.fontname = 'arial'
+		# kicked participants are gray
 		if participant.killed() and participant.killedby.killer is None:
 			node.color = 'gray'
 			node.fontcolor = 'gray'
+		# dead participants are red
 		if participant.killed() and not participant.killedby.killer is None:
 			node.color = 'red'
 			node.fontcolor = 'red'
-	if alledges:
-		edge = G.add_edge(node, first_node)
 
 	for participant in round.participants:
-		if participant.killed():
-			# add black edges for the initial killer
+		if alledges or participant.killed():
+			# add black edges for the initial kill assignment
 			edge = G.add_edge(nodes[participant.getInitialKiller().player.public_id], nodes[participant.player.public_id])
 			edge.color = 'black'
 			edge.weight = 1.0
+		if participant.killed():
 			# add red edges for the kill
 			if not participant.killedby.killer is None:
+				# normal case
 				edge = G.add_edge(nodes[participant.killedby.killer.player.public_id], nodes[participant.player.public_id])
 			else:
+				# special case of a game master kill
 				node = G.add_node('vorzeitig ausgestiegen')
 				node.fontsize = nodefontsize
 				node.fontname = 'arial'
@@ -68,21 +76,13 @@ def moerdergraph(round, filename, alledges=False, nodefontsize=8.0, edgefontsize
 			edge.color = 'red'
 			edge.fontcolor = 'red'
 			edge.weight = 1.0
+			# set edge label to kill description
 			label = participant.killedby.date + ":\\n"
-			label += "\\n".join(textwrap.wrap(participant.killedby.reason, 28))
-			#l = len(label)
-			#maxlen = 25
-			#i = 0
-			## set label for kill edge
-			#while l > maxlen:
-			#	i = label.find(' ', i+maxlen)
-			#	if i >= 0:
-			#		label = label[:i] + "\\n" + label[i+1:]
-			#		l = l - i
-			#	else:
-			#		break
+			maxlinelen = max(24, math.trunc(math.ceil(math.sqrt(6 * len(participant.killedby.reason)))))
+			label += "\\n".join(textwrap.wrap(participant.killedby.reason, maxlinelen))
 			edge.label = label.encode('utf-8')
 			edge.fontsize = edgefontsize
 			edge.fontname = 'arial'
+	# do the layout math and save to file
 	G.layout(graph.engines.dot)
 	G.render(filename)
