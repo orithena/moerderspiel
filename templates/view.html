@@ -188,47 +188,9 @@
 				</py:for>
 			</table>
 		</py:if>
-		<py:for each="round in sorted(game.rounds)" py:if="game.status == 'RUNNING' or game.status == 'OVER'">
-			<div class="box collapsed full white" py:if="len(game.rounds) > 1">
-				<h3 py:if="len(game.rounds) > 1">Kreis: ${round}</h3>
-				<table py:if="game.status == 'RUNNING'">
-					<tr><th>Name</th><th>Ermordet von</th><th>Wann?</th><th>Tathergang</th></tr>
-					<py:for each="p in game.rounds[round].getDeadParticipants()">
-						<tr>
-							<td>${p.player}</td>
-							<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
-							<td><py:if test="p.killedby">${p.killedby.date}</py:if></td>
-							<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
-						</tr>
-					</py:for>
-	<!--
-					<py:for each="p in game.rounds[round].getLivingParticipants()">
-						<tr>
-							<td>${p.player.html()}</td>
-							<td></td>
-							<td></td>
-							<td></td>
-						</tr>
-					</py:for>
-	-->
-				</table>
-			</div>
-			<table py:if="game.status == 'OVER'">
-				<tr><th>Name</th><th>Ermordet von</th><th>Wann?</th><th>Tathergang</th></tr>
-				<py:for each="p in game.rounds[round].participants">
-					<tr>
-						<td>${p.player}</td>
-						<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
-						<td><py:if test="p.killedby">${p.killedby.date}</py:if></td>
-						<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
-					</tr>
-				</py:for>
-			</table>
-
-			<div style="width:100%; height:50em; overflow:auto; border:1px solid black; text-align:center;">
-				<img src="gamegraph?id=${game.id}&amp;roundid=${round}" />
-			</div>
-		</py:for>
+		<div style="width:100%; height:50em; overflow:auto; border:1px solid black; text-align:center;">
+			<img src="gamegraphall?id=${game.id}" />
+		</div>
 	</div>
 	</div>
 </div>

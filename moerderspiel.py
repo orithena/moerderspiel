@@ -23,6 +23,7 @@ import logging
 import time
 from moerderklassen import GameError
 from moerdergraph import moerdergraph
+from moerdergraphall import moerdergraphall
 from pprint import pformat
 os.environ['TZ'] = 'Europe/Berlin'
 time.tzset()
@@ -202,6 +203,41 @@ def gamegraph(req, id, roundid, mastercode=''):
 	while tries < 10:
 		try:
 			moerdergraph(round, fname, adminview)
+			tries = 10
+		except:
+			time.sleep(0.01)
+			tries += 1
+	req.content_type = 'image/png'
+	ret = None
+	tries = 0
+	while tries < 10:
+		img = file(fname, 'r')
+		try:
+			ret = img.read()
+			tries = 10
+		except:
+			time.sleep(0.01)
+			tries += 1
+		finally:
+			img.close()
+	return ret
+	
+def gamegraphall(req, id, mastercode=''):
+	game = None
+	tries = 0
+	while tries < 10:
+		try:
+			game = _loadgame(id, False)
+			tries = 10
+		except:
+			time.sleep(0.01)
+			tries += 1
+	adminview = (mastercode == game.mastercode or game.status == 'OVER')
+	fname = os.path.join(G.savegamedir, '%s_%s%s.png' % (game.id, 'full',  '-admin' if adminview else ''))
+	tries = 0
+	while tries < 10:
+		try:
+			moerdergraphall(game, fname, adminview)
 			tries = 10
 		except:
 			time.sleep(0.01)
