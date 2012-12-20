@@ -333,6 +333,17 @@ td > input[type="submit"]:active
 	color:white;
 }
 
+div.bigimage {
+	width: 97%;
+	height: 50em;
+	overflow: auto;
+	border: 1px solid black;
+	text-align: center;
+	box-shadow: -2px -2px 12px #000 inset;
+	padding: 10px;
+	z-index: 10;
+}
+
 span.deaths {
 	width:0;
 	height:9px;
