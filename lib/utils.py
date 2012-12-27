@@ -108,7 +108,7 @@ def sendemail(templatedir, filename, subject, sender, receiver, game, player, pd
 		pass
 
 def colorgen(starthue, format='#RGBA'):
-	PHI = (1.0 + math.sqrt(5)) / 2.0
+	PHI = 1.0 / ((1.0 + math.sqrt(5)) / 2.0)
 	s = 1.0
 	v = 1.0
 	c = 0
