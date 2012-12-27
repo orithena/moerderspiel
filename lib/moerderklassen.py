@@ -107,6 +107,14 @@ class Player:
 			self,
 			pdfpath
 		)
+	def killcount(self):
+		return self.game.getKillsCount(self)
+	
+	def deathscount(self):
+		return self.game.getDeathsCount(self)
+		
+	def score(self):
+		return len(self.game.rounds) - self.deathscount() + self.killcount()
 	
 	def pdfgen(self):
 		return self.game.pdfgen(players = [self])
@@ -559,7 +567,8 @@ class Game:
 		else:
 			return []
 	
-	def getMassMurdererString(self, maxlen=40):
+	
+	def getMassMurdererString(self, maxlen=45):
 		"""Returns a text consisting of a comma-separated list of Player
 		names who are currently in the lead, adding the score in parentheses:
 		'Anna, Berta, Charlie (4)'
@@ -571,10 +580,26 @@ class Game:
 		if len(mm) < 1:
 			return "Niemand"
 		ret = ', '.join([ i.name for i in mm['killers']])
-		ret += ' (%s)' % mm['kills']
+		ret += ' (%s Morde)' % mm['kills']
 		if len(ret) > maxlen:
-			ret = u'%s Mörder (%s)' % (len(mm['killers']), mm['kills'])
+			ret = u'%s Mörder (%s Morde)' % (len(mm['killers']), mm['kills'])
 		return ret
+
+	def getHighScoreList(self):
+		playerlist = sorted(self.players, key=lambda q: q.score(), reverse=True)
+		highscore = playerlist[0].score()
+		return sorted([ p for p in playerlist if p.score() == highscore ], key=lambda q: q.name+q.info)
+			
+	def getHighScoreString(self, maxlen=45):
+		hs = self.getHighScoreList()
+		if len(hs) < 1:
+			return "Niemand"
+		ret = ', '.join([ p.name for p in hs])
+		ret += ' (%s Punkte)' % hs[0].score()
+		if len(ret) > maxlen:
+			ret = u'%s Spieler (%s Punkte)' % (len(hs), hs[0].score())
+		return ret
+		
 	
 	def getKilled(self):
 		return flatten([r.getDeadParticipants() for r in self.rounds.values()])
