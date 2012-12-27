@@ -177,11 +177,17 @@
 			<h3>Morde</h3>
 			<table>
 				<tr><th>Name</th><th>Ermordet von</th><th py:if="len(game.rounds) > 1">Kreis</th><th>Wann?</th><th>Tathergang</th></tr>
+				<?python 
+					colors = utils.colorgen(0.86, format='rgba()')
+					colorlist = {}
+					for round in game.rounds.values():
+						colorlist[str(round.name)] = next(colors)
+				?>
 				<py:for each="p in sorted(game.getKilled(), key=lambda r: r.killedby.date, reverse=True)">
 						<tr py:if="p.killedby and p.killedby.killer">
 							<td>${p.player} <span class="deaths" style="width:${game.getDeathsCount(p)*9}px;">&nbsp;</span></td>
 							<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="kills" style="width:${game.getKillsCount(p.killedby.killer.player)*9}px;">&nbsp;</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
-							<td py:if="len(game.rounds) > 1"><py:if test="p.killedby">${p.round.name}</py:if></td>
+							<td py:if="len(game.rounds) > 1" class="centered"><py:if test="p.killedby"><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></td>
 							<td><py:if test="p.killedby">${p.killedby.date}</py:if></td>
 							<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
 						</tr>

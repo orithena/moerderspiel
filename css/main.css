@@ -217,6 +217,10 @@ div.right {
 	background-color: #fca;
 }
 
+table td.centered {
+	text-align:center;
+}
+
 dl {
 	display: block;
 	vertical-align: middle;
@@ -325,6 +329,14 @@ td > input[type="submit"]:active
 	color:white;
 }
 
+.circle {
+	display: inline-block;
+	margin: 0;
+	border-radius: 1em;
+	padding: 0.2em 1em 0.2em 1em;
+	box-shadow: 0.2em 0.2em 0.5em -0.2em #f99;
+	color:black;
+}
 .box .id_display, .box .code, .box .url {
 	background-color: #f33;
 	box-shadow: 0.2em 0.2em 0.5em 0 #933;

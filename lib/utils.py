@@ -5,6 +5,8 @@ import smtplib
 import mimetypes
 import os
 import os.path
+import math
+import colorsys
 
 from genshi.template import NewTextTemplate
 from genshi.template import TemplateLoader
@@ -41,6 +43,9 @@ class Bunch(object):
 		self.__dict__.update(kwds)
 	def __eq__(self, other):
 		return self.__dict__ == other.__dict__
+	def put(self, **kwds):
+		self.__dict__.update(kwds)
+tmp = Bunch()
 
 def latexEsc(str):
 	translations = dict((
@@ -102,6 +107,24 @@ def sendemail(templatedir, filename, subject, sender, receiver, game, player, pd
 	except:
 		pass
 
+def colorgen(starthue, format='#RGBA'):
+	PHI = (1.0 + math.sqrt(5)) / 2.0
+	s = 1.0
+	v = 1.0
+	c = 0
+	while(True):
+		r,g,b = colorsys.hsv_to_rgb(starthue, s, v)
+		starthue = (starthue + PHI) % 1.0
+		c += 1
+		if c % 3 == 0:
+			v = (v + PHI) % 1.0
+		if format == '#RGBA':
+			yield '#%02x%02x%02xA0' % ( r*255, g*255, b*255 )
+		elif format == '#RGB':
+			yield '#%02x%02x%02x' % ( r*255, g*255, b*255 )
+		elif format == 'rgba()':
+			yield 'rgba(%d, %d, %d, 0.627)' % ( r*255, g*255, b*255 )
+		
 html_escape_table = {
 	'"': "&quot;",
 	"'": "&apos;",

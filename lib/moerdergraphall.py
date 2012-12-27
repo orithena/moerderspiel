@@ -4,33 +4,32 @@
 import sys
 import os.path
 import yapgvb as graph
+from yapgvb import RenderingContext, tempfile
 import textwrap
 import math
 import colorsys
 import pickle
 from moerderklassen import *
+from utils import colorgen
 
-def u8(s):
-	try:
-		return s.decode('utf8')
-	except UnicodeDecodeErrors:
-		try:
-			return s.decode('latin1')
-		except UnicodeDecodeError:
-			return None
+class MyRenderingContext(RenderingContext):
+	def render(self, graph, output_type, destfile):
+		if isinstance(destfile,file):
+			filename = destfile.name
+			destfile.close()
+		elif isinstance(destfile,str):
+			filename = destfile
+		else:
+			raise Exception
+		temp = tempfile('.dot')
+		graph._write_dot(temp)
+		cmd = "%s -Gsize=100,50 -T%s -o%s %s" % (self._engine_executable, output_type, filename, temp)
+		ier = os.system(cmd)
+		if ier:
+			check_graphviz_working()
+			raise CLIRenderError("Error code %s rendering %s" % (ier, temp))
+		#os.remove(temp)
 
-def colorgen(starthue):
-	PHI = (1.0 + math.sqrt(5)) / 2.0
-	s = 1.0
-	v = 1.0
-	c = 0
-	while(True):
-		r,g,b = colorsys.hsv_to_rgb(starthue, s, v)
-		starthue = (starthue + PHI) % 1.0
-		c += 1
-		if c % 3 == 0:
-			v = (v + PHI) % 1.0
-		yield '#%02x%02x%02xA0' % ( r*255, g*255, b*255 )
 
 def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsize=8.0):
 	# G is the main Graph object
@@ -145,8 +144,9 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 				edge.fontsize = edgefontsize
 				edge.fontname = 'arial'
 	# do the layout math and save to file
-	G.layout(graph.engines.dot)
-	G.render(filename)
+	rc = MyRenderingContext()
+	G.layout(graph.engines.dot, rendering_context=rc)
+	G.render(filename, rendering_context=rc)
 
 
 def _loadgame(gamefile):
@@ -158,5 +158,5 @@ def _loadgame(gamefile):
 if __name__ == "__main__":
 	import sys
 	game = _loadgame(sys.argv[1])
-	moerdergraphall(game, sys.argv[2])
+	moerdergraphall(game, sys.argv[2], alledges=True)
 	
