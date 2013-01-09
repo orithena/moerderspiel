@@ -56,7 +56,8 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 	hnode = inode = G.add_node('invisible')
 	inode.style = 'invisible'
 	inode.pos = (0.0, 0.0)
-	massmurdererlist = [ player.public_id for player in game.getMassMurderer()['killers'] ]
+	massmurderers = game.getMassMurderer()
+	massmurdererlist = [ player.public_id for player in massmurderers['killers'] ] if len(massmurderers) > 0 else []
 
 	if not alledges:
 		# if not admin/gameover view: sort nodes prior to adding them to the graph
