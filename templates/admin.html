@@ -208,7 +208,7 @@
 						</td>
 						<td>${p.id}</td>
 						<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
-						<td><py:if test="p.killedby">${p.killedby.date}</py:if></td>
+						<td><py:if test="p.killedby">${utils.dateformat(p.killedby.date)}</py:if></td>
 						<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
 						<td class="buttons">
 							<py:if test="p.killedby">
@@ -226,7 +226,7 @@
 				</py:for>
 			</table>
 			<div style="width:96%; height:300px; overflow:auto; border:1px solid black; text-align:center;">
-				<img src="gamegraph?id=${game.id}&amp;roundid=${round}&amp;mastercode=${game.mastercode}" />
+				<img src="gamegraphall?id=${game.id}&amp;roundid=${round}&amp;mastercode=${game.mastercode}" />
 			</div>
 		</py:for>
 	</div>

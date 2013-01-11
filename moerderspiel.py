@@ -222,7 +222,7 @@ def gamegraph(req, id, roundid, mastercode=''):
 			img.close()
 	return ret
 	
-def gamegraphall(req, id, mastercode=''):
+def gamegraphall(req, id, roundid='', mastercode=''):
 	game = None
 	tries = 0
 	while tries < 10:
@@ -233,11 +233,14 @@ def gamegraphall(req, id, mastercode=''):
 			time.sleep(0.01)
 			tries += 1
 	adminview = (mastercode == game.mastercode or game.status == 'OVER')
-	fname = os.path.join(G.savegamedir, '%s_%s%s.png' % (game.id, 'full',  '-admin' if adminview else ''))
+	fname = os.path.join(G.savegamedir, '%s_%s%s%s.png' % (game.id, roundid, 'full', '-admin' if adminview else ''))
 	tries = 0
 	while tries < 10:
 		try:
-			moerdergraphall(game, fname, adminview)
+			if len(roundid) < 1:
+				moerdergraphall(game, fname, adminview)
+			else:
+				moerdergraphall(game, fname, adminview, rounds=game.rounds[roundid])
 			tries = 10
 		except:
 			time.sleep(0.01)
@@ -246,15 +249,17 @@ def gamegraphall(req, id, mastercode=''):
 	ret = None
 	tries = 0
 	while tries < 10:
-		img = file(fname, 'r')
+		img = None
 		try:
+			img = file(fname, 'r')
 			ret = img.read()
 			tries = 10
 		except:
 			time.sleep(0.01)
 			tries += 1
 		finally:
-			img.close()
+			if img is not None:
+				img.close()
 	return ret
 
 def addplayer(req, gameid, spielername, zusatzinfo, email='', ajax=0):
@@ -324,7 +329,7 @@ def _pdfblankgen(req, count, game):
 	tmptexdir = "/tmp/moerder_" + game.id
 	if not os.path.isdir(tmptexdir):
 		os.mkdir(tmptexdir)
-	shutil.copy(os.path.join(G.templatedir, "moerder.tex"), os.path.join(tmptexdir, "moerder.tex"))
+	shutil.copyfile(os.path.join(G.templatedir, "moerder.tex"), os.path.join(tmptexdir, "moerder.tex"))
 	listfile = codecs.open(os.path.join(tmptexdir, "list.tex"), "w", "utf-8")
 	for p in range(0, count):
 		for roundid in sorted(game.rounds):
@@ -350,7 +355,7 @@ def _pdfblankgen(req, count, game):
 	os.chdir(tmptexdir)
 	os.system("xelatex moerder.tex")
 	os.chdir(cwd)
-	shutil.copy(tmptexdir + "/moerder.pdf", os.path.join(G.savegamedir, "%s.pdf" % game.id))
+	shutil.copyfile(tmptexdir + "/moerder.pdf", os.path.join(G.savegamedir, "%s.pdf" % game.id))
 
 def css(req, css):
 	filepath = os.path.join(G.cssdir, "%s.css" % css )

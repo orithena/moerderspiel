@@ -11,6 +11,7 @@ import colorsys
 import pickle
 from moerderklassen import *
 from utils import colorgen
+import utils
 
 class MyRenderingContext(RenderingContext):
 	def render(self, graph, output_type, destfile):
@@ -31,7 +32,11 @@ class MyRenderingContext(RenderingContext):
 		#os.remove(temp)
 
 
-def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsize=8.0):
+def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsize=8.0, rounds=None):
+	if rounds is None:
+		rounds = game.rounds.values()
+	elif type(rounds) is not list:
+		rounds = [rounds]
 	# G is the main Graph object
 	G = graph.Digraph("Moerder")
 	G.model = 'subset'
@@ -114,7 +119,7 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 			#node.fillcolor = '#FF0000FF'
 
 	colorgenerator = colorgen(0.86)
-	for round in game.rounds.values():
+	for round in rounds:
 		edgecolor = next(colorgenerator)
 		for participant in round.participants:
 			if alledges or participant.killed():
@@ -137,7 +142,7 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 				edge.penwidth = 4
 				edge.weight = 10.0
 				# set edge label to kill description
-				label = participant.killedby.date + ":\\n"
+				label = utils.dateformat(participant.killedby.date) + ":\\n"
 				maxlinelen = max(24, math.trunc(math.ceil(math.sqrt(6 * len(participant.killedby.reason)))))
 				label += "\\n".join(textwrap.wrap(participant.killedby.reason, maxlinelen)).replace('"', "'")
 				edge.label = label.encode('utf-8')

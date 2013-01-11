@@ -53,6 +53,14 @@ class Kill:
 		self.killer = killer
 		self.date = date
 		self.reason = reason
+	def __setstate__(self, state):
+		"""Upgrade old pickles."""
+		if type(state['date']) == str:
+			try:
+				state['date'] = datetime.strptime(state['date'], '%d.%m.%Y %H:%M')
+			except:
+				pass
+		self.__dict__.update(state)
 
 class Player:
 	"""This data class contains all meta data of a player.
@@ -269,7 +277,7 @@ class Round:
 	def getDeadParticipants(self):
 		"""Returns a list of dead Participants"""
 		participants = [ p for p in self.participants if not p.alive() ]
-		participants.sort(key = lambda p: p.killedby.date)
+		participants.sort(key = lambda p: str(p.killedby.date))
 		return participants
 		
 	def getLivingParticipants(self):
@@ -602,7 +610,7 @@ class Game:
 		
 	
 	def getKilled(self):
-		return flatten([r.getDeadParticipants() for r in self.rounds.values()])
+		return sorted(flatten([r.getDeadParticipants() for r in self.rounds.values()]), key=lambda r: str(r.killedby.date), reverse=True)
 	
 	def getKillsCount(self, player_or_participant_or_id):
 		id = self.findPlayer(player_or_participant_or_id)
@@ -644,7 +652,7 @@ class Game:
 		tmptexdir = "/tmp/moerder_" + fname
 		if not os.path.isdir(tmptexdir):
 			os.mkdir(tmptexdir)
-		shutil.copy(os.path.join(self.templatedir, "moerder.tex"), os.path.join(tmptexdir, "moerder.tex"))
+		shutil.copyfile(os.path.join(self.templatedir, "moerder.tex"), os.path.join(tmptexdir, "moerder.tex"))
 		listfile = codecs.open(os.path.join(tmptexdir, "list.tex"), "w", "utf-8")
 		#for roundid,round in self.rounds.iteritems():
 		#	for participant in round.participants:
@@ -676,7 +684,7 @@ class Game:
 		os.system("xelatex moerder.tex")
 		os.chdir(cwd)
 		pdfpath = os.path.join(self.savegamedir, "%s.pdf" % fname)
-		shutil.copy(tmptexdir + "/moerder.pdf", pdfpath)
+		shutil.copyfile(tmptexdir + "/moerder.pdf", pdfpath)
 		return pdfpath
 
 

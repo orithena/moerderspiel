@@ -6,6 +6,7 @@ import os.path
 import yapgvb as graph
 import textwrap
 import math
+import utils
 from moerderklassen import *
 
 def u8(s):
@@ -77,7 +78,7 @@ def moerdergraph(round, filename, alledges=False, nodefontsize=8.0, edgefontsize
 			edge.fontcolor = 'red'
 			edge.weight = 1.0
 			# set edge label to kill description
-			label = participant.killedby.date + ":\\n"
+			label = utils.dateformat(participant.killedby.date) + ":\\n"
 			maxlinelen = max(24, math.trunc(math.ceil(math.sqrt(6 * len(participant.killedby.reason)))))
 			label += "\\n".join(textwrap.wrap(participant.killedby.reason, maxlinelen))
 			edge.label = label.encode('utf-8')
