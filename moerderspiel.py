@@ -21,10 +21,12 @@ import filelock
 import moerderklassen
 import logging
 import time
+import locale
 from moerderklassen import GameError
 from moerdergraph import moerdergraph
 from moerdergraphall import moerdergraphall
 from pprint import pformat
+locale.setlocale(locale.LC_ALL, ('de_DE', 'UTF8'))
 os.environ['TZ'] = 'Europe/Berlin'
 time.tzset()
 

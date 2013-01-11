@@ -23,7 +23,7 @@ from email.mime.text import MIMEText
 def now(format='%d.%m.%Y %H:%M'):
 	return datetime.datetime.now().strftime(format)
 	
-def dateformat(dt, format='%d.%m. %H:%M'):
+def dateformat(dt, format='%a %d.%m. %H:%M'):
 	return dt.strftime(format)
 
 def future(format='%d.%m.%Y %H:%M', **kwargs):

@@ -189,7 +189,7 @@
 							<td>${p.player} <span class="deaths" style="width:${game.getDeathsCount(p)*9}px;">&nbsp;</span></td>
 							<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="kills" style="width:${game.getKillsCount(p.killedby.killer.player)*9}px;">&nbsp;</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
 							<td py:if="len(game.rounds) > 1" class="centered"><py:if test="p.killedby"><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></td>
-							<td><py:if test="p.killedby">${utils.dateformat(p.killedby.date)}</py:if></td>
+							<td><py:if test="p.killedby">${utils.dateformat(p.killedby.date, format="%a")}&nbsp;${utils.dateformat(p.killedby.date, format="%d.%m. %H:%M")}</py:if></td>
 							<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
 						</tr>
 				</py:for>
