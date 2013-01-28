@@ -24,7 +24,10 @@ def now(format='%d.%m.%Y %H:%M'):
 	return datetime.datetime.now().strftime(format)
 	
 def dateformat(dt, format='%a %d.%m. %H:%M'):
-	return dt.strftime(format)
+	try:
+		return dt.strftime(format)
+	except:
+		return dt
 
 def future(format='%d.%m.%Y %H:%M', **kwargs):
 	return (datetime.datetime.now() + datetime.timedelta(**kwargs)).strftime(format)

@@ -51,7 +51,10 @@ class Kill:
 	"""
 	def __init__(self, killer, date, reason):
 		self.killer = killer
-		self.date = date
+		try:
+			self.date = datetime.strptime(date, '%d.%m.%Y %H:%M')
+		except:
+			self.date = date
 		self.reason = reason
 	def __setstate__(self, state):
 		"""Upgrade old pickles."""
@@ -678,6 +681,8 @@ class Game:
 							utils.latexEsc(roundname)
 						)
 					)
+				else:
+					listfile.write(u"%s lebt nicht mehr in Kreis %s.\\\\~\\\\~" % (str(killer), round.name))
 		listfile.close()
 		cwd = os.getcwd()
 		os.chdir(tmptexdir)
