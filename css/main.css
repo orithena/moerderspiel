@@ -395,3 +395,7 @@ ul.tabs > li {
 	margin: 0 -0.3em 0 0;
 	box-shadow: 2px 2px 8px gray;
 }
+
+ul.tabs > li > a {
+	text-decoration: none;
+}
