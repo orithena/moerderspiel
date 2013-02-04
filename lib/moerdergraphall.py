@@ -120,8 +120,10 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 			#node.fillcolor = '#FF0000FF'
 
 	colorgenerator = colorgen(0.86)
-	for round in rounds:
+	for round in game.rounds.values():
 		edgecolor = next(colorgenerator)
+		if round not in rounds:
+			continue
 		for participant in round.participants:
 			if alledges or participant.killed():
 				edge = G.add_edge(nodes[participant.getInitialKiller().player.public_id], nodes[participant.player.public_id])
