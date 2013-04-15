@@ -682,7 +682,7 @@ class Game:
 						)
 					)
 				else:
-					listfile.write(u"%s lebt nicht mehr in Kreis %s.\\\\~\\\\~" % (str(killer), round.name))
+					listfile.write(u"%s lebt nicht mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
 		listfile.close()
 		cwd = os.getcwd()
 		os.chdir(tmptexdir)
