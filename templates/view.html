@@ -129,7 +129,17 @@
 						</p>
 					</td>
 				</tr>
-				<tr>
+				<tr py:if="game.id.find('kif') > -1 or game.id.find('koma') > -1">
+					<th>Hochschule:</th>
+					<td>
+						<input type="text" name="zusatzinfo" size="20"/>
+						<p class="hint">
+						Kein Spieler wird einen anderen Spieler von einer gleich geschriebenen Hochschule als erstes 
+						Opfer erhalten (sofern möglich). <em>Das heißt nicht, dass sie ein Team bilden!</em>
+						</p>
+					</td>
+				</tr>
+				<tr py:if="game.id.find('kif') == -1 and game.id.find('koma') == -1">
 					<th>Gruppe:</th>
 					<td>
 						<input type="text" name="zusatzinfo" size="20"/>

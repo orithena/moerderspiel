@@ -13,6 +13,7 @@ import shutil
 import moerderklassen
 import filelock
 import logging
+import datetime
 from moerdergraph import moerdergraph
 from pprint import pformat
 
@@ -31,7 +32,7 @@ G.modpath = modpath
 G.cssdir = os.path.join(workdir, 'css')
 G.templatedir = os.path.join(workdir, 'templates')
 G.savegamedir = os.path.join(workdir, 'savegames')
-logging.basicConfig(filename=os.path.join(G.savegamedir, 'moerderspiel.log'), level=logging.DEBUG)
+logging.basicConfig(filename=os.path.join(G.savegamedir, 'moerderspiel-%s.log'%datetime.date.today()), level=logging.DEBUG)
 
 def _savegame(game, checkifexists=False):
 	G.fname = G.savegamedir + '/' + game.id + '.pkl'

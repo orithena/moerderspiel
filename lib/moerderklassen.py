@@ -665,22 +665,25 @@ class Game:
 			for roundid,round in self.rounds.iteritems():
 				if round.getParticipant(killer).alive():
 					victim = round.getCurrentVictim(killer)
-					roundname = round.name if len(self.rounds) > 1 else ''
-					#listfile.write("\Auftrag{Gamename}{Gameid}{Victim}{Killer}{Signaturecode}{Spielende}{URL}\n")
-					listfile.write(u"\\Auftrag{%s}{%s}{%s\\\\%s}{%s\\\\%s}{%s}{%s}{%s}{%s}\n" % 
-						(
-							utils.latexEsc(self.name),
-							utils.latexEsc(self.id), 
-							utils.latexEsc(victim.player.name), 
-							utils.latexEsc(victim.player.info), 
-							utils.latexEsc(killer.name), 
-							utils.latexEsc(killer.info), 
-							utils.latexEsc(victim.id), 
-							utils.latexEsc(self.enddate.strftime("%d.%m.%Y %H:%M")), 
-							utils.latexEsc(self.url), 
-							utils.latexEsc(roundname)
+					if victim is not None:
+						roundname = round.name if len(self.rounds) > 1 else ''
+						#listfile.write("\Auftrag{Gamename}{Gameid}{Victim}{Killer}{Signaturecode}{Spielende}{URL}\n")
+						listfile.write(u"\\Auftrag{%s}{%s}{%s\\\\%s}{%s\\\\%s}{%s}{%s}{%s}{%s}\n" % 
+							(
+								utils.latexEsc(self.name),
+								utils.latexEsc(self.id), 
+								utils.latexEsc(victim.player.name), 
+								utils.latexEsc(victim.player.info), 
+								utils.latexEsc(killer.name), 
+								utils.latexEsc(killer.info), 
+								utils.latexEsc(victim.id), 
+								utils.latexEsc(self.enddate.strftime("%d.%m.%Y %H:%M")), 
+								utils.latexEsc(self.url), 
+								utils.latexEsc(roundname)
+							)
 						)
-					)
+					else:
+						listfile.write(u"%s hat kein Opfer mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
 				else:
 					listfile.write(u"%s lebt nicht mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
 		listfile.close()
