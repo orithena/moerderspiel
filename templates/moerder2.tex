@@ -1,0 +1,62 @@
+\documentclass[a4paper,landscape]{scrartcl}
+%\usepackage{ngerman}
+%\usepackage{a4wide}
+%\usepackage[utf8]{inputenc}
+%\usepackage{tabularx}
+\usepackage{xltxtra}
+\usepackage{multicol}
+\usepackage{url}
+\usepackage[left=0.4cm,right=0.4cm,top=0cm,bottom=0cm,includeheadfoot]{geometry}
+%\usepackage[left=0.4cm,right=0.4cm,top=0.4cm,bottom=0.4cm,includeheadfoot]{geometry}
+\columnsep1.5cm
+\pagestyle{empty}
+\setlength{\columnseprule}{0.5pt}
+\setlength{\columnsep}{0.5pt}
+\setlength{\premulticols}{\textheight}
+\setmainfont[Mapping=tex-text]{Gentium}
+
+% \Auftrag{Headline}{gameid}{Opfer}{Moerder}{Signaturcode}{URL}
+\newcommand{\Auftrag}[8]{
+		\vskip0.85cm
+		\begin{minipage}[b][8.0cm][c]{7.1cm}
+		\hrule\vskip0.1cm
+		\begin{center}\scriptsize{#4}\tiny{\\~\\ $\downarrow$ Bitte nach Erhalt des Auftrags hier abtrennen $\downarrow$ \\ \hrule}\end{center}%
+		\vfill
+		\fbox{\begin{minipage}[b][6.3cm][c]{7.0cm}\begin{center}
+		#1
+		\ifx&#8&%
+			%
+		\else
+			-- Kreis #8
+		\fi
+		~\\
+		\vskip0.2cm
+		Mordauftrag: \\
+		{\Large \textbf{\sffamily{#3}}} \\
+		\end{center}
+		\scriptsize{Wurdest du ermordet, gib diesen Auftrag deinem
+		\ifx&#8&%
+			Mörder.
+		\else
+			Mörder aus Kreis #8 im Spiel #1.
+		\fi
+		\\
+		\textbf{Trage diesen Mordauftrag immer bei dir.} Nach Erledigung zeige ihn deinem Opfer zum Beweis und melde den Mord unter Angabe des Signaturcodes auf der Webseite des Spiels.\\~\\
+		\begin{tabular}{ll}
+			Signaturcode dieses Auftrags: & \sffamily{#5} \\
+			ID des Spiels: & \sffamily{#2} \\
+			Spielende: & \sffamily{#6} \\
+		\end{tabular}
+		}
+%		\vskip0.3cm
+%		Erledigt von: \underline{\hskip4.5cm}
+		\begin{center}\url{#7}\end{center}%
+		\end{minipage}}\end{minipage}
+}
+
+\begin{document}\raggedcolumns\begin{multicols}{3}
+%\begin{center}
+\centering
+\include{list}
+%\end{center}
+\end{multicols}\end{document}
