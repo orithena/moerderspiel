@@ -655,7 +655,10 @@ class Game:
 		tmptexdir = "/tmp/moerder_" + fname
 		if not os.path.isdir(tmptexdir):
 			os.mkdir(tmptexdir)
-		shutil.copyfile(os.path.join(self.templatedir, "moerder.tex"), os.path.join(tmptexdir, "moerder.tex"))
+		tmplfile = "moerder.tex"
+		if( len(self.rounds) % 2 == 0 and len(players) > 1 ):
+			tmplfile = "moerder2.tex"
+		shutil.copyfile(os.path.join(self.templatedir, tmplfile), os.path.join(tmptexdir, "moerder.tex"))
 		listfile = codecs.open(os.path.join(tmptexdir, "list.tex"), "w", "utf-8")
 		#for roundid,round in self.rounds.iteritems():
 		#	for participant in round.participants:
