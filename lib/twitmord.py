@@ -5,7 +5,7 @@ import twython
 def twit(msg):
   try: # get tokens from https://dev.twitter.com/
     client = twython.Twython(app_key='TODO:insert app key', app_secret='TODO: insert app secret', oauth_token='TODO:insert oauth token', oauth_token_secret='TODO:insert oauth secret')  
-    client.updateStatus(status=msg)
+    client.update_status(status=msg)
   except:
     pass #if there is an error while tweeting, it can't be solved by the user, so he does not need an error message
 
