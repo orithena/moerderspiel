@@ -186,7 +186,7 @@
 						<td>${player.name}</td>
 						<td>${player.info}</td>
 						<td class="buttons">
-							<button onclick="return askajax('admin', {'id':'${game.id}', 'mastercode':'${game.mastercode}', 'action':'removeplayer', 'victim':'${player.public_id}' }, this, 'Spieler ${player.html()} wirklich wieder aus dem Spiel rausschmeißen?');">
+							<button onclick="return askajax('admin', {'id':'${game.id}', 'mastercode':'${game.mastercode}', 'action':'removeplayer', 'victim':'${player.public_id}' }, this, 'Spieler ${player.name} wirklich wieder aus dem Spiel rausschmeißen?');">
 								kick
 							</button>
 						</td>
@@ -202,9 +202,10 @@
 					<tr>
 						<td>${p.player}</td>
 						<td class="buttons">
-							<button onclick="return askajax('admin', {'id':'${game.id}', 'mastercode':'${game.mastercode}', 'action':'kickplayer', 'victim':'${p.player.public_id}' }, this, 'Spieler ${p.player.html()} wirklich aus allen Runden rausschmeißen?');">
+							<button onclick="return askajax('admin', {'id':'${game.id}', 'mastercode':'${game.mastercode}', 'action':'kickplayer', 'victim':'${p.player.public_id}' }, this, 'Spieler ${p.player.name} wirklich aus allen Runden rausschmeißen?');">
 								kick
 							</button>
+							<span class="circle"><a href="pdfdownload?id=${game.id}&amp;mastercode=${game.mastercode}&amp;publicid=${p.player.public_id}">Auftrag</a></span>
 						</td>
 						<td>${p.id}</td>
 						<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>

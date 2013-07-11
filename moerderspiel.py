@@ -377,6 +377,21 @@ def css(req, css):
 	else:
 		req.content_type = 'text/css'
 		return ""
+		
+def pdfdownload(req, id, mastercode, publicid):
+	game = _loadgame(id)
+	filename = os.path.join(G.savegamedir, "%s_%s.pdf" % (game.id, publicid))
+	if mastercode == game.mastercode:
+		if not os.path.isfile(filename):
+			return error(req, u"Da gibt es kein passendes PDF")
+		else:
+			req.content_type = 'application/pdf'
+			pdf = file(filename, 'r')
+			ret = pdf.read()
+			pdf.close()
+			return ret
+	else:
+		return error(req, u"Das war nicht der richtige Mastercode")
 
 def pdfget(req, id, mastercode, count=0):
 	game = _loadgame(id)
