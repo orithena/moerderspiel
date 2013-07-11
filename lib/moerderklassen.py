@@ -434,7 +434,7 @@ class Game:
 		is 1 or lower.
 		"""
 		if self.status == 'OPEN':
-			if len(name) > 1:
+			if len(name) > 0:
 				self.players.append(Player(name, info, self, email))
 			else:
 				raise GameError(u'Der Spieler sollte auch einen Namen haben')

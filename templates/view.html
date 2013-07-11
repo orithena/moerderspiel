@@ -205,17 +205,20 @@
 				</py:for>
 			</table>
 		</py:if>
+		<py:if test="game.status != 'OPEN'">
 		<py:if test="len(game.rounds) > 1">
 			<ul class="tabs">
-				<li><a href="gamegraphall?id=${game.id}" onclick="return imgurl('gamegraph', this.href);">Alle Kreise</a></li>
+				<li py:if="len(game.players) &lt; 25"><a href="gamegraphall?id=${game.id}" onclick="return imgurl('gamegraph', this.href);">Alle Kreise</a></li>
 				<py:for each="round in sorted(game.rounds.values(), key=lambda k: k.name)">
 					<li><a href="gamegraphall?id=${game.id}&amp;roundid=${round.name}" onClick="return imgurl('gamegraph', this.href);">Kreis ${round.name}</a></li>
 				</py:for>
 			</ul>	
 		</py:if>
 		<div class="bigimage">
-			<img id="gamegraph" src="gamegraphall?id=${game.id}" />
+			<img id="gamegraph"
+			src="gamegraphall?id=${game.id}&amp;roundid=${game.rounds.values()[0].name}" />
 		</div>
+		</py:if>
 	</div>
 	</div>
 </div>
