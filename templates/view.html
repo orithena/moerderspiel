@@ -67,20 +67,20 @@
 					<td><input type="submit" value="Auftrag erledigt!"/></td>
 				</tr>
 			</table>
-		</form>
-		<script type="text/javascript">
-		$(document).ready(function() {
-			$('#canvasdateclocktrigger').click(function() {
-				canvasdateclockpicker({
-					clockcanvasid: "#clockcanvas",
-					datecanvasid: "#datecanvas",
-					inputfield: '#killdate',
-					notbefore: Date.today().add({days:-1}),
-					notafter: Date.today()
+			<script type="text/javascript">
+			$(document).ready(function() {
+				$('#canvasdateclocktrigger').click(function() {
+					canvasdateclockpicker({
+						clockcanvasid: "#clockcanvas",
+						datecanvasid: "#datecanvas",
+						inputfield: '#killdate',
+						notbefore: Date.today().add({days:-1}),
+						notafter: Date.today()
+					});
 				});
 			});
-		});
-		</script>
+			</script>
+		</form>
 	</div>
 	<div id="addplayer" class="box right half clear" py:if="game.status == 'OPEN'">
 		<h3>Zum Spiel anmelden</h3>
