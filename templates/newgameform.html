@@ -40,26 +40,24 @@
 		</tr>
 		<tr>
 			<th>Spielende</th>
-			<td><input type="text" id="enddate" name="enddate" maxlength="18" size="18" value="${utils.future(days=4)}"/><input type="button" id="f_trigger_b" value="..."/></td>
+			<td><input type="text" id="enddate" name="enddate" maxlength="18" size="18" value="${utils.future(days=4)}"/><input type="button" id="canvasdateclocktrigger" value="..."/></td>
 		</tr>
 		<tr>
 			<th></th>
 			<td><input type="submit" value="Spiel eröffnen!"/></td>
 		</tr>
 	</table>
-	<script type="text/javascript">
-		if( calbox ) {
-			calbox.destroy()
-		}
-		var calbox = Calendar.setup({
-                        inputField     :    "enddate",      // id of the input field
-                        ifFormat       :    "%d.%m.%Y %H:%M",       // format of the input field
-                        showsTime      :    true,            // will display a time selector
-                        timeFormat     :    24,
-                        button         :    "f_trigger_b",   // trigger for the calendar (button ID)
-                        singleClick    :    false,           // double-click mode
-                        firstDay       :    1,
-                        step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-                });
-	</script>
+		<script type="text/javascript">
+		$(document).ready(function() {
+			$('#canvasdateclocktrigger').click(function() {
+				canvasdateclockpicker({
+					clockcanvasid: "#clockcanvas",
+					datecanvasid: "#datecanvas",
+					inputfield: '#enddate',
+					notbefore: Date.today(),
+					notafter: Date.today().add({days:50})
+				});
+			});
+		});
+		</script>
 </form> 

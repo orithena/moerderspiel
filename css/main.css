@@ -3,21 +3,27 @@
 }
 
 body {
-	font: 8pt black;
+	font: 9pt black;
 	background-color:#c01;
+	padding: 0;
+	margin: 0;
+}
+
+body > h1 {
+	padding-left:0.5em;
 }
 
 h1 {
-	font-size: 240%;
+	font-size: 200%;
 	color: white;
 }
 
 h2 {
-	font-size: 200%;
+	font-size: 170%;
 }
 
 h3 {
-	font-size:160%;
+	font-size:140%;
 	margin: 0.4em 0 0.3em 0;
 }
 
@@ -26,6 +32,7 @@ h3 {
 	background:transparent;
 	position:relative;
 	padding:0;
+	margin: 1em;
 }
 
 .error {
@@ -50,7 +57,7 @@ h3 {
 	margin: 1em auto 1em auto;
 	overflow: auto;
 	border: 1px black solid;
-	padding: 1em;
+	padding: 0;
 	border-radius: 7px;
 	box-shadow: 5px 5px 30px -4px black;
 	position:relative;
@@ -78,9 +85,12 @@ div.box {
 	box-shadow: 5px 5px 10px -4px red;
 	background-color: #c01;
 	color: white;
-	padding: 0.5em 1em;
+	padding: 0 1em;
 	margin: 0.5em 0;
-	display:inline-table;
+	display:block;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 div.box.white {
 	background-color:#f6f6f6;
@@ -94,7 +104,7 @@ div.box.white > h3:first-child {
 	color: white;
 	padding: 0.5em 1em;
 	margin: 0.5em 0;
-	display:inline-table;
+	display:block;
 }
 
 div.box td, div.box th {
@@ -117,38 +127,70 @@ div.box.collapsed > * {
 div.box.collapsed > :first-child {
 	display:block;
 	position:static;
+	cursor:s-resize;
 }
 
-div.box.collapsed:hover > * {
-	display:block;
-	background-color:white;
-	border-radius:7px;
-	border:1px solid black;
-	right:0.3em;
-	left:0.5em;
-	margin-top:-1em;
+div.box > :first-child {
+	cursor:n-resize;
+}
+
+div.box > :last-child {
+	margin-bottom:2em;
+}
+div.box > :first-child:last-child {
+	margin-bottom:0.5em;
+}
+
+div.box.nocollapse > :first-child {
+	cursor:auto;
+}
+
+div.box > h3 {
+	width:100%;
 }
 
 div.half {
-	width:43%;
+	width:48%;
 }
 div.full {
 	width:100%;
 }
-div.full > h3 {
-	width:100%;
-}
-
 div.third {
-	width:30%;
+	width:31%;
 }
 
 div.left {
 	float:left;
+	clear:left;
 }
 
 div.right {
 	float:right;
+	clear:right;
+}
+
+@media screen and (max-width: 768px) {
+	div.half {
+		width:100%;
+	}
+	div.full {
+		width:100%;
+	}
+	div.third {
+		width:100%;
+	}
+
+	div.left {
+		float:none;
+	}
+
+	div.right {
+		float:none;
+	}
+}
+
+.no-js #canvasdateclocktrigger {
+	display:none;
 }
 
 .clear {
@@ -286,8 +328,8 @@ th {
 
 td > input, 
 td > select, 
-td > button, 
-td > input[type="submit"] 
+button, 
+input[type="submit"] 
 {
 	border:1px solid grey;
 	background:#fca;
@@ -301,17 +343,17 @@ td > input[type="submit"]
 
 td > input:focus,
 td > select:focus,
-td > button:focus,
-td > input[type="submit"]:focus 
-td > button:hover,
-td > input[type="submit"]:hover 
+button:focus,
+input[type="submit"]:focus 
+button:hover,
+input[type="submit"]:hover 
 {
 	border:1px solid grey;
 	background-color:#fdc;
 }
 
-td > button:active,
-td > input[type="submit"]:active 
+button:active,
+input[type="submit"]:active 
 {
 	border:1px solid black;
 	background-color:#fff;
@@ -346,13 +388,13 @@ td > input[type="submit"]:active
 }
 
 div.bigimage {
-	width: 97%;
+	width: 100%;
 	height: 50em;
 	overflow: auto;
 	border: 1px solid black;
 	text-align: center;
 	box-shadow: -2px -2px 12px #000 inset;
-	padding: 10px;
+	padding: 0;
 	z-index: 10;
 }
 
@@ -372,13 +414,8 @@ span.kills {
 }
 
 input + .hint, select + .hint {
-	display:none;
 	margin-top:0.5ex;
 	padding-bottom:1ex;
-}
-
-input:focus + .hint, select:focus + .hint {
-	display:block;
 }
 
 ul.tabs {
@@ -399,3 +436,32 @@ ul.tabs > li {
 ul.tabs > li > a {
 	text-decoration: none;
 }
+
+#overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+	filter:alpha(opacity=90);
+	-moz-opacity:0.9;
+	-khtml-opacity: 0.9;
+	opacity: 0.9;
+	z-index: 100;
+	text-align: center;
+	display:table;
+}
+#overlay > div {
+	text-align: center;
+	vertical-align: middle;
+	position: static;
+	display: table-cell;
+}
+#overlay button {
+	font-size: 200%;
+	display: block;
+	margin: 1em auto;
+}
+
+
