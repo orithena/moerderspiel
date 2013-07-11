@@ -15,7 +15,7 @@
 			<py:if test="game.status != 'OPEN' and len(game.rounds) > 1"><dt>nach Punkten</dt><dd>${game.getHighScoreString()}</dd></py:if>
 		</dl>
 	</div>
-	<div id="makeakill" class="box right half" py:if="game.status == 'RUNNING'">
+	<div id="makeakill" class="box right half alwayscollapse" py:if="game.status == 'RUNNING'">
 		<h3>Erfolgreichen Mord melden!</h3>
 		<p>Wenn ihr nicht komplett online spielt, solltest du zu diesem Zeitpunkt bereits einen neuen
 		Auftrag von deinem Opfer bekommen haben. Und zwar genau den
@@ -139,7 +139,7 @@
 			</table>
 		</form>
 	</div>
-	<div id="goadmin" class="box right half clear">
+	<div id="goadmin" class="box right half clear alwayscollapse">
 		<h3>Spiel administrieren</h3>
 		<form action="admin" method="post" accept-charset="utf8">
 			<input type="hidden" name="id" value="${game.id}"/>
