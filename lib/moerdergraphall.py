@@ -4,7 +4,7 @@
 import sys
 import os.path
 import yapgvb as graph
-from yapgvb import RenderingContext, tempfile
+from yapgvb import RenderingContext
 import textwrap
 import math
 import colorsys
@@ -14,7 +14,11 @@ from utils import colorgen
 import utils
 
 class MyRenderingContext(RenderingContext):
+	""" Used only if yapgvb does not use libboost.
+	W/o libboost, this class is used to modify the parameters passed to graphviz/dot.
+	"""
 	def render(self, graph, output_type, destfile):
+		from yapgvb import tempfile
 		if isinstance(destfile,file):
 			filename = destfile.name
 			destfile.close()
@@ -152,9 +156,15 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 				edge.fontsize = edgefontsize
 				edge.fontname = 'arial'
 	# do the layout math and save to file
-	rc = MyRenderingContext()
-	G.layout(graph.engines.dot, rendering_context=rc)
-	G.render(filename, rendering_context=rc)
+	if graph.__dict__.has_key('_yapgvb_py'):
+		# if yapgvb works in python-only mode
+		rc = MyRenderingContext()
+		G.layout(graph.engines.dot, rendering_context=rc)
+		G.render(filename, rendering_context=rc)
+	else:
+		# if yapgvb has libboost support compiled in
+		G.layout(graph.engines.dot)
+		G.render(filename)
 
 
 def _loadgame(gamefile):
