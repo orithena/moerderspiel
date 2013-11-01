@@ -32,13 +32,20 @@ var oh = 0,
 var mouseX = 0,
     mouseY = 0;
 var wheeltimer;
-var drawdata = {};
+var drawdata = {
+        c: c,
+        h: 1,
+        m: 1,
+        d: 1,
+        hl: 1
+    };
+
 var drawupdate = true;
 var mousedown = false,
     updateminutes = false;
 
-function p2c(rad, len) { //polar (clock) coords to cartesian (canvas) coords
-    normrad = (((-3.0 / 2.0) * Math.PI) - rad) % (2 * Math.PI);
+var p2c = function(rad, len) { 
+    var normrad = (((-3.0 / 2.0) * Math.PI) - rad) % (2 * Math.PI);
     return {
         x: mx + (Math.cos(normrad) * len),
         y: my - (Math.sin(normrad) * len)
@@ -126,8 +133,8 @@ function actuallyDrawClock(c, hour, minute, day, hl) {
         c.stroke();
         // dial numerals
         c.fillStyle = col.dialtext;
-        c.font = fs + "px sans-serif";
-        c.fillText((minute < 10 ? "0" : "") + minute, p.x, p.y);
+        c.font = fs + 'px sans-serif';
+        c.fillText((minute < 10 ? '0' : '') + minute, p.x, p.y);
         // hours
         c.fillStyle = (hl == 1 ? col.handh : col.hand);
         c.strokeStyle = (hl == 1 ? col.dialh : col.dial);
@@ -139,7 +146,11 @@ function actuallyDrawClock(c, hour, minute, day, hl) {
         // dial numerals
         c.fillStyle = col.dialtext;
         c.font = "bold " + fs + "px sans-serif";
-        c.fillText(hour, p.x, p.y);
+        c.fillText(
+            hour, 
+            p.x, 
+            p.y
+        );
     } else {
         // minute hand
         c.lineWidth = hw;
@@ -178,7 +189,7 @@ function actuallyDrawClock(c, hour, minute, day, hl) {
     c.strokeRect(mx - (tfs * tfx), my - (tfs * tfy), (tfs * 2 * tfx), tfs * 2 * tfy);
     c.fillStyle = col.timetext;
     c.font = (2 * tfs) + "px sans-serif";
-    c.fillText(hour + ":" + (minute < 10 ? "0" : "") + minute, mx, my);
+    c.fillText(hour + ":" + (minute < 10 ? '0' : '') + minute, mx, my);
 }
 
 function drawClock(c, hour, minute, day, hl) {
@@ -201,7 +212,15 @@ function drawClock(c, hour, minute, day, hl) {
 function render() {
     var du = drawupdate;
     drawupdate = false;
-    if (du) actuallyDrawClock(c, drawdata.h, drawdata.m, drawdata.d, drawdata.hl);
+    if(du) { 
+        actuallyDrawClock(
+            c,
+            drawdata.h,
+            drawdata.m,
+            drawdata.d, 
+            drawdata.hl
+        );
+    }
 }
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
@@ -276,12 +295,15 @@ function update(force) {
     } else drawClock(c, oh, om, od, 0);
 }
 $(canvas).mousemove(function (e) {
+    if (mousedown) {
+        mouseX = e.offsetX;
+        mouseY = e.offsetY;
+        update();
+    
     e.stopPropagation();
     e.preventDefault();
-    mouseX = e.offsetX;
-    mouseY = e.offsetY;
-    if (mousedown) update();
     return false;
+    }
 });
 $(canvas).mousedown(function (e) {
     e.stopPropagation();
@@ -400,7 +422,7 @@ var sdim = Math.min(w,h);
 var lw = dim / 96;
 var ds = 0.6*Math.min(w,h);
 var sf = 0.4;
-var cur = config.date;
+var cur = config.date.clone().clearTime();
 //var notbefore = Date.today().add({days: -5});
 //var notafter = Date.today().add({days: 3});
 var notbefore = config.notbefore;
