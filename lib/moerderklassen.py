@@ -112,7 +112,7 @@ class Player:
 			self.game.templatedir,
 			'auftraege.txt', 
 			'Auftraege im Spiel "%s"' % self.game.id,
-			'dave@andaka.org',
+			'hades@moerderspiel.org',
 			self.email,
 			self.game,
 			self,
@@ -468,8 +468,11 @@ class Game:
 				for r in self.rounds.values():
 					for participant in r.participants:
 						if participant.player.id == player_id or participant.player.public_id == player_id:
-							r.kill(None, participant.id, 'never', u'Premature End Of Game')
-							r.getCurrentKiller(participant).player.sendemail()
+							try:
+								r.kill(None, participant.id, 'never', u'Premature End Of Game')
+								r.getCurrentKiller(participant).player.sendemail()
+							except:
+								pass
 							break
 			else:
 				raise GameError(u'Das war nicht der Mastercode!')
