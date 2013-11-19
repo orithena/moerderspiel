@@ -141,3 +141,13 @@ def htmlescape(text):
 		text = u8(text).__str__()
 	return "".join(html_escape_table.get(c,c) for c in text)
 
+quote_escape_table = {
+	'"': '\\"',
+	"'": "\\'",
+	}
+			
+def escape_quotes(text):
+	if text is not str:
+		text = u8(text).__str__()
+	return "".join(quote_escape_table.get(c,c) for c in text)
+
