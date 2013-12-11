@@ -290,6 +290,7 @@ def creategame(req, action, rundenname, kreiszahl, enddate, rundenid=''):
 		_url(req, 'view',  rundenid), 
 		rundenid
 	)
+	game.url = _url(req, 'view', game.id)
 	G.fname = os.path.join(G.savegamedir, '%s.pkl' % game.id)
 	if not os.path.exists(G.fname):
 		G.lockfile = filelock.FileLock(G.fname + '.lock')
