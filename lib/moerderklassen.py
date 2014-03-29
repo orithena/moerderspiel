@@ -218,7 +218,7 @@ class Round:
 		if isinstance(participant_or_player_or_id, Participant) or \
 			isinstance(participant_or_player_or_id, Player):
 			id = participant_or_player_or_id.id;
-		elif isinstance(participant_or_player_or_id, str):
+		elif isinstance(participant_or_player_or_id, basestring):
 			id = participant_or_player_or_id;
 		for participant in self.participants:
 			if participant.id == id or \
@@ -518,7 +518,7 @@ class Game:
 			return player_or_participant_or_id
 		elif isinstance(player_or_participant_or_id, Participant):
 			return player_or_participant_or_id.player
-		elif isinstance(player_or_participant_or_id, str):
+		elif isinstance(player_or_participant_or_id, basestring):
 			for player in self.players:
 				if (player.public_id == player_or_participant_or_id or
 					player.id == player_or_participant_or_id):
@@ -540,7 +540,7 @@ class Game:
 		vp = None
 		if isinstance(victim_participant_or_id, Participant):
 			vp = victim_participant_or_id
-		elif isinstance(victim_participant_or_id, str):
+		elif isinstance(victim_participant_or_id, basestring):
 			vp = self.findParticipant(victim_participant_or_id)
 		if isinstance(vp, Participant) and self.canRevert(vp):
 			killer = vp.killedby.killer.player
