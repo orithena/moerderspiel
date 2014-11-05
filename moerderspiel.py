@@ -246,7 +246,7 @@ def gamegraph(id, roundid, mastercode=''):
 			tries += 1
 	round = game.rounds[roundid]
 	adminview = (mastercode == game.mastercode or game.status == 'OVER')
-	fname = os.path.join(G.savegamedir, '%s_%s%s.png' % (game.id, round.name, '-admin' if adminview else ''))
+	fname = os.path.join(G.savegamedir, '%s_%s%s.svg' % (game.id, round.name, '-admin' if adminview else ''))
 	tries = 0
 	while tries < 10:
 		try:
@@ -255,7 +255,7 @@ def gamegraph(id, roundid, mastercode=''):
 		except:
 			time.sleep(0.01)
 			tries += 1
-	req.content_type = 'image/png'
+	req.content_type = 'image/svg+xml'
 	ret = None
 	tries = 0
 	while tries < 10:
@@ -282,7 +282,7 @@ def gamegraphall(id, roundid='', mastercode=''):
 			time.sleep(0.01)
 			tries += 1
 	adminview = (mastercode == game.mastercode or game.status == 'OVER')
-	fname = os.path.join(G.savegamedir, '%s_%s%s%s.png' % (game.id, roundid, 'full', '-admin' if adminview else ''))
+	fname = os.path.join(G.savegamedir, '%s_%s%s%s.svg' % (game.id, roundid, 'full', '-admin' if adminview else ''))
 	tries = 0
 	while tries < 10:
 		try:
@@ -308,7 +308,7 @@ def gamegraphall(id, roundid='', mastercode=''):
 		finally:
 			if img is not None:
 				img.close()
-	return _response(ret, 'image/png')
+	return _response(ret, 'image/svg+xml')
 
 @route('/addplayer')
 def addplayer(gameid, spielername, zusatzinfo, email='', ajax=0):

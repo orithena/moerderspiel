@@ -86,7 +86,7 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 		node.style = 'rounded,filled'
 		node.penwidth = 2
 		node.color = '#00003380'
-		node.fillcolor = '#00003322'
+		node.fillcolor = '#FFFFFF00'
 		node.margin = 0.01
 		nodeweight = game.getDeathsCount(participant) + game.getKillsCount(participant)
 		#node.group = str(nodeweight)
