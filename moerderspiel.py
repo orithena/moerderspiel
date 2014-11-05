@@ -228,7 +228,7 @@ def view(id, msg = ""):
 	return stream.render('xhtml')
 
 @route('/wall', '/wall/<id>')
-def wall(id, msg = ""):
+def wall(id, msg = "", ajax=0):
 	stream = None
 	game = None
 	try:
@@ -236,8 +236,13 @@ def wall(id, msg = ""):
 	except:
 		stream = _mainstream('error.html', errormsg = "Sorry, Spiel-ID %s  existiert nicht." % id, returnurl="start")
 	else:
-		stream = _mainstream('wall.html', game = game, errormsg = msg)
-	return stream.render('xhtml')
+		if ajax == '1':
+			selectors = [ "//*[@id='listplayers']" ]
+			stream = _ajaxstream('wall.html', selectors, game = game, errormsg = None)
+			return _response(stream.render("xhtml"), 'text/xml')
+		else:
+			stream = _mainstream('wall.html', game = game, errormsg = msg)
+			return stream.render('xhtml')
 
 @route('/error')
 def error(msg = "", returnurl = "index"):

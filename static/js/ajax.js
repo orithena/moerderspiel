@@ -165,7 +165,9 @@ function _ajax(Url, variables, form) {
 			}
 		}
 	}
-	showloadinganimation(form);
+	if( form ) {
+		showloadinganimation(form);
+	}
 	AJAX.onreadystatechange = function() {
 		if(AJAX.readyState == 4) {
 			if(AJAX.status == 200) {

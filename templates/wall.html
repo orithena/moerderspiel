@@ -23,13 +23,12 @@
 		<py:if test="game.status != 'OPEN'">
 			<ul class="cardlist">
                                 <li id="gameinfo" class="card">
-                                        <dl>
-                                        	<dt>Spiel</dt><dd>${game.name}</dd>
-                                                <dt>Spieler</dt><dd>${len(game.players)}</dd>
-                                                <dt>Morde</dt><dd>${len(list(game.getKilled()))}</dd>
-                                                <py:if test="game.status != 'OPEN'"><dt>Massenmörder</dt><dd>${game.getMassMurdererString()}</dd></py:if>
-                                                <py:if test="game.status != 'OPEN' and len(game.rounds) > 1"><dt>nach Punkten</dt><dd>${game.getHighScoreString()}</dd></py:if>
-                                        </dl>
+                                        <table>
+                                        	<tr><td>Spiel</td><td colspan="3">${game.name}</td></tr>
+                                                <tr><td>Spieler</td><td>${len(game.players)}</td><td>Morde</td><td>${len(list(game.getKilled()))}</td></tr>
+                                                <tr py:if="game.status != 'OPEN'"><td>Massenmörder</td><td colspan="3">${game.getMassMurdererString()}</td></tr>
+                                                <tr py:if="game.status != 'OPEN' and len(game.rounds) > 1"><td>nach Punkten</td><td colspan="3">${game.getHighScoreString()}</td></tr>
+                                        </table>
                                 </li>
 				<?python 
 					colors = utils.colorgen(0.86, format='rgba()')
@@ -38,7 +37,7 @@
 						colorlist[str(round.name)] = next(colors)
 				?>
 				<py:for each="p in game.getKilled()">
-						<li class="card" py:if="p.killedby and p.killedby.killer">
+						<li class="card" py:if="p.killedby and p.killedby.killer" data="participantid:${p.id}">
 							<span class="topleft"><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="kills" style="width:${game.getKillsCount(p.killedby.killer.player)*9}px;">&nbsp;</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></span>
 							<span class="topright"><py:if test="p.killedby"><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></span>
 							<h3>${p.player}</h3>
@@ -50,9 +49,11 @@
 			</ul>
 		</py:if>
 		
-		<script type="text/javascript">
-			  var timeout = setTimeout("location.reload(true);",60000);
-		</script>
 	</div>
 	</div>
+<script type="text/javascript">
+        setInterval(function(){
+	  	return ajax('wall', {'id':'${game.id}'}); 
+	  }, 10000);
+</script>
 </div>

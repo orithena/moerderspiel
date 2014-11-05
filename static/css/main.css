@@ -480,7 +480,7 @@ ul.tabs > li > a {
 	box-shadow: 2px 2px 8px gray;
 	min-width: 18rem;
 	max-width: 36rem;
-	height: 10em;
+	height: 8em;
 	margin: 0.5%;
 	padding: 2em 0.2em;
 	position: relative;
@@ -516,11 +516,11 @@ ul.tabs > li > a {
 	}
 }
 #gameinfo.card {
-	padding: 0.2em;
-	height:13.6em;
-}
-#gameinfo.card dt {
-	margin: 0.2em 0;
+	padding: 1em 0.2em;
+	height:10em;
+	vertical-align:middle;
+	border: none;
+	box-shadow: none;
 }
 .card h3 {
 	text-align: center;
@@ -535,7 +535,8 @@ ul.tabs > li > a {
 	vertical-align: middle;
 }
 .card p {
-	font-size:115%;
+	margin: 0.5em 1em;
+	font-size:120%;
 }
 .card .topleft {
 	position: absolute;
@@ -554,4 +555,32 @@ ul.tabs > li > a {
 	display: block;
 	bottom: 0.2em;
 	right: 0.2em;
+}
+.card table {
+	width: 100%;
+	margin: 0;
+}
+.card td {
+	background-color: red;
+}
+.card td:nth-child(2n+1) {
+	width: 0;
+	background-color: transparent;
+	text-align: left;
+}
+.card td:last-child {
+}
+#listplayers .card table {
+	border-spacing: 0.3em;
+	padding: 0;
+}
+#listplayers .card table tr td {
+	background-color: white;
+}
+#listplayers .card table tr td:nth-child(2n+0) {
+	background-color: red;
+	color: white;
+	font-weight: bold;
+	width:50%;
+	font-size:120%;
 }
