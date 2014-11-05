@@ -20,7 +20,7 @@
 				</py:for>
 			</table>
 		</py:if>
-		<py:if test="game.status == 'RUNNING'">
+		<py:if test="game.status != 'OPEN'">
 			<ul class="cardlist">
                                 <li id="gameinfo" class="card">
                                         <dl>
@@ -51,7 +51,7 @@
 		</py:if>
 		
 		<script type="text/javascript">
-			  var timeout = setTimeout("location.reload(true);",6000);
+			  var timeout = setTimeout("location.reload(true);",60000);
 		</script>
 	</div>
 	</div>
