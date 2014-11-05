@@ -422,6 +422,7 @@ ul.tabs {
 	list-style: none;
 	padding: 0;
 	margin: 0;
+	clear:both;
 }
 
 ul.tabs > li {
@@ -464,4 +465,93 @@ ul.tabs > li > a {
 	margin: 1em auto;
 }
 
-
+.cardlist {
+	list-style-type:none;
+	margin: 0;
+	padding: 0;
+	clear:both;
+	margin: 1em auto;
+	text-align:center;
+}
+.card {
+	float:left;
+	border:1px solid red;
+	border-radius: 0.4em;
+	box-shadow: 2px 2px 8px gray;
+	min-width: 18rem;
+	max-width: 36rem;
+	height: 10em;
+	margin: 0.5%;
+	padding: 2em 0.2em;
+	position: relative;
+}
+@media (max-width: 45rem) {
+	.card {
+		width: 100%;
+	}
+}
+@media (min-width: 45rem) and (max-width: 65rem) {
+	.card {
+		width: 47%;
+	}
+}
+@media (min-width: 65rem) and (max-width: 85rem) {
+	.card {
+		width: 31%;
+	}
+}
+@media (min-width: 85rem) and (max-width: 102rem) {
+	.card {
+		width: 22%;
+	}
+}
+@media (min-width: 102rem) and (max-width: 122rem) {
+	.card {
+		width: 18%;
+	}
+}
+@media (min-width: 122rem) and (max-width: 142rem) {
+	.card {
+		width: 11%;
+	}
+}
+#gameinfo.card {
+	padding: 0.2em;
+	height:13.6em;
+}
+#gameinfo.card dt {
+	margin: 0.2em 0;
+}
+.card h3 {
+	text-align: center;
+	margin:0;
+}
+.card span.deaths {
+	display:inline-block;
+	text-align:center;
+}
+.card span.kills {
+	display:inline-block;
+	vertical-align: middle;
+}
+.card p {
+	font-size:115%;
+}
+.card .topleft {
+	position: absolute;
+	display: block;
+	top: 0.2em;
+	left: 0.2em;
+}
+.card .topright {
+	position: absolute;
+	display: block;
+	top: 0.2em;
+	right: 0.2em;
+}
+.card .bottomright {
+	position: absolute;
+	display: block;
+	bottom: 0.2em;
+	right: 0.2em;
+}

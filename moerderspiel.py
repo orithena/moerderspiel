@@ -227,6 +227,18 @@ def view(id, msg = ""):
 		stream = _mainstream('view.html', game = game, errormsg = msg)
 	return stream.render('xhtml')
 
+@route('/wall', '/wall/<id>')
+def wall(id, msg = ""):
+	stream = None
+	game = None
+	try:
+		game = _loadgame(id, False)
+	except:
+		stream = _mainstream('error.html', errormsg = "Sorry, Spiel-ID %s  existiert nicht." % id, returnurl="start")
+	else:
+		stream = _mainstream('wall.html', game = game, errormsg = msg)
+	return stream.render('xhtml')
+
 @route('/error')
 def error(msg = "", returnurl = "index"):
 	#game = _loadgame(id, False)

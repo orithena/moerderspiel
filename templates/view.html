@@ -7,7 +7,8 @@
 		<dl>
 			<dt>Status</dt><dd>${game.status}</dd>
 			<dt>ID</dt><dd>${game.id}</dd>
-			<dt>Twitter</dt><dd><a href="http://1favre.de/wall/?key=${game.id}">#${game.id}</a></dd>
+			<dt>Twitter</dt><dd><a href="https://twitter.com/search?q=%23${game.id}">#${game.id}</a></dd>
+			<dt>Wall</dt><dd><a href="/wall/${game.id}">${game.id}</a></dd>
 			<py:if test="len(game.rounds) > 1"><dt>Kreise</dt><dd>${len(game.rounds)}</dd></py:if>
 			<dt>Spieler</dt><dd>${len(game.players)}</dd>
 			<dt>Morde</dt><dd>${len(list(game.getKilled()))}</dd>
@@ -213,10 +214,30 @@
 					</py:for>
 				</ul>	
 			</py:if>
-			<div class="bigimage">
+			<div class="bigimage" id="graphimage">
 				<img id="gamegraph" src="${ utils.url_for('gamegraphall', id=game.id, roundid=game.rounds.values()[0].name) }" />
 			</div>
-		</py:if>
+
+			<script type="text/javascript">
+			// <![CDATA[
+			(function() {
+				var panzoom = $('#gamegraph').panzoom();
+				panzoom.parent().on('mousewheel.focal', function( e ) {
+					e.preventDefault();
+					var delta = e.delta || e.originalEvent.wheelDelta;
+					var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+					panzoom.panzoom('zoom', zoomOut, {
+						increment: 0.1,
+						animate: false,
+						contain: 'invert',
+						focal: e
+					});
+				});
+			})();
+			//]]>
+			</script>
+
+    		</py:if>
 	</div>
 	</div>
 </div>
