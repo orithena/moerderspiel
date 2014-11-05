@@ -3,6 +3,8 @@ RewriteRule ^$ /moerderspiel/ [R=302,L]
 RewriteRule ^moerderspiel$ /moerderspiel/ [R=302,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^([a-z0-9\.\-]+)$ /moerderspiel/view?id=$1 [R=302]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([a-zA-Z0-9\.\-]+)$ /moerderspiel/view?id=${lc:$1} [R=302]
 
 AddHandler mod_python .py
 PythonHandler mod_python.publisher
