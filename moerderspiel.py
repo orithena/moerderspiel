@@ -92,8 +92,9 @@ def _savegame(game, checkifexists=False):
 	pickle.dump(game, output)
 	output.close()
 	os.rename('%s.tmp' % G.fname, G.fname)
-	G.lockfile.release()
-	del G.lockfile
+	if hasattr(G, 'lockfile'):
+		G.lockfile.release()
+		del G.lockfile
 	return game.id
 	
 def _loadgame(gameid, lock=True):
@@ -343,8 +344,7 @@ def addplayer(gameid, spielername, zusatzinfo, email='', ajax=0):
 		stream = _ajaxstream('view.html', selectors, game = game, errormsg = err)
 		return _response(stream.render("xhtml"), 'text/xml')
 	else:
-		redirect(_url(req, 'view', gameid, err))
-		return ""
+		return redirect(_url(req, 'view', gameid, err))
 
 @route('/creategame')
 def creategame(action, rundenname, kreiszahl, enddate, rundenid=''):
@@ -363,7 +363,7 @@ def creategame(action, rundenname, kreiszahl, enddate, rundenid=''):
 			gameid = _savegame(game, True)
 		except Exception as e:
 			return error(req, e.__str__())
-	stream = _mainstream('creategame.html', gameid = gameid, url = _url(req, 'view', id=game.id), mastercode = game.mastercode)
+	stream = _mainstream('creategame.html', gameid = game.id, url = _url(req, 'view', id=game.id), mastercode = game.mastercode)
 	return stream.render('xhtml')
 
 @route('/startgame', '/startgame/<gameid>/<mastercode>')
@@ -378,8 +378,9 @@ def startgame(gameid, mastercode):
 		_pdfgen(game)
 	except Exception as e:
 		pass
-	stream = _mainstream('startgame.html', game = game, adminurl = _url(req, 'admin', game.id), viewurl = req.construct_url("/" + gameid))
-	return stream.render('xhtml')
+	return redirect(_url(req, 'view', gameid))
+	#stream = _mainstream('startgame.html', game = game, adminurl = _url(req, 'admin', game.id), viewurl = _url(req, 'view', id=game.id))
+	#return stream.render('xhtml')
 
 @route('/endgame', '/endgame/<gameid>/<mastercode>')
 def endgame(gameid, mastercode):

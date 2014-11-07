@@ -67,21 +67,7 @@ function fade(id, pos, speed) {
 		setOpacity(e, 100);
 	}
 }
-function movemessage(form) {
-	var submitnode;
-	if( form.nodeName.toLowerCase() == 'form' ) {
-		var inputs = form.getElementsByTagName('input');
-		for( var i = 0; i < inputs.length; i++) {
-			if( inputs[i].getAttribute('type').toLowerCase() == 'submit' ) {
-				submitnode = inputs[i];
-			}
-		}
-	}
-	else {
-		submitnode = form;
-	}
-	// get coordinates of submit button
-	var offset = findPos(submitnode);
+function movemessagetooffset(offset) {
 	// position div#errormessage beside form
 	var msgnode = document.getElementById('errormessage');
 	msgnode.style.top = '0px';
@@ -97,6 +83,23 @@ function movemessage(form) {
 		msgnode.style.left = offset[0] + 'px';
 	}
 	setOpacity(msgnode.style, 100);
+}
+function movemessage(form) {
+	var submitnode;
+	if( form.nodeName.toLowerCase() == 'form' ) {
+		var inputs = form.getElementsByTagName('input');
+		for( var i = 0; i < inputs.length; i++) {
+			if( inputs[i].getAttribute('type').toLowerCase() == 'submit' ) {
+				submitnode = inputs[i];
+			}
+		}
+	}
+	else {
+		submitnode = form;
+	}
+	// get coordinates of submit button
+	var offset = findPos(submitnode);
+	movemessagetooffset(offset);
 }
 function hideerrormessage() {
 	var msgnode = document.getElementById('errormessage');
@@ -118,6 +121,17 @@ function displayerrormessage(form) {
 		// start timer to blur the message away (depend on length)
 		var msgnode = document.getElementById('errormessage');
 		fadeout("errormessage", 4000+(msgnode.textContent.length*50), 5);
+		msgnode.setAttribute("onclick", 'this.style.display = "none"; clearTimeout(timeout);');
+	}
+}
+function messageoverlay(text) {
+	if( text ) {
+		clearTimeout(timeout);
+		// start timer to blur the message away (depend on length)
+		var msgnode = document.getElementById('errormessage');
+		msgnode.innerHTML = '<div>'+text+'</div>';
+		fadeout("errormessage", 4000+(msgnode.textContent.length*50), 5);
+		movemessagetooffset([$(document).width()/2 - msgnode.offsetWidth/2, $('body').scrollTop()]);
 		msgnode.setAttribute("onclick", 'this.style.display = "none"; clearTimeout(timeout);');
 	}
 }

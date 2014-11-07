@@ -38,11 +38,11 @@
 				?>
 				<py:for each="p in game.getKilled()">
 						<li class="card" py:if="p.killedby and p.killedby.killer" data="participantid:${p.id}">
-							<span class="topleft"><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="kills" style="width:${game.getKillsCount(p.killedby.killer.player)*9}px;">&nbsp;</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></span>
+							<span class="topleft"><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="red symbols">${game.getKillsCount(p.killedby.killer.player)*'&#10003;'}</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></span>
 							<span class="topright"><py:if test="p.killedby"><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></span>
-							<h3>${p.player}</h3>
-							<span class="deaths" style="width:${game.getDeathsCount(p)*9}px;">&nbsp;</span>
-							<p py:if="p.killedby">${p.killedby.reason}</p>
+							<h3>${p.player.name}</h3><span>${p.player.info}</span>
+							<p py:if="p.killedby" style="font-size:${max(180-len(p.killedby.reason)/1.7, 100.0)}%">${p.killedby.reason}</p>
+							<span class="big symbols bottomleft">${game.getDeathsCount(p) * '&#128128;'}</span> 
 							<span class="bottomright"><py:if test="p.killedby">${utils.dateformat(p.killedby.date, format="%a")}&nbsp;${utils.dateformat(p.killedby.date, format="%d.%m. %H:%M")}</py:if></span>
 						</li>
 				</py:for>
@@ -52,8 +52,47 @@
 	</div>
 	</div>
 <script type="text/javascript">
-        setInterval(function(){
-	  	return ajax('wall', {'id':'${game.id}'}); 
-	  }, 10000);
+jQuery.easing['jswing'] = jQuery.easing['swing'];
+
+jQuery.extend( jQuery.easing,
+{	
+	def: 'easeOutQuad',
+	easeInQuart: function (x, t, b, c, d) {
+		return c*(t/=d)*t*t*t + b;
+	},
+	easeOutQuart: function(x, t, b, c, d) {
+		return -c * ((t=t/d-1)*t*t*t - 1) + b;
+	}
+});
+
+var timer;
+var running = true;
+
+function startAnimation() {
+	messageoverlay("Autoreload und Autoscrollen aktiv.<br/> Zyklus: 1 Minute.");
+	$('body').css('cursor', 'none');
+        $("html, body").animate({ scrollTop: $(document).height()-$(window).height() }, 60000, "easeInQuart");		  	
+        timer = setInterval(function() {
+                $("html, body").animate({ scrollTop: 0 }, "1000", "swing");
+                var ret = ajax('wall', {'id':'${game.id}'}); 
+                $("html, body").animate({ scrollTop: $(document).height()-$(window).height() }, 60000, "easeInQuart");
+                return ret;
+        }, 62000);
+}
+
+	$(document).ready(function() {
+		$('body').click(function() {
+			running = !running;
+			if(running) {
+				startAnimation();
+			} else {
+				$("html, body").stop();
+				clearInterval(timer);
+				messageoverlay("Autoreload und Autoscrollen abgeschaltet.");
+				$('body').css('cursor', 'normal');
+			}
+		});
+		startAnimation();
+	});
 </script>
 </div>

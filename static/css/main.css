@@ -339,6 +339,7 @@ input[type="submit"]
 	vertical-align:middle;
 	font-size:8pt;
 	border-radius: 0.8em;
+	max-width: 30em;
 }
 
 td > input:focus,
@@ -472,55 +473,62 @@ ul.tabs > li > a {
 	clear:both;
 	margin: 1em auto;
 	text-align:center;
+	zoom:0.9;
 }
 .card {
-	float:left;
-	border:1px solid red;
+	border: 1px solid red;
 	border-radius: 0.4em;
 	box-shadow: 2px 2px 8px gray;
 	min-width: 18rem;
 	max-width: 36rem;
 	height: 8em;
-	margin: 0.5%;
+	margin: 0.3em;
 	padding: 2em 0.2em;
 	position: relative;
+	overflow: hidden;
+	display: inline-block;
+	text-align:center;
 }
 @media (max-width: 45rem) {
 	.card {
-		width: 100%;
+		width: 96%;
 	}
 }
-@media (min-width: 45rem) and (max-width: 65rem) {
+@media (min-width: 45rem) and (max-width: 60rem) {
 	.card {
-		width: 47%;
+		width: 48.1%;
 	}
 }
-@media (min-width: 65rem) and (max-width: 85rem) {
+@media (min-width: 60rem) and (max-width: 85rem) {
 	.card {
-		width: 31%;
+		width: 31.6%;
 	}
 }
 @media (min-width: 85rem) and (max-width: 102rem) {
 	.card {
-		width: 22%;
+		width: 23.7%;
 	}
 }
 @media (min-width: 102rem) and (max-width: 122rem) {
 	.card {
-		width: 18%;
+		width: 18.9%;
 	}
 }
 @media (min-width: 122rem) and (max-width: 142rem) {
 	.card {
-		width: 11%;
+		width: 15.5%;
 	}
 }
 #gameinfo.card {
 	padding: 1em 0.2em;
 	height:10em;
-	vertical-align:middle;
 	border: none;
 	box-shadow: none;
+}
+#gameinfo.card+.card{
+	zoom: 150%;
+	width: 100%;
+	max-width:37.7rem;
 }
 .card h3 {
 	text-align: center;
@@ -537,6 +545,8 @@ ul.tabs > li > a {
 .card p {
 	margin: 0.5em 1em;
 	font-size:120%;
+	z-index:999;
+	position:relative;
 }
 .card .topleft {
 	position: absolute;
@@ -555,6 +565,12 @@ ul.tabs > li > a {
 	display: block;
 	bottom: 0.2em;
 	right: 0.2em;
+}
+.card .bottomleft {
+	position: absolute;
+	display: block;
+	bottom: 0.2em;
+	left: 0.2em;
 }
 .card table {
 	width: 100%;
@@ -582,5 +598,21 @@ ul.tabs > li > a {
 	color: white;
 	font-weight: bold;
 	width:50%;
-	font-size:120%;
+	font-size: 140%;
+	padding: 0.3em inherit;
+}
+span.symbols {
+	font-size:140%;
+	font-weight: normal !important;
+}
+span.symbols.big {
+	font-size: 4.2em;
+	color: #aaa;
+	z-index: 0;
+}
+span.symbols.big.bottomleft {
+	bottom: -0.25em;
+}
+span.red {
+	color: red;
 }
