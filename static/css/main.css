@@ -1,5 +1,5 @@
 * {
-	font-family: sans-serif;
+	font-family: Droid Sans, sans-serif;
 }
 
 body {
@@ -481,9 +481,9 @@ ul.tabs > li > a {
 	box-shadow: 2px 2px 8px gray;
 	min-width: 18rem;
 	max-width: 36rem;
-	height: 8em;
+	height: 10em;
 	margin: 0.3em;
-	padding: 2em 0.2em;
+	padding: 3em 0.2em 1em;
 	position: relative;
 	overflow: hidden;
 	display: inline-block;
@@ -521,7 +521,7 @@ ul.tabs > li > a {
 }
 #gameinfo.card {
 	padding: 1em 0.2em;
-	height:10em;
+	height:12em;
 	border: none;
 	box-shadow: none;
 }
@@ -615,4 +615,22 @@ span.symbols.big.bottomleft {
 }
 span.red {
 	color: red;
+}
+
+.teaser {
+	text-align:center;
+}
+.teaser h1, .teaser h2 {
+	color: red;
+}
+.teaser h1 {
+	font-size:360%;
+	font-size:4.6vw;
+}
+.teaser h2 {
+	font-size:280%;
+	font-size:3.5vw;
+}
+.teaser img {
+	max-width:50%;
 }

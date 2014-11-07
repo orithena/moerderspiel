@@ -14,6 +14,10 @@ from genshi import Stream
 from genshi.input import XML
 from genshi.core import QName
 
+import qrcode
+import cStringIO
+import base64
+
 from email import encoders
 from email.message import Message
 from email.mime.base import MIMEBase
@@ -151,3 +155,15 @@ def escape_quotes(text):
 		text = u8(text).__str__()
 	return "".join(quote_escape_table.get(c,c) for c in text)
 
+
+def qrdata(text, **kwargs):
+	qr = qrcode.QRCode(**kwargs)
+	qr.add_data(text)
+	qr.make() # Generate the QRCode itself
+	
+	# im contains a PIL.Image.Image object
+	im = qr.make_image()
+	
+	jpeg_image_buffer = cStringIO.StringIO()
+	im.save(jpeg_image_buffer)
+	return base64.b64encode(jpeg_image_buffer.getvalue())

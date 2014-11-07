@@ -7,6 +7,11 @@
     	}
     </style>
     <div id="inner-content">
+	<div py:if="game.status == 'OPEN'" class="teaser">
+		<h1>Das Mörderspiel lädt zur Teilnahme ein!</h1>
+		<img src="data:image/png;base64,${utils.qrdata(game.url, version=3)}"></img>
+		<h2>Hier registrieren: <a href="${game.url}">${game.url}</a></h2>
+	</div>
 	<div id="listplayers">
 		<py:if test="game.status == 'OPEN'">
 			<h3>Liste der Mitspieler</h3>
@@ -46,6 +51,11 @@
 							<span class="bottomright"><py:if test="p.killedby">${utils.dateformat(p.killedby.date, format="%a")}&nbsp;${utils.dateformat(p.killedby.date, format="%d.%m. %H:%M")}</py:if></span>
 						</li>
 				</py:for>
+				<py:if test="len(game.getKilled()) &lt; 5">
+					<li class="card fullwidth">
+						TODO: Regelerinnerungen
+					</li>
+				</py:if>
 			</ul>
 		</py:if>
 		
