@@ -42,7 +42,8 @@
 				</tr><tr>
 					<th>Datum</th>
 					<td>
-						<input id="killdate" type="text" name="datum"/><input type="button" id="f_trigger_b" value="..."/>
+						<input id="killdate" type="text" name="datum" value="${utils.now()}"/>
+						<input type="button" id="canvasdateclocktrigger" value="..."/>
 					</td>
 				</tr><tr>
 					<th>Tathergang</th>
@@ -52,22 +53,20 @@
 					<td><input type="submit" value="Auftrag erledigt!"/></td>
 				</tr>
 			</table>
+			<script type="text/javascript">
+			$(document).ready(function() {
+				$('#canvasdateclocktrigger').click(function() {
+					canvasdateclockpicker({
+						clockcanvasid: "#clockcanvas",
+						datecanvasid: "#datecanvas",
+						inputfield: '#killdate',
+						notbefore: Date.today().add({days:-1}),
+						notafter: Date.today()
+					});
+				});
+			});
+			</script>
 		</form>
-		<script type="text/javascript">
-		if( calbox ) {
-			calbox.destroy()
-		}
-		var calbox = Calendar.setup({
-		    inputField     :    "killdate",      // id of the input field
-		    ifFormat       :    "%d.%m.%Y %H:%M",       // format of the input field
-		    showsTime      :    true,            // will display a time selector
-			timeFormat     :    24,
-		    button         :    "f_trigger_b",   // trigger for the calendar (button ID)
-		    singleClick    :    false,           // double-click mode
-			firstDay       :    1,
-		    step           :    1                // show all years in drop-down boxes (instead of every other year as default)
-		    });
-		</script>
 	</div>
 	<div id="gameinfo" class="left half">
 		<dl>
@@ -227,7 +226,7 @@
 				</py:for>
 			</table>
 			<div style="width:96%; height:300px; overflow:auto; border:1px solid black; text-align:center;">
-				<img src="gamegraphall?id=${game.id}&amp;roundid=${round}&amp;mastercode=${game.mastercode}" />
+				<img src="${ utils.url_for('gamegraphall', id=game.id, roundid=round, mastercode=game.mastercode) }" />
 			</div>
 		</py:for>
 	</div>

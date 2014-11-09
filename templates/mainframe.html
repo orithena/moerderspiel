@@ -6,15 +6,17 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-<meta id="baseurl" name="X-baseurl" content="${baseurl}"/>
-<link rel="stylesheet" type="text/css" media="all" href="css?css=main" />
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-<script type="text/javascript" src="/jquery.viewport.js"></script>
+<meta id="baseurl" name="X-baseurl" content="${ url_for('.index') }"/>
+<link rel="stylesheet" type="text/css" media="all" href="${ url_for('static', filename='css/main.css') }" />
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript" src="${ url_for('static', filename='js/jquery.viewport.js') }"></script>
 <script type="text/javascript" src="http://datejs.googlecode.com/svn/trunk/build/date-de-DE.js"></script>
 <script type="text/javascript" src="http://datejs.googlecode.com/svn/trunk/src/time.js"></script>
-<script type="text/javascript" src="/canvasdateclockpicker.js"></script>
-<script type="text/javascript" src="/ajax.js"/>
-<script type="text/javascript" src="/ui.js"/>
+<script type="text/javascript" src="${ url_for('static', filename='js/canvasdateclockpicker.js') }"></script>
+<script type="text/javascript" src="${ url_for('static', filename='js/ajax.js') }"></script>
+<script type="text/javascript" src="${ url_for('static', filename='js/ui.js') }"></script>
+<script type="text/javascript" src="${ url_for('static', filename='js/jquery.panzoom.min.js') }"></script>
+<script type="text/javascript" src="${ url_for('static', filename='js/jquery.mousewheel.min.js') }"></script>
 
 <title>Mörderspiel</title>
 </head>

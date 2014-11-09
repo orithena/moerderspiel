@@ -5,7 +5,9 @@ import sys
 workdir = os.path.dirname(__file__)
 modpath = os.path.join(workdir,"lib")
 sys.path.insert(0,modpath)
-from mod_python import util
+from flask import Flask, request as req, redirect, url_for, make_response, copy_current_request_context
+from flaskext.genshi import Genshi
+#from mod_python import util
 from genshi.template import MarkupTemplate
 from genshi.template import TemplateLoader
 from genshi import Stream
@@ -26,9 +28,15 @@ from moerderklassen import GameError
 from moerdergraph import moerdergraph
 from moerdergraphall import moerdergraphall
 from pprint import pformat
+from functools import wraps
 locale.setlocale(locale.LC_ALL, ('de_DE', 'UTF8'))
 os.environ['TZ'] = 'Europe/Berlin'
 time.tzset()
+
+app = Flask(__name__)
+genshi = Genshi(app)
+
+utils.url_for = url_for
 
 class G:
 	@staticmethod
@@ -43,12 +51,38 @@ class G:
 	
 G.workdir = workdir
 G.modpath = modpath
-G.cssdir = os.path.join(workdir, 'css')
+G.staticdir = os.path.join(workdir, 'static')
+G.cssdir = os.path.join(G.staticdir, 'css')
+G.imagedir = os.path.join(G.staticdir, 'images')
 G.templatedir = os.path.join(workdir, 'templates')
 G.savegamedir = os.path.join(workdir, 'savegames')
 logging.basicConfig(filename=os.path.join(G.savegamedir, 'moerderspiel.log'), level=logging.DEBUG)
 
-#mod_python convention: functions starting with an underscore are _not_ published on the webserver
+def route(part, altpart=None, *arg, **kwarg):
+	def func_wrapper(f):
+		x = altpart 		# hack to avoid "usage of variable before assignment" error...
+		if x is None:
+			x = part + '/' + '/'.join([ "<%s>" % n for n in f.func_code.co_varnames[0:f.func_code.co_argcount]])
+		if x.find('<') >= 0:
+			if kwarg.has_key('methods'):
+				kwarg['methods'].append('POST')
+			else:
+				kwarg['methods'] = ['GET', 'POST']
+		@app.route(x, *arg, **kwarg)
+		@app.route(part, *arg, **kwarg)
+		@wraps(f)
+		def handler(*args, **kwargs):
+			if len(kwargs) == 0:
+				if len(req.args.items()) > 0:
+					a = dict([ (k,v) for k,v in req.args.items() ])
+				else:
+					a = dict([ (k,v) for k,v in req.form.items() ])
+			else:
+				a = kwargs 
+			return f(**a)
+		return handler
+	return func_wrapper
+
 def _savegame(game, checkifexists=False):
 	G.fname = os.path.join(G.savegamedir, '%s.pkl' % game.id)
 	if checkifexists and os.path.isfile(G.fname):
@@ -58,8 +92,9 @@ def _savegame(game, checkifexists=False):
 	pickle.dump(game, output)
 	output.close()
 	os.rename('%s.tmp' % G.fname, G.fname)
-	G.lockfile.release()
-	del G.lockfile
+	if hasattr(G, 'lockfile'):
+		G.lockfile.release()
+		del G.lockfile
 	return game.id
 	
 def _loadgame(gameid, lock=True):
@@ -80,6 +115,11 @@ def _loadgame(gameid, lock=True):
 	time.tzset()
 	return ret
 	
+def _response(content, content_type="text/html"):
+	response = make_response(content)
+	response.content_type = content_type
+	return response
+
 def _template(filename):
 	loader = TemplateLoader([G.templatedir])
 	tmpl = loader.load(filename)
@@ -88,11 +128,10 @@ def _template(filename):
 def _stream(filename, **args):
 	return _template(filename).generate(utils = utils, **args)
 
-def _mainstream(req, filename, **args):
-	req.content_type = 'text/html;charset=utf-8'
+def _mainstream(filename, **args):
 	if not args.has_key('errormsg'):
 		args['errormsg'] = ''
-	return _stream('mainframe.html', baseurl = _url(req, ''), content = _stream(filename, **args), **args )
+	return _stream('mainframe.html', baseurl = url_for('.index'), url_for = url_for, content = _stream(filename, **args), **args )
 
 def _insert(outer, tagname, *inner):
 	suppresstag = False
@@ -107,7 +146,7 @@ def _insert(outer, tagname, *inner):
 		elif not suppresstag:
 			yield kind, data, pos
 
-def _ajaxstream(req, filename, selectors, **args):
+def _ajaxstream(filename, selectors, **args):
 	"""Creates a genshi.Stream object containing XML response data suitable for
 	the JS AJAX functions in ajax.js. 
 	
@@ -119,7 +158,7 @@ def _ajaxstream(req, filename, selectors, **args):
 	is automatically selected.
 	
 	Call example:
-		stream = _ajaxstream(req, "index.html", 
+		stream = _ajaxstream("index.html", 
 			'//*[@id="content"]', 
 			errormsg="Fehlertext", 
 			headline="Welcome")
@@ -136,7 +175,7 @@ def _ajaxstream(req, filename, selectors, **args):
 		</div>
 	"""
 	main = list()
-	s = list(_mainstream(req, filename, **args))
+	s = list(_mainstream(filename, **args))
 	try:
 		if args.has_key('errormsg'):
 			main.append(Stream(s).select("//*[@id='errormessage']"))
@@ -158,37 +197,62 @@ def _ajaxstream(req, filename, selectors, **args):
 	else:
 		logging.debug("_ajaxstream(): selectors is not list nor str")
 	frame = XML('<div xmlns="http://www.w3.org/1999/xhtml"><insert/></div>')
-	req.content_type = 'text/xml'
 	return Stream(_insert(frame, u'insert', *main))
-	
-def index(req):
-	util.redirect(req, _url(req, 'start'))
 
-def start(req):
-	stream = _mainstream(req, 'index.html')
-	return stream.render('xhtml')
 	
-def newgameform(req):
-	stream = _mainstream(req, 'newgameform.html')
-	return stream.render('xhtml')
 	
-def view(req, id, msg = ""):
+@app.route('/')
+def index():
+	return redirect(url_for('start'))
+
+@app.route('/start')
+def start():
+	stream = _mainstream('index.html')
+	return stream.render('xhtml')
+
+@app.route('/newgameform')
+def newgameform():
+	stream = _mainstream('newgameform.html')
+	return stream.render('xhtml')
+
+@app.route('/<id>')
+@route('/view', '/view/<id>')
+def view(id, msg = ""):
 	stream = None
 	game = None
 	try:
 		game = _loadgame(id, False)
 	except:
-		stream = _mainstream(req, 'error.html', errormsg = "Sorry, diese Spiel-ID existiert nicht.", returnurl="start")
+		stream = _mainstream('error.html', errormsg = "Sorry, Spiel-ID %s  existiert nicht." % id, returnurl="start")
 	else:
-		stream = _mainstream(req, 'view.html', game = game, errormsg = msg)
+		stream = _mainstream('view.html', game = game, errormsg = msg)
 	return stream.render('xhtml')
 
-def error(req, msg = "", returnurl = "index"):
+@route('/wall', '/wall/<id>')
+def wall(id, msg = "", ajax=0):
+	stream = None
+	game = None
+	try:
+		game = _loadgame(id, False)
+	except:
+		stream = _mainstream('error.html', errormsg = "Sorry, Spiel-ID %s  existiert nicht." % id, returnurl="start")
+	else:
+		if ajax == '1':
+			selectors = [ "//*[@id='listplayers']" ]
+			stream = _ajaxstream('wall.html', selectors, game = game, errormsg = None)
+			return _response(stream.render("xhtml"), 'text/xml')
+		else:
+			stream = _mainstream('wall.html', game = game, errormsg = msg)
+			return stream.render('xhtml')
+
+@route('/error')
+def error(msg = "", returnurl = "index"):
 	#game = _loadgame(id, False)
-	stream = _mainstream(req, 'error.html', errormsg = msg, returnurl = returnurl)
+	stream = _mainstream('error.html', errormsg = msg, returnurl = returnurl)
 	return stream.render('xhtml')
 
-def gamegraph(req, id, roundid, mastercode=''):
+@route('/gamegraph', '/gamegraph/<id>/<roundid>/<mastercode>')
+def gamegraph(id, roundid, mastercode=''):
 	game = None
 	tries = 0
 	while tries < 10:
@@ -200,7 +264,7 @@ def gamegraph(req, id, roundid, mastercode=''):
 			tries += 1
 	round = game.rounds[roundid]
 	adminview = (mastercode == game.mastercode or game.status == 'OVER')
-	fname = os.path.join(G.savegamedir, '%s_%s%s.png' % (game.id, round.name, '-admin' if adminview else ''))
+	fname = os.path.join(G.savegamedir, '%s_%s%s.svg' % (game.id, round.name, '-admin' if adminview else ''))
 	tries = 0
 	while tries < 10:
 		try:
@@ -209,7 +273,7 @@ def gamegraph(req, id, roundid, mastercode=''):
 		except:
 			time.sleep(0.01)
 			tries += 1
-	req.content_type = 'image/png'
+	req.content_type = 'image/svg+xml'
 	ret = None
 	tries = 0
 	while tries < 10:
@@ -224,7 +288,8 @@ def gamegraph(req, id, roundid, mastercode=''):
 			img.close()
 	return ret
 	
-def gamegraphall(req, id, roundid='', mastercode=''):
+@route('/gamegraphall', '/gamegraphall/<id>/<roundid>/<mastercode>')
+def gamegraphall(id, roundid='', mastercode=''):
 	game = None
 	tries = 0
 	while tries < 10:
@@ -235,7 +300,7 @@ def gamegraphall(req, id, roundid='', mastercode=''):
 			time.sleep(0.01)
 			tries += 1
 	adminview = (mastercode == game.mastercode or game.status == 'OVER')
-	fname = os.path.join(G.savegamedir, '%s_%s%s%s.png' % (game.id, roundid, 'full', '-admin' if adminview else ''))
+	fname = os.path.join(G.savegamedir, '%s_%s%s%s.svg' % (game.id, roundid, 'full', '-admin' if adminview else ''))
 	tries = 0
 	while tries < 10:
 		try:
@@ -247,7 +312,6 @@ def gamegraphall(req, id, roundid='', mastercode=''):
 		except:
 			time.sleep(0.01)
 			tries += 1
-	req.content_type = 'image/png'
 	ret = None
 	tries = 0
 	while tries < 10:
@@ -262,9 +326,10 @@ def gamegraphall(req, id, roundid='', mastercode=''):
 		finally:
 			if img is not None:
 				img.close()
-	return ret
+	return _response(ret, 'image/svg+xml')
 
-def addplayer(req, gameid, spielername, zusatzinfo, email='', ajax=0):
+@route('/addplayer')
+def addplayer(gameid, spielername, zusatzinfo, email='', ajax=0):
 	err = ''
 	game = _loadgame(gameid)
 	try:
@@ -276,13 +341,13 @@ def addplayer(req, gameid, spielername, zusatzinfo, email='', ajax=0):
 		err = "Neuer Mitspieler: %s" % G.u8(spielername)
 	if ajax == '1':
 		selectors = [ "//*[@id='listplayers']", "//*[@id='gameinfo']" ]
-		stream = _ajaxstream(req, 'view.html', selectors, game = game, errormsg = err)
-		return stream.render("xhtml")
+		stream = _ajaxstream('view.html', selectors, game = game, errormsg = err)
+		return _response(stream.render("xhtml"), 'text/xml')
 	else:
-		util.redirect(req, _url(req, 'view', gameid, err))
-		return ""
+		return redirect(_url(req, 'view', gameid, err))
 
-def creategame(req, action, rundenname, kreiszahl, enddate, rundenid=''):
+@route('/creategame')
+def creategame(action, rundenname, kreiszahl, enddate, rundenid=''):
 	game = moerderklassen.Game(
 		G.u8(rundenname), 
 		int(kreiszahl), 
@@ -298,10 +363,11 @@ def creategame(req, action, rundenname, kreiszahl, enddate, rundenid=''):
 			gameid = _savegame(game, True)
 		except Exception as e:
 			return error(req, e.__str__())
-	stream = _mainstream(req, 'creategame.html', gameid = gameid, url = _url(req, 'view', id=game.id), mastercode = game.mastercode)
+	stream = _mainstream('creategame.html', gameid = game.id, url = _url(req, 'view', id=game.id), mastercode = game.mastercode)
 	return stream.render('xhtml')
 
-def startgame(req, gameid, mastercode):
+@route('/startgame', '/startgame/<gameid>/<mastercode>')
+def startgame(gameid, mastercode):
 	game = _loadgame(gameid)
 	try:
 		game.start(mastercode)
@@ -309,26 +375,28 @@ def startgame(req, gameid, mastercode):
 		return error(req, e.__str__(), _url(req, "view", gameid))
 	gameid = _savegame(game)
 	try:
-		_pdfgen(req, game)
+		_pdfgen(game)
 	except Exception as e:
 		pass
-	stream = _mainstream(req, 'startgame.html', game = game, adminurl = _url(req, 'admin', game.id), viewurl = req.construct_url("/" + gameid))
-	return stream.render('xhtml')
+	return redirect(_url(req, 'view', gameid))
+	#stream = _mainstream('startgame.html', game = game, adminurl = _url(req, 'admin', game.id), viewurl = _url(req, 'view', id=game.id))
+	#return stream.render('xhtml')
 
-def endgame(req, gameid, mastercode):
+@route('/endgame', '/endgame/<gameid>/<mastercode>')
+def endgame(gameid, mastercode):
 	game=_loadgame(gameid)
 	try:
 		game.stop(mastercode)
 	except GameError as e:
 		return error(req, e.__str__(), _url(req, "view", gameid))
 	gameid = _savegame(game)
-	stream = _mainstream(req, 'view.html', game = game, errormsg = u'Spiel beendet')
+	stream = _mainstream('view.html', game = game, errormsg = u'Spiel beendet')
 	return stream.render('xhtml')
 
-def _pdfgen(req, game):
+def _pdfgen(game):
 	return game.pdfgen()
 
-def _pdfblankgen(req, count, game):
+def _pdfblankgen(count, game):
 	tmptexdir = "/tmp/moerder_" + game.id
 	if not os.path.isdir(tmptexdir):
 		os.mkdir(tmptexdir)
@@ -360,11 +428,12 @@ def _pdfblankgen(req, count, game):
 	os.chdir(cwd)
 	shutil.copyfile(tmptexdir + "/moerder.pdf", os.path.join(G.savegamedir, "%s.pdf" % game.id))
 
-def css(req, css):
+@route('/css', '/css/<css>')
+def css(css):
+	print _url(req, 'view',  rundenid)
 	filepath = os.path.join(G.cssdir, "%s.css" % css )
 	if filepath.find("..") < 0 and os.path.isfile(filepath):
 		ret = ""
-		req.content_type = 'text/css'
 		cssfile = None
 		try:
 			cssfile = file(filepath, 'r')
@@ -374,27 +443,47 @@ def css(req, css):
 		finally:
 			if cssfile:
 				cssfile.close()
-		return ret
+		return _response(ret, "text/css")
 	else:
-		req.content_type = 'text/css'
-		return ""
-		
-def pdfdownload(req, id, mastercode, publicid):
+		return _response('', "text/css")
+
+@route('/images', '/images/<path:image>')
+def images(image):
+	filepath = os.path.join(G.imagedir, image )
+	if filepath.find("..") < 0 and os.path.isfile(filepath):
+		ret = ""
+		imagefile = None
+		mime='png'
+		try:
+			imagefile = file(filepath, 'r')
+			ret = imagefile.read()
+			mime = image.split('.')[-1]
+		except:
+			pass
+		finally:
+			if imagefile:
+				imagefile.close()
+		return _response(ret, "image/%s" % mime)
+	else:
+		return _response('', "text/html"), 404
+
+@route('/pdfdownload', '/pdfdownload/<id>/<mastercode>/<publicid>')		
+def pdfdownload(id, mastercode, publicid):
 	game = _loadgame(id)
 	filename = os.path.join(G.savegamedir, "%s_%s.pdf" % (game.id, publicid))
 	if mastercode == game.mastercode:
 		if not os.path.isfile(filename):
 			return error(req, u"Da gibt es kein passendes PDF")
 		else:
-			req.content_type = 'application/pdf'
 			pdf = file(filename, 'r')
 			ret = pdf.read()
 			pdf.close()
-			return ret
+			return _response(ret, 'application/pdf')
 	else:
 		return error(req, u"Das war nicht der richtige Mastercode")
 
-def pdfget(req, id, mastercode, count=0):
+@route('/pdfget', '/pdfget/<id>/<mastercode>/<int:count>')
+def pdfget(id, mastercode, count=0):
 	game = _loadgame(id)
 	filename = os.path.join(G.savegamedir, "%s.pdf" % game.id)
 	if mastercode == game.mastercode:
@@ -406,26 +495,27 @@ def pdfget(req, id, mastercode, count=0):
 					_pdfblankgen(req, int(count), game)
 				except:
 					return error(req, u"Das war keine Zahl...")
-		req.content_type = 'application/pdf'
 		pdf = file(filename, 'r')
 		ret = pdf.read()
 		pdf.close()
 		if not count == 0:
 			os.unlink(filename)
-		return ret
+		return _response(ret, 'application/pdf')
 	else:
 		return error(req, u"Das war nicht der richtige Mastercode!")
 
-def htmlget(req, id, mastercode):
+@route('/htmlget', '/htmlget/<id>/<mastercode>')
+def htmlget(id, mastercode):
 	game = _loadgame(id)
 	if mastercode == game.mastercode:
-		req.content_type = 'text/xml;charset=utf-8'
+		#TODO req.content_type = 'text/xml;charset=utf-8'
 		stream = _stream('auftrag.html', game = game)
 		return stream.render('xhtml')
 	else:
 		return error(req, u"Das war nicht der richtige Mastercode!")
 
-def admin(req, id=None, mastercode=None, action=None, round=None, killer=None, victim=None, datum=None, reason=None, ajax=0, spielername=None, zusatzinfo=None, email=''):
+@route('/admin')
+def admin(id=None, mastercode=None, action=None, round=None, killer=None, victim=None, datum=None, reason=None, ajax=0, spielername=None, zusatzinfo=None, email=''):
 	stream = None
 	if id is not None:
 		err = ''
@@ -483,21 +573,25 @@ def admin(req, id=None, mastercode=None, action=None, round=None, killer=None, v
 			id = _savegame(game)
 			if ajax == '1':
 				logging.debug(selectors)
-				stream = _ajaxstream(req, 'admin.html', selectors, game = game, errormsg = err)
+				stream = _ajaxstream('admin.html', selectors, game = game, errormsg = err)
 			else:
-				stream = _mainstream(req, 'admin.html', game = game, errormsg = err)
+				stream = _mainstream('admin.html', game = game, errormsg = err)
 		else:
 			err = u'Das war nicht der Game Master Code zu diesem Spiel!'
 		if stream is None:
 			if ajax == '1':
-				stream = _ajaxstream(req, 'view.html', selectors, game = game, errormsg = err)
+				stream = _ajaxstream('view.html', selectors, game = game, errormsg = err)
 			else:
-				stream = _mainstream(req, 'view.html', game = game, errormsg = err)
+				stream = _mainstream('view.html', game = game, errormsg = err)
 	else: #if id is None
-		stream = _mainstream(req, 'index.html', errormsg = "")
-	return stream.render('xhtml')
+		stream = _mainstream('index.html', errormsg = "")
+	if ajax == '1':
+		return _response(stream.render('xhtml'), 'text/xml')
+	else:
+		return stream.render('xhtml')
 
-def killplayer(req, gameid, victimid, killerpublicid, datum, reason, ajax=0):
+@route('/killplayer')
+def killplayer(gameid, victimid, killerpublicid, datum, reason, ajax=0):
 	errormsg = ''
 	game = _loadgame(gameid)
 	try:
@@ -508,19 +602,19 @@ def killplayer(req, gameid, victimid, killerpublicid, datum, reason, ajax=0):
 	gameid = _savegame(game)
 	selectors = "//*[@id='inner-content']"
 	if ajax == '1':
-		stream = _ajaxstream(req, 'view.html', selectors, game = game, errormsg = errormsg)
-		return stream.render('xhtml')
+		stream = _ajaxstream('view.html', selectors, game = game, errormsg = errormsg)
+		return _response(stream.render('xhtml'), 'text/xml')
 	else:
-		stream = _mainstream(req, 'view.html', game = game, errormsg = errormsg)
+		stream = _mainstream('view.html', game = game, errormsg = errormsg)
 		return stream.render('xhtml')
 
 def _url(req, action, id=None, errormsg=""):
 	if id is not None and action == 'view':
 		# I can do this because .htaccess has this line: 
 		# RewriteRule ^([a-z0-9]+)$ /moerderspiel/view?id=$1 [R=302]
-		return req.construct_url("/%s" % id)
+		return "%s%s" % (req.host_url, id)
 	else:
-		url = req.construct_url("/moerderspiel/%s" % action)
+		url = "%s%s" % (url_for('.index'), action)
 		if id != None:
 			url += '?id=' + id
 		if len(errormsg) > 1 and id == None:
@@ -529,9 +623,9 @@ def _url(req, action, id=None, errormsg=""):
 			url +=  '&msg=' + errormsg
 		return url
 
-def hello(req):
-	return req.construct_url("/view/")
+@route('/redir', '/redir/<gameid>')
+def redir(gameid):
+	redirect(_url(req, 'view', gameid))
 
-def redir(req, gameid):
-	util.redirect(req, _url(req, 'view', gameid))
-
+if __name__ == '__main__':
+	app.run(host='0.0.0.0', debug=True)
