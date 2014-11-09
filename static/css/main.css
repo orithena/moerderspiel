@@ -489,6 +489,12 @@ ul.tabs > li > a {
 	display: inline-block;
 	text-align:center;
 }
+.card.rules {
+	border:none;
+	box-shadow: 1px 1px 5px gray;
+	padding-top: 2em;
+	height:11em;
+}
 @media (max-width: 45rem) {
 	.card {
 		width: 96%;
@@ -525,11 +531,13 @@ ul.tabs > li > a {
 	border: none;
 	box-shadow: none;
 }
+/*
 #gameinfo.card+.card{
 	zoom: 150%;
 	width: 100%;
 	max-width:37.7rem;
 }
+*/
 .card h3 {
 	text-align: center;
 	margin:0;

@@ -10,9 +10,120 @@
 	<div py:if="game.status == 'OPEN'" class="teaser">
 		<h1>Das Mörderspiel lädt zur Teilnahme ein!</h1>
 		<img src="data:image/png;base64,${utils.qrdata(game.url, version=3)}"></img>
-		<h2>Hier registrieren: <a href="${game.url}">${game.url}</a></h2>
+		<h2>Hier mitspielen: <a href="${game.url}">${game.url}</a></h2>
 	</div>
 	<div id="listplayers">
+		<ul class="cardlist">
+			<py:if test="game.status != 'OPEN'">
+				<li id="gameinfo" class="card">
+					<table>
+						<tr><td>Spiel</td><td colspan="3">${game.name}</td></tr>
+						<tr><td>Spieler</td><td>${len(game.players)}</td><td>Morde</td><td>${len(list(game.getKilled()))}</td></tr>
+						<tr py:if="game.status != 'OPEN'"><td>Massenmörder</td><td colspan="3">${game.getMassMurdererString()}</td></tr>
+						<tr py:if="game.status != 'OPEN' and len(game.rounds) > 1"><td>nach Punkten</td><td colspan="3">${game.getHighScoreString()}</td></tr>
+					</table>
+				</li>
+				<?python 
+					colors = utils.colorgen(0.86, format='rgba()')
+					colorlist = {}
+					for round in game.rounds.values():
+						colorlist[str(round.name)] = next(colors)
+				?>
+				<py:for each="p in game.getKilled()">
+						<li class="card" py:if="p.killedby and p.killedby.killer">
+							<span class="topleft"><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="red symbols">${game.getKillsCount(p.killedby.killer.player)*'&#10003;'}</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></span>
+							<span class="topright"><py:if test="p.killedby"><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></span>
+							<h3>${p.player.name}</h3><span>${p.player.info}</span>
+							<p py:if="p.killedby" style="font-size:${max(180-len(p.killedby.reason)/1.7, 100.0)}%">${p.killedby.reason}</p>
+							<span class="big symbols bottomleft">${game.getDeathsCount(p) * '&#128128;'}</span> 
+							<span class="bottomright"><py:if test="p.killedby">${utils.dateformat(p.killedby.date, format="%a")}&nbsp;${utils.dateformat(p.killedby.date, format="%d.%m. %H:%M")}</py:if></span>
+						</li>
+				</py:for>
+			</py:if>
+			<py:if test="len(game.getKilled()) &lt; 72">
+				<li class="card rules" py:if="game.status == 'OPEN'">
+					<h3>Willkommen beim Mörderspiel!</h3>
+					<p>Das Mörderspiel ist ein Nebenbei-Spiel im Real Life mit drei Auswirkungen:
+					</p>
+					<p>&#10122;&nbsp;Man lernt sich untereinander besser kennen.</p>
+					<p>&#10123;&nbsp;Man entwickelt ein gehöriges Maß an Paranoia.</p>
+					<p>&#10124;&nbsp;Man entwickelt kreative Sozialinteraktion.</p>
+				</li>
+				<li class="card rules" py:if="game.status == 'OPEN'">
+					<h3>Ablauf</h3>
+					<p>&#10122;&nbsp;Anmelden. &#10123;&nbsp;Spielleiter gibt Aufträge aus.</p>
+					<p>&#10124;&nbsp;Jede/r versucht die auf den Aufträgen angegebenen Opfer zu finden und ihnen einen beliebigen Gegenstand
+					zu übergeben.</p>
+					<p>&#10125;&nbsp;Nimmt das Opfer den Gegenstand freiwillig an, verliert es ein Leben und einen Auftrag.</p>
+				</li>
+				<li class="card rules" py:if="game.status == 'RUNNING' and len(game.getKilled()) &lt; 8">
+					<h3>Willkommen beim Mörderspiel!</h3>
+					<p>Hier an dieser Stelle werden die erledigten Mordaufträge aufgelistet. Umschreibt also 
+					schön den Tathergang, wenn ihr einen Mord meldet.
+					</p><p>
+					Viel Spaß und Paranoia!
+					</p>
+				</li>
+				<li class="card rules" py:if="game.status == 'RUNNING' and len(game.getKilled()) &lt; 5">
+					<h3>Aufträge abholen</h3>
+					<p>Irgendwo gibts eine Auftragsauslage. Nimm dir dort den Auftragszettel, der mit deinem
+					Namen beschriftet ist. Außerdem eine Markierung.
+					</p><p>Vielleicht liegen später erneut welche dort für dich. Guck da hin und wieder mal vorbei.
+					</p>
+				</li>
+				<li class="card rules" py:if="game.status != 'OVER'">
+					<h3>Morden</h3>
+					<p>&#10122;&nbsp;Finde dein(e) Opfer. &#10123;&nbsp;Gib dem Opfer ohne anwesende Zeugen einen beliebigen Gegenstand, den es
+					auch freiwillig annehmen muss. &#10124;&nbsp;Sag "Du bist tot". &#10125;&nbsp;Erhalte vom Opfer den Auftrag 
+					aus dem Kreis, in dem es grad ermordet wurde. &#10126;&nbsp;??? &#10127;&nbsp;Profit!</p>
+				</li>
+				<li class="card rules" py:if="game.status == 'RUNNING'">
+					<h3>Mord melden!</h3>
+					<img style="float:right; height:90%; image-rendering: crisp-edges;" src="data:image/png;base64,${utils.qrdata(game.url, version=1)}"></img>
+					<p>Du brauchst dazu den Signaturcode von deinem erledigten Auftrag. Dann kannst du den Mord hier melden:</p>
+					<p><a href="${game.url}">${game.url}</a>
+					</p>
+				</li>
+				<li class="card rules" py:if="game.status != 'OVER'">
+					<h3>Keine lebenden Zeugen!</h3>
+					<p>Morde haben ohne lebende Zeugen zu geschehen (Spielleiter/Nichtspieler sind tot). Das Opfer kann nach einem Mord fragen,
+					ob jemand die Übergabe gesehen hat. Ist dies der Fall, gilt der Mord als schiefgelaufen,
+					das Opfer behält seinen Auftrag.</p>
+				</li>
+				<li class="card rules" py:if="game.status == 'RUNNING' and len(game.getKilled()) &lt; 24">
+					<h3>Markierung</h3>
+					<p>Anhand der ausgegebenen Markierung erkennt man andere Mitspieler. Wer morden will, muss seine 
+					Markierung erkennbar am Körper/Namensschild tragen.
+					</p><p>Wer seine Markierung nicht offen trägt, kann nicht morden, aber ermordet werden!</p>
+				</li>
+				<li class="card rules" py:if="game.status == 'RUNNING'">
+					<h3>Neue Aufträge</h3>
+					<p>Manchmal hat der Spielleiter einen neuen Auftrag für dich. Dann wird dieser an der 
+					Auftragsausgabe zur Abholung ausgelegt. Also guck hin und wieder mal dort.
+					</p>
+				</li>
+				<li class="card rules" py:if="game.status == 'RUNNING'">
+					<h3>Mordfreie Zonen</h3>
+					<p>Alle Orte der persönlichen Hygiene und Schlafräume sind mordfreie Zonen.
+					Weitere können vereinbart werden, müssen dann aber deutlich gekennzeichnet sein,
+					andernfalls gelten sie nicht für hinzukommende Spieler.</p>
+				</li>
+				<li class="card rules" py:if="game.status == 'RUNNING' and len(game.getKilled()) &lt; 18" >
+					<h3>Verlust des Auftragszettels</h3>
+					<p>Guck in deine Mails. Da stehen immer alle aktuellen Aufträge als PDF zum ausdrucken.</p>
+					<h3>Papier hat Vorrang</h3>
+					<p>Erst wenn jede/r Daueronline ist, können wir auf ausgedruckte Aufträge verzichten.</p>
+				</li>
+				<li class="card rules" py:if="game.status == 'RUNNING'">
+					<h3>Vorzeitiges Aussteigen</h3>
+					<p>Sag dem Spielleiter Bescheid. Dieser schmeißt dich aus dem Spiel und benachrichtigt
+					die Leute, die dadurch neue Aufträge kriegen.</p>
+					<h3>Auftragszettel gefunden?</h3>
+					<p>Bitte beim Spielleiter abgeben!
+					</p>
+				</li>
+			</py:if>
+		</ul>
 		<py:if test="game.status == 'OPEN'">
 			<h3>Liste der Mitspieler</h3>
 			<table>
@@ -25,43 +136,11 @@
 				</py:for>
 			</table>
 		</py:if>
-		<py:if test="game.status != 'OPEN'">
-			<ul class="cardlist">
-                                <li id="gameinfo" class="card">
-                                        <table>
-                                        	<tr><td>Spiel</td><td colspan="3">${game.name}</td></tr>
-                                                <tr><td>Spieler</td><td>${len(game.players)}</td><td>Morde</td><td>${len(list(game.getKilled()))}</td></tr>
-                                                <tr py:if="game.status != 'OPEN'"><td>Massenmörder</td><td colspan="3">${game.getMassMurdererString()}</td></tr>
-                                                <tr py:if="game.status != 'OPEN' and len(game.rounds) > 1"><td>nach Punkten</td><td colspan="3">${game.getHighScoreString()}</td></tr>
-                                        </table>
-                                </li>
-				<?python 
-					colors = utils.colorgen(0.86, format='rgba()')
-					colorlist = {}
-					for round in game.rounds.values():
-						colorlist[str(round.name)] = next(colors)
-				?>
-				<py:for each="p in game.getKilled()">
-						<li class="card" py:if="p.killedby and p.killedby.killer" data="participantid:${p.id}">
-							<span class="topleft"><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="red symbols">${game.getKillsCount(p.killedby.killer.player)*'&#10003;'}</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></span>
-							<span class="topright"><py:if test="p.killedby"><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></span>
-							<h3>${p.player.name}</h3><span>${p.player.info}</span>
-							<p py:if="p.killedby" style="font-size:${max(180-len(p.killedby.reason)/1.7, 100.0)}%">${p.killedby.reason}</p>
-							<span class="big symbols bottomleft">${game.getDeathsCount(p) * '&#128128;'}</span> 
-							<span class="bottomright"><py:if test="p.killedby">${utils.dateformat(p.killedby.date, format="%a")}&nbsp;${utils.dateformat(p.killedby.date, format="%d.%m. %H:%M")}</py:if></span>
-						</li>
-				</py:for>
-				<py:if test="len(game.getKilled()) &lt; 5">
-					<li class="card fullwidth">
-						TODO: Regelerinnerungen
-					</li>
-				</py:if>
-			</ul>
-		</py:if>
 		
 	</div>
 	</div>
 <script type="text/javascript">
+// <![CDATA[
 jQuery.easing['jswing'] = jQuery.easing['swing'];
 
 jQuery.extend( jQuery.easing,
@@ -76,33 +155,62 @@ jQuery.extend( jQuery.easing,
 });
 
 var timer;
-var running = true;
+var running = false;
+var animationduration = 70;
+var mousemovetimeout;
 
 function startAnimation() {
-	messageoverlay("Autoreload und Autoscrollen aktiv.<br/> Zyklus: 1 Minute.");
+	var enable = "<p><b>Autoreload und Autoscrollen aktiv.</b></p><p>Zyklus: "+animationduration+" Sekunden.</p><p>Zum deaktivieren irgendwo hinklicken.</p><p>Größeneinstellung: Strg-plus und Strg-minus.</p><p>Geschwindigkeit: + und -</p>";
+	messageoverlay(enable, "1.7");
 	$('body').css('cursor', 'none');
-        $("html, body").animate({ scrollTop: $(document).height()-$(window).height() }, 60000, "easeInQuart");		  	
-        timer = setInterval(function() {
-                $("html, body").animate({ scrollTop: 0 }, "1000", "swing");
-                var ret = ajax('wall', {'id':'${game.id}'}); 
-                $("html, body").animate({ scrollTop: $(document).height()-$(window).height() }, 60000, "easeInQuart");
-                return ret;
-        }, 62000);
+	$("html, body").animate({ scrollTop: $(document).height()-$(window).height() }, (animationduration-8)*1000, "easeInQuart");		  	
+	timer = setInterval(function() {
+		$("html, body").animate({ scrollTop: 0 }, "1000", "swing");
+		ajax('wall', {'id':'${game.id}'}); 
+		$("html, body").animate({ scrollTop: $(document).height()-$(window).height() }, (animationduration-8)*1000, "easeInQuart");
+	}, animationduration*1000);
+}
+function stopAnimation() {
+	var disable = "<p><b>Autoreload und Autoscrollen inaktiv.</b></p><p>Zum Aktivieren irgendwo hinklicken.</p>";
+	$("html, body").stop();
+	clearInterval(timer);
+	messageoverlay(disable, "1.7");
+	$('body').css('cursor', 'normal');
 }
 
-	$(document).ready(function() {
-		$('body').click(function() {
-			running = !running;
-			if(running) {
-				startAnimation();
-			} else {
-				$("html, body").stop();
-				clearInterval(timer);
-				messageoverlay("Autoreload und Autoscrollen abgeschaltet.");
-				$('body').css('cursor', 'normal');
-			}
-		});
-		startAnimation();
+$(document).ready(function() {
+	$('body').click(function() {
+		running = !running;
+		if(running) {
+			startAnimation();
+		} else {
+			stopAnimation();
+		}
 	});
+	messageoverlay("<p><b>Diese Seite ist zur Anzeige am Beamer gedacht.</b></p><p>Klicke irgendwo auf die Seite, um Autoscroll und Autoreload zu aktivieren.</p>", "1.3");
+//	startAnimation();
+	$('html').keypress(function(e) {
+		if( e.which == 43 ) {
+			// +
+			if( animationduration < 200 ) {
+				animationduration += 5;
+				if( running ) {
+					stopAnimation();
+					startAnimation();
+				}
+			}
+		} else if( e.which == 45 ) {
+			// -
+			if( animationduration > 20 ) {
+				animationduration -= 5;
+				if( running ) {
+					stopAnimation();
+					startAnimation();
+				}
+			}
+		}
+	});
+});
+// ]]>
 </script>
 </div>

@@ -124,12 +124,16 @@ function displayerrormessage(form) {
 		msgnode.setAttribute("onclick", 'this.style.display = "none"; clearTimeout(timeout);');
 	}
 }
-function messageoverlay(text) {
+function messageoverlay(text, zoom) {
 	if( text ) {
 		clearTimeout(timeout);
 		// start timer to blur the message away (depend on length)
 		var msgnode = document.getElementById('errormessage');
-		msgnode.innerHTML = '<div>'+text+'</div>';
+		if(zoom) {
+			msgnode.innerHTML = '<div style="zoom:'+zoom+';">'+text+'</div>';
+		} else {
+			msgnode.innerHTML = '<div>'+text+'</div>';
+		}
 		fadeout("errormessage", 4000+(msgnode.textContent.length*50), 5);
 		movemessagetooffset([$(document).width()/2 - msgnode.offsetWidth/2, $('body').scrollTop()]);
 		msgnode.setAttribute("onclick", 'this.style.display = "none"; clearTimeout(timeout);');
