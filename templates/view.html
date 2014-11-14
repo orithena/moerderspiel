@@ -22,7 +22,8 @@
 		Auftrag von deinem Opfer bekommen haben. Und zwar genau den
 		Auftrag aus dem gleichen Kreis, in dem du dein Opfer gerade
 		erledigt hast (siehe Auftragszettel).</p>
-		<form action="killplayer" method="post" name="killplayer" onsubmit="return ajaxsubmit(this);" accept-charset="utf8">
+		<!-- form action="killplayer" method="post" name="killplayer" onsubmit="return ajaxsubmit(this);" accept-charset="utf8" -->
+		<form action="killplayer" method="post" name="killplayer" accept-charset="utf8">
 			<input type="hidden" name="gameid" value="${game.id}"/>
 			<table>
 				<tr>
@@ -85,7 +86,8 @@
 	</div>
 	<div id="addplayer" class="box right half clear" py:if="game.status == 'OPEN'">
 		<h3>Zum Spiel anmelden</h3>
-		<form action="addplayer" method="post" onsubmit="ajaxsubmit(this); return false;" accept-charset="utf8">
+		<!-- form action="addplayer" method="post" onsubmit="ajaxsubmit(this); return false;" accept-charset="utf8" -->
+		<form action="addplayer" method="post" accept-charset="utf8">
 			<input type="hidden" name="gameid" value="${game.id}"/>
 			<table>
 				<tr>

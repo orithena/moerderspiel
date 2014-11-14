@@ -41,6 +41,8 @@ utils.url_for = url_for
 class G:
 	@staticmethod
 	def u8(s):
+                if isinstance(s, unicode):
+                	return s
 		try:
 			return s.decode('utf8')
 		except UnicodeDecodeError:
