@@ -19,6 +19,7 @@ import cStringIO
 import base64
 
 from email import encoders
+import email.utils
 from email.message import Message
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -97,6 +98,8 @@ def sendemail(templatedir, filename, subject, sender, receiver, game, player, pd
 		outer['Subject'] = subject
 		outer['From'] = sender
 		outer['To'] = receiver
+		outer['Date'] = email.utils.formatdate()
+		outer['Message-Id'] = email.utils.make_msgid('hades')
 		outer.preamble = ''
 		ctype, encoding = mimetypes.guess_type(pdfpath)
 		if ctype is None or encoding is not None:
