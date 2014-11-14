@@ -35,7 +35,9 @@
 							<span class="topright"><py:if test="p.killedby"><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></span>
 							<h3>${p.player.name}</h3><span>${p.player.info}</span>
 							<p py:if="p.killedby" style="font-size:${max(180-len(p.killedby.reason)/1.7, 100.0)}%">${p.killedby.reason}</p>
-							<span class="big symbols bottomleft">${game.getDeathsCount(p) * '&#128128;'}</span> 
+							<span class="big symbols bottomleft">
+								<img py:for="g in range(game.getDeathsCount(p))" src='/static/images/skull.png'></img>
+							</span> 
 							<span class="bottomright"><py:if test="p.killedby">${utils.dateformat(p.killedby.date, format="%a")}&nbsp;${utils.dateformat(p.killedby.date, format="%d.%m. %H:%M")}</py:if></span>
 						</li>
 				</py:for>
