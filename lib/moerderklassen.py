@@ -399,7 +399,7 @@ class Game:
 		* ``rounds``: dictionary containing the rounds (key = round name)
 		* ``players``: list of Players in this Game.
 	"""
-	def __init__(self, name, rounds, enddate, url, rundenid=''):
+	def __init__(self, name, rounds, enddate, url, rundenid='', desc=None):
 		self.status = 'OPEN'
 		self.name = name
 		self.id = ''
@@ -415,6 +415,7 @@ class Game:
 		self.rounds = {}
 		self.players = []
 		self.url = url
+		self.desc = desc
 		for a in range(rounds):
 			self.rounds[str(a+1)] = Round(str(a+1))
 	def __str__(self):
@@ -423,6 +424,8 @@ class Game:
 		"""Upgrade old pickles."""
 		if not state.has_key('config'):
 			state['config'] = Config()
+		if not state.has_key('desc'):
+			state['desc'] = None
 		self.__dict__.update(state)
 	
 	def addPlayer(self, name, info, email=''):

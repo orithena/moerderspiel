@@ -207,54 +207,67 @@ div.right {
 	clear:both;
 }
 
-#listplayers table {
+#listplayers table,
+.listplayers table {
 	width: 100%;
 	padding: 2em 0;
 	border-spacing: 0em;
 }
 
-#listplayers table th, #listplayers table td {
+#listplayers table th, 
+#listplayers table td,
+.listplayers table th, 
+.listplayers table td {
 	padding: 0.4em 1em;
 	box-shadow: 0.1em 0.2em 0.3em -0.1em gray;
 }
 
-#listplayers table td.buttons {
+#listplayers table td.buttons,
+.listplayers table td.buttons {
 	white-space: nowrap;
 	padding: 0.4em 0.4em;
 }
 
-#listplayers table tr > :first-child {
+#listplayers table tr > :first-child,
+.listplayers table tr > :first-child {
 	border-radius: 0.8em 0 0 0.8em;
 }
 
-#listplayers table tr > :last-child {
+#listplayers table tr > :last-child,
+.listplayers table tr > :last-child {
 	border-radius: 0 0.8em 0.8em 0;
 }
 
-#listplayers table tr td {
+#listplayers table tr td,
+.listplayers table tr td {
 	background-color:rgba(255, 248, 240, 0.6);
 	z-index:2;
 }
 
-#listplayers table tr:nth-child(4n+1) td {
+#listplayers table tr:nth-child(4n+1) td,
+.listplayers table tr:nth-child(4n+1) td {
 	background-color:rgba(255, 224, 192, 0.6);
 }
 
-#listplayers table tr:hover td {
+#listplayers table tr:hover td,
+.listplayers table tr:hover td {
 	background-color:rgba(255, 224, 192, 1.0);
 	box-shadow: 0.3em 0.3em 1em 0.3em gray;
 	z-index:5;
 }
 
-#listplayers table tr td.buttons button {
+#listplayers table tr td.buttons button,
+.listplayers table tr td.buttons button {
 	opacity:0.3;
 }
 
-#listplayers table tr:hover td.buttons button {
+#listplayers table tr:hover td.buttons button,
+.listplayers table tr:hover td.buttons button {
 	opacity:1.0;
 }
 
-#listplayers table th {
+#listplayers table th,
+.listplayers table th {
 	text-align: left;
 	background-color: #fca;
 }
@@ -328,6 +341,7 @@ th {
 
 td > input, 
 td > select, 
+td > textarea,
 button, 
 input[type="submit"] 
 {
@@ -344,6 +358,7 @@ input[type="submit"]
 
 td > input:focus,
 td > select:focus,
+td > textarea:focus
 button:focus,
 input[type="submit"]:focus 
 button:hover,
@@ -525,7 +540,8 @@ ul.tabs > li > a {
 		width: 15.5%;
 	}
 }
-#gameinfo.card {
+#gameinfo.card,
+.gameinfo.card {
 	padding: 1em 0.2em;
 	height:12em;
 	border: none;
@@ -594,14 +610,17 @@ ul.tabs > li > a {
 }
 .card td:last-child {
 }
-#listplayers .card table {
+#listplayers .card table,
+.listplayers .card table {
 	border-spacing: 0.3em;
 	padding: 0;
 }
-#listplayers .card table tr td {
+#listplayers .card table tr td,
+.listplayers .card table tr td {
 	background-color: white;
 }
-#listplayers .card table tr td:nth-child(2n+0) {
+#listplayers .card table tr td:nth-child(2n+0),
+.listplayers .card table tr td:nth-child(2n+0) {
 	background-color: red;
 	color: white;
 	font-weight: bold;
@@ -629,7 +648,11 @@ span.red {
 	text-align:center;
 }
 .teaser h1, .teaser h2 {
-	color: red;
+	color: #c00;
+}
+.teaser h2 a:link {
+	text-decoration: none;
+	color:#c0c;
 }
 .teaser h1 {
 	font-size:360%;
@@ -637,8 +660,25 @@ span.red {
 }
 .teaser h2 {
 	font-size:280%;
-	font-size:3.5vw;
+	font-size:2.8vw;
+	word-wrap: break-word;
+	white-space: normal;
 }
 .teaser img {
 	max-width:50%;
+}
+.teaser .card img {
+	min-width:96%;
+}
+.teaser .card {
+	width: 48%;
+	height: auto;
+	vertical-align:top;
+	padding:0;
+}
+.teaser td {
+	font-size:2.2vw;
+}
+.teaser .card table tr td:nth-child(2n+0) {
+	font-size: 2.6vw !important;
 }

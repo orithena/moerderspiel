@@ -233,18 +233,19 @@ def view(id, msg = ""):
 @route('/wall', '/wall/<id>')
 def wall(id, msg = "", ajax=0):
 	stream = None
-	game = None
+	games = []
 	try:
-		game = _loadgame(id, False)
+		for gameid in id.split(':'):
+			games.append(_loadgame(gameid, False))
 	except:
 		stream = _mainstream('error.html', errormsg = "Sorry, Spiel-ID %s  existiert nicht." % id, returnurl="start")
 	else:
 		if ajax == '1':
 			selectors = [ "//*[@id='listplayers']" ]
-			stream = _ajaxstream('wall.html', selectors, game = game, errormsg = None)
+			stream = _ajaxstream('wall.html', selectors, games = games, errormsg = None)
 			return _response(stream.render("xhtml"), 'text/xml')
 		else:
-			stream = _mainstream('wall.html', game = game, errormsg = msg)
+			stream = _mainstream('wall.html', games = games, errormsg = msg)
 			return stream.render('xhtml')
 
 @route('/error')
@@ -349,13 +350,14 @@ def addplayer(gameid, spielername, zusatzinfo, email='', ajax=0):
 		return redirect(_url(req, 'view', gameid, err))
 
 @route('/creategame')
-def creategame(action, rundenname, kreiszahl, enddate, rundenid=''):
+def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None):
 	game = moerderklassen.Game(
 		G.u8(rundenname), 
 		int(kreiszahl), 
 		enddate, 
 		_url(req, 'view',  rundenid), 
-		rundenid
+		rundenid,
+		G.u8(desc)
 	)
 	game.url = _url(req, 'view', game.id)
 	G.fname = os.path.join(G.savegamedir, '%s.pkl' % game.id)

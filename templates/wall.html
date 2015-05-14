@@ -7,15 +7,11 @@
     	}
     </style>
     <div id="inner-content">
-	<div py:if="game.status == 'OPEN'" class="teaser">
-		<h1>Das Mörderspiel lädt zur Teilnahme ein!</h1>
-		<img src="data:image/png;base64,${utils.qrdata(game.url, version=3)}"></img>
-		<h2>Hier mitspielen: <a href="${game.url}">${game.url}</a></h2>
-	</div>
 	<div id="listplayers">
 		<ul class="cardlist">
+		    	<py:for each="game in games">
 			<py:if test="game.status != 'OPEN'">
-				<li id="gameinfo" class="card">
+				<li class="card gameinfo">
 					<table>
 						<tr><td>Spiel</td><td colspan="3">${game.name}</td></tr>
 						<tr><td>Spieler</td><td>${len(game.players)}</td><td>Morde</td><td>${len(list(game.getKilled()))}</td></tr>
@@ -42,7 +38,11 @@
 						</li>
 				</py:for>
 			</py:if>
-			<py:if test="len(game.getKilled()) &lt; 72">
+			</py:for>
+			<py:if test="sum([len(game.getKilled()) for game in games]) &lt; 72">
+				<?python 
+					game = games[0]
+				?>
 				<li class="card rules" py:if="game.status == 'OPEN'">
 					<h3>Willkommen beim Mörderspiel!</h3>
 					<p>Das Mörderspiel ist ein Nebenbei-Spiel im Real Life mit drei Auswirkungen:
@@ -77,7 +77,7 @@
 					<h3>Morden</h3>
 					<p>&#10122;&nbsp;Finde dein(e) Opfer. &#10123;&nbsp;Gib dem Opfer ohne anwesende Zeugen einen beliebigen Gegenstand, den es
 					auch freiwillig annehmen muss. &#10124;&nbsp;Sag "Du bist tot". &#10125;&nbsp;Erhalte vom Opfer den Auftrag 
-					aus dem Kreis, in dem es grad ermordet wurde. &#10126;&nbsp;??? &#10127;&nbsp;Profit!</p>
+					aus dem Kreis, in dem es grad ermordet wurde. &#10126;&nbsp; Trage den Mord ein. &#10127;&nbsp;??? &#10128;&nbsp;Profit!</p>
 				</li>
 				<li class="card rules" py:if="game.status == 'RUNNING'">
 					<h3>Mord melden!</h3>
@@ -126,6 +126,7 @@
 				</li>
 			</py:if>
 		</ul>
+	    	<py:for each="game in games" py:if="len(games) == 1">
 		<py:if test="game.status == 'OPEN'">
 			<h3>Liste der Mitspieler</h3>
 			<table>
@@ -138,9 +139,28 @@
 				</py:for>
 			</table>
 		</py:if>
-		
+		</py:for>
+    	<py:for each="game in games">
+		<div py:if="game.status == 'OPEN'" class="teaser listplayers">
+			<h1>Das Mörderspiel lädt zur Teilnahme ein!</h1>
+			<ul class="cardlist">
+				<li class="card gameinfo">
+					<table>
+						<tr><td>Spiel</td><td>${game.name}</td></tr>
+						<tr><td>Kreise</td><td>${len(game.rounds.keys())}</td></tr>
+						<tr><td>Spieler</td><td>${len(game.players)}</td></tr>
+						<tr py:if="game.desc"><td colspan="2">${game.desc}</td></tr>
+					</table>
+				<h2>Mitspielen?<br/><a href="${game.url}">${game.url}</a><br/>...oder QR-Code scannen:</h2>
+				</li>
+				<li class="card">
+					<img src="data:image/png;base64,${utils.qrdata(game.url, version=3)}"></img>
+				</li>
+			</ul>
+		</div>
+	</py:for>
 	</div>
-	</div>
+</div>
 <script type="text/javascript">
 // <![CDATA[
 jQuery.easing['jswing'] = jQuery.easing['swing'];
@@ -168,7 +188,7 @@ function startAnimation() {
 	$("html, body").animate({ scrollTop: $(document).height()-$(window).height() }, (animationduration-8)*1000, "easeInQuart");		  	
 	timer = setInterval(function() {
 		$("html, body").animate({ scrollTop: 0 }, "1000", "swing");
-		ajax('wall', {'id':'${game.id}'}); 
+		ajax('wall', {'id':'${":".join([g.id for g in games])}'}); 
 		$("html, body").animate({ scrollTop: $(document).height()-$(window).height() }, (animationduration-8)*1000, "easeInQuart");
 	}, animationduration*1000);
 }
