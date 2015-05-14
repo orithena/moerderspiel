@@ -39,7 +39,7 @@ h3 {
 	position:absolute;
 	display:none;
 	z-index:999;
-	background:red;
+	background:#f33;
 	color:white;
 	padding:1em;
 	box-shadow: 5px 5px 30px -4px black;
@@ -82,7 +82,7 @@ h3 {
 div.box {
 	border: 1px solid black;
 	border-radius: 7px;
-	box-shadow: 5px 5px 10px -4px red;
+	box-shadow: 5px 5px 10px -4px #c01;
 	background-color: #c01;
 	color: white;
 	padding: 0 1em;
@@ -99,7 +99,7 @@ div.box.white {
 div.box.white > h3:first-child {
 	border: 1px solid black;
 	border-radius: 7px;
-	box-shadow: 5px 5px 10px -4px red;
+	box-shadow: 5px 5px 10px -4px #c01;
 	background-color: #c01;
 	color: white;
 	padding: 0.5em 1em;
@@ -491,7 +491,7 @@ ul.tabs > li > a {
 	zoom:0.9;
 }
 .card {
-	border: 1px solid red;
+	border: 1px solid #c01;
 	border-radius: 0.4em;
 	box-shadow: 2px 2px 8px gray;
 	min-width: 18rem;
@@ -601,7 +601,7 @@ ul.tabs > li > a {
 	margin: 0;
 }
 .card td {
-	background-color: red;
+	background-color: #c01;
 }
 .card td:nth-child(2n+1) {
 	width: 0;
@@ -621,7 +621,7 @@ ul.tabs > li > a {
 }
 #listplayers .card table tr td:nth-child(2n+0),
 .listplayers .card table tr td:nth-child(2n+0) {
-	background-color: red;
+	background-color: #c01;
 	color: white;
 	font-weight: bold;
 	width:50%;
@@ -641,7 +641,7 @@ span.symbols.big.bottomleft {
 	bottom: -0.45em;
 }
 span.red {
-	color: red;
+	color: #c01;
 }
 
 .teaser {

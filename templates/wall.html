@@ -28,7 +28,7 @@
 				<py:for each="p in game.getKilled()">
 						<li class="card" py:if="p.killedby and p.killedby.killer">
 							<span class="topleft"><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="red symbols">${game.getKillsCount(p.killedby.killer.player)*'&#10003;'}</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></span>
-							<span class="topright"><py:if test="p.killedby"><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></span>
+							<span class="topright"><py:if test="p.killedby"><py:if test="len(games) &gt; 1"><strong>${game.id}</strong> </py:if><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></span>
 							<h3>${p.player.name}</h3><span>${p.player.info}</span>
 							<p py:if="p.killedby" style="font-size:${max(180-len(p.killedby.reason)/1.7, 100.0)}%">${p.killedby.reason}</p>
 							<span class="big symbols bottomleft">
@@ -79,13 +79,15 @@
 					auch freiwillig annehmen muss. &#10124;&nbsp;Sag "Du bist tot". &#10125;&nbsp;Erhalte vom Opfer den Auftrag 
 					aus dem Kreis, in dem es grad ermordet wurde. &#10126;&nbsp; Trage den Mord ein. &#10127;&nbsp;??? &#10128;&nbsp;Profit!</p>
 				</li>
-				<li class="card rules" py:if="game.status == 'RUNNING'">
-					<h3>Mord melden!</h3>
-					<img style="float:right; height:90%; image-rendering: crisp-edges;" src="data:image/png;base64,${utils.qrdata(game.url, version=1)}"></img>
-					<p>Du brauchst dazu den Signaturcode von deinem erledigten Auftrag. Dann kannst du den Mord hier melden:</p>
-					<p><a href="${game.url}">${game.url}</a>
-					</p>
-				</li>
+				<py:for each="game in games">
+					<li class="card rules" py:if="game.status == 'RUNNING'">
+						<h3>Mord melden!</h3>
+						<img style="float:right; height:90%; image-rendering: crisp-edges;" src="data:image/png;base64,${utils.qrdata(game.url, version=1)}"></img>
+						<p>Du brauchst dazu den Signaturcode von deinem erledigten Auftrag. Dann kannst du den Mord hier melden:</p>
+						<p><a href="${game.url}">${game.url}</a>
+						</p>
+					</li>
+				</py:for>
 				<li class="card rules" py:if="game.status != 'OVER'">
 					<h3>Keine lebenden Zeugen!</h3>
 					<p>Morde haben ohne lebende Zeugen zu geschehen (Spielleiter/Nichtspieler sind tot). Das Opfer kann nach einem Mord fragen,
