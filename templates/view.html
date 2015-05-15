@@ -186,38 +186,20 @@
 				</py:for>
 			</table>
 		</py:if>
-		<py:if test="game.status == 'RUNNING'">
-			<h3>Morde</h3>
-			<table>
-				<tr><th>Name</th><th>Ermordet von</th><th py:if="len(game.rounds) > 1">Kreis</th><th>Wann?</th><th>Tathergang</th></tr>
-				<?python 
-					colors = utils.colorgen(0.86, format='rgba()')
-					colorlist = {}
-					for round in game.rounds.values():
-						colorlist[str(round.name)] = next(colors)
-				?>
-				<py:for each="p in game.getKilled()">
-						<tr py:if="p.killedby and p.killedby.killer">
-							<td>${p.player} <span class="deaths" style="width:${game.getDeathsCount(p)*9}px;">&nbsp;</span></td>
-							<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="kills" style="width:${game.getKillsCount(p.killedby.killer.player)*9}px;">&nbsp;</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
-							<td py:if="len(game.rounds) > 1" class="centered"><py:if test="p.killedby"><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></td>
-							<td><py:if test="p.killedby">${utils.dateformat(p.killedby.date, format="%a")}&nbsp;${utils.dateformat(p.killedby.date, format="%d.%m. %H:%M")}</py:if></td>
-							<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
-						</tr>
-				</py:for>
-			</table>
-		</py:if>
 		<py:if test="game.status != 'OPEN'">
+			<h3>Spielgraphen</h3>
 			<py:if test="len(game.rounds) > 1">
 				<ul class="tabs">
-					<li><a href="${ utils.url_for('gamegraphall', id=game.id )}" onclick="return imgurl('gamegraph', this);">Alle Kreise</a></li>
+					<li><a href="${ utils.url_for('gamegraphall', id=game.id )}" onclick="return imgoverlay('#graphimage', '#gamegraph', this);">Alle Kreise</a></li>
 					<py:for each="round in sorted(game.rounds.values(), key=lambda k: k.name)">
-						<li><a href="${ utils.url_for('gamegraphall', id=game.id, roundid=round.name) }" onclick="return imgurl('gamegraph', this);">Kreis ${round.name}</a></li>
+						<li><a href="${ utils.url_for('gamegraphall', id=game.id, roundid=round.name) }" onclick="return imgoverlay('#graphimage', '#gamegraph', this);">Kreis ${round.name}</a></li>
 					</py:for>
 				</ul>	
 			</py:if>
-			<div class="bigimage" id="graphimage">
-				<img id="gamegraph" src="${ utils.url_for('gamegraphall', id=game.id, roundid=game.rounds.values()[0].name) }" />
+			<div class="overlay-hidden" id="graphimage">
+				<a class="closeoverlay" href="#" onclick="return closeoverlay('#graphimage');">X</a>
+				<!-- img id="gamegraph" src="${ utils.url_for('gamegraphall', id=game.id, roundid=game.rounds.values()[0].name) }" / -->
+				<img id="gamegraph" src="" />
 			</div>
 
 			<script type="text/javascript">
@@ -240,6 +222,29 @@
 			</script>
 
     		</py:if>
+		<py:if test="game.status != 'OPEN'">
+			<h3>Morde</h3>
+			<ul class="cardlist small">
+				<?python 
+					colors = utils.colorgen(0.86, format='rgba()')
+					colorlist = {}
+					for round in game.rounds.values():
+						colorlist[str(round.name)] = next(colors)
+				?>
+				<py:for each="p in game.getKilled()">
+						<li class="card" py:if="p.killedby and p.killedby.killer">
+							<span class="topleft"><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="red symbols">${game.getKillsCount(p.killedby.killer.player)*'&#10003;'}</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></span>
+							<span class="topright"><py:if test="p.killedby"><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></span>
+							<h3>${p.player.name}</h3><span>${p.player.info}</span>
+							<p py:if="p.killedby" style="font-size:${max(180-len(p.killedby.reason)/1.7, 100.0)}%">${p.killedby.reason}</p>
+							<span class="big symbols bottomleft">
+								<img py:for="g in range(game.getDeathsCount(p))" src='/static/images/skull.png'></img>
+							</span> 
+							<span class="bottomright"><py:if test="p.killedby">${utils.dateformat(p.killedby.date, format="%a")}&nbsp;${utils.dateformat(p.killedby.date, format="%d.%m. %H:%M")}</py:if></span>
+						</li>
+				</py:for>
+			</ul>
+		</py:if>
 	</div>
 	</div>
 </div>

@@ -5,6 +5,15 @@ function imgurl(id, link) {
 	$('html,body').animate({scrollTop: $(link).offset().top - 15}, 300);
 	return false;
 }
+function imgoverlay(overlayid, imgid, link) {
+	$(imgid).attr('src', link.href);
+	$(overlayid).removeClass('overlay-hidden').addClass('overlay');
+	return false;
+}
+function closeoverlay(overlayid) {
+	$(overlayid).removeClass('overlay').addClass('overlay-hidden');
+	return false;
+}
 
 var init_boxcollapse = function() {
 	$('div.box').each(function(i,box) {

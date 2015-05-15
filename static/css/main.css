@@ -454,7 +454,8 @@ ul.tabs > li > a {
 	text-decoration: none;
 }
 
-#overlay {
+#overlay,
+.overlay {
 	position: fixed;
 	top: 0;
 	right: 0;
@@ -469,16 +470,47 @@ ul.tabs > li > a {
 	text-align: center;
 	display:table;
 }
-#overlay > div {
+.overlay {
+	z-index: 1000;
+	background: #ddd;
+}
+.overlay img {
+	background: white;
+}
+.overlay > .closeoverlay {
+  position: fixed;
+  display: block;
+  top: 1em;
+  right: 1em;
+  width: 3em;
+  height: 3em;
+  line-height: 3em;
+  vertical-align: middle;
+  border-radius: 1.5em;
+  background: #aaa;
+  z-index: 2000;
+}
+.overlay a:link {
+	text-decoration:none;
+	color: black;
+	font-weight: bolder;
+}
+#overlay > div,
+.overlay > div {
 	text-align: center;
 	vertical-align: middle;
 	position: static;
 	display: table-cell;
 }
-#overlay button {
+#overlay button,
+.overlay button {
 	font-size: 200%;
 	display: block;
 	margin: 1em auto;
+}
+.overlay-hidden {
+	display: none;
+	position: fixed;
 }
 
 .cardlist {
@@ -496,7 +528,7 @@ ul.tabs > li > a {
 	box-shadow: 2px 2px 8px gray;
 	min-width: 18rem;
 	max-width: 36rem;
-	height: 10em;
+	height: 11em;
 	margin: 0.3em;
 	padding: 3em 0.2em 1em;
 	position: relative;
@@ -504,15 +536,31 @@ ul.tabs > li > a {
 	display: inline-block;
 	text-align:center;
 }
+.small .card {
+	min-width: 9rem;
+	max-width: 18rem;
+	zoom: 0.8;
+	height: 12em;
+}
 .card.rules {
 	border:none;
 	box-shadow: 1px 1px 5px gray;
-	padding-top: 2em;
-	height:11em;
+	padding-top: 1em;
+	height: 13em;
+}
+@media (max-width: 18rem) {
+	.small .card {
+		width: 46.1%;
+	}
 }
 @media (max-width: 45rem) {
 	.card {
 		width: 96%;
+	}
+}
+@media (min-width: 18rem) and (max-width: 36rem) {
+	.small .card {
+		width: 46.1%;
 	}
 }
 @media (min-width: 45rem) and (max-width: 60rem) {
@@ -520,24 +568,41 @@ ul.tabs > li > a {
 		width: 48.1%;
 	}
 }
+@media (min-width: 36rem) and (max-width: 60rem) {
+	.small .card {
+		width: 31.0%;
+	}
+}
 @media (min-width: 60rem) and (max-width: 85rem) {
 	.card {
 		width: 31.6%;
+	}
+	.small .card {
+		width: 23.1%;
 	}
 }
 @media (min-width: 85rem) and (max-width: 102rem) {
 	.card {
 		width: 23.7%;
 	}
+	.small .card {
+		width: 18.5%;
+	}
 }
 @media (min-width: 102rem) and (max-width: 122rem) {
 	.card {
 		width: 18.9%;
 	}
+	.small .card {
+		width: 15.0%;
+	}
 }
 @media (min-width: 122rem) and (max-width: 142rem) {
 	.card {
 		width: 15.5%;
+	}
+	.small .card {
+		width: 15.0%;
 	}
 }
 #gameinfo.card,
