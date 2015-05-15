@@ -332,8 +332,11 @@ def gamegraphall(id, roundid='', mastercode=''):
 	return _response(ret, 'image/svg+xml')
 
 @route('/addplayer')
-def addplayer(gameid, spielername, zusatzinfo, email='', ajax=0):
+def addplayer(gameid, spielername, zusatzinfo, email='', email2='', ajax=0):
 	err = ''
+	if email != email2:
+		stream = _mainstream('error.html', errormsg = "Die beiden Mailadressen sind nicht gleich!", returnurl = 'view/%s' % gameid)
+		return stream.render('xhtml')
 	game = _loadgame(gameid)
 	try:
 		game.addPlayer(G.u8(spielername), G.u8(zusatzinfo), G.u8(email) )
