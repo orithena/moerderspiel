@@ -8,6 +8,8 @@ import codecs
 import utils as utils
 from twitmord import twitkill
 from datetime import datetime
+from dateutil.parser import parse
+from dateutil.relativedelta import relativedelta
 from collections import defaultdict
 
 def flatten(lst):
@@ -21,6 +23,30 @@ def flatten(lst):
 				yield i
 		else:
 			yield elem
+			
+def force_datetime(dt):
+	formats = [ '%d.%m.%Y %H:%M' ]
+	if isinstance(dt, datetime):
+		return dt
+	if isinstance(dt, int):
+		return datetime.utcfromtimestamp(dt)
+	if isinstance(dt, basestring):
+		dt = dt.strip()
+		for f in formats:
+			try:
+				return datetime.strptime(dt, f)
+			except:
+				pass
+		else:
+			try:
+				r = parse(dt, fuzzy=True, default=(datetime.now() - relativedelta(minutes=15)) )
+				while r > datetime.now():
+					r = r - relativedelta(days=1)
+				return r
+			except:
+				pass
+	return datetime.now() - relativedelta(minutes=15)
+			
 class GameMessage(RuntimeError):
 	"""This Exception denotes a message to be delivered to the User."""
 	def __init__(self, value):
@@ -51,18 +77,13 @@ class Kill:
 	"""
 	def __init__(self, killer, date, reason):
 		self.killer = killer
-		try:
-			self.date = datetime.strptime(date, '%d.%m.%Y %H:%M')
-		except:
-			self.date = date
+		self.date = force_datetime(date)
 		self.reason = reason
 	def __setstate__(self, state):
 		"""Upgrade old pickles."""
-		if type(state['date']) == str:
-			try:
-				state['date'] = datetime.strptime(state['date'], '%d.%m.%Y %H:%M')
-			except:
-				pass
+		if not isinstance(state['date'], datetime):
+			state['date'] = force_datetime(state['date'])
+		
 		self.__dict__.update(state)
 
 class Player:
@@ -411,7 +432,7 @@ class Game:
 		else:
 			self.id = wordconstruct.WordGenerator().generate(7)
 		self.mastercode = wordconstruct.WordGenerator().generate(6)
-		self.enddate = datetime.strptime(enddate, '%d.%m.%Y %H:%M')
+		self.enddate = force_datetime(enddate)
 		self.rounds = {}
 		self.players = []
 		self.url = url

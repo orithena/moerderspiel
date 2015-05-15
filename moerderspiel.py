@@ -246,7 +246,8 @@ def wall(id, msg = "", ajax=0):
 			return _response(stream.render("xhtml"), 'text/xml')
 		else:
 			stream = _mainstream('wall.html', games = games, errormsg = msg)
-			return stream.render('xhtml')
+	
+	return stream.render('xhtml')
 
 @route('/error')
 def error(msg = "", returnurl = "index"):
