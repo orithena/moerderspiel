@@ -19,26 +19,26 @@
 						<tr py:if="game.status != 'OPEN' and len(game.rounds) > 1"><td>nach Punkten</td><td colspan="3">${game.getHighScoreString()}</td></tr>
 					</table>
 				</li>
+			</py:if>
+			</py:for>
 				<?python 
 					colors = utils.colorgen(0.86, format='rgba()')
 					colorlist = {}
-					for round in game.rounds.values():
+					for round in games[0].rounds.values():
 						colorlist[str(round.name)] = next(colors)
 				?>
-				<py:for each="p in game.getKilled()">
+				<py:for each="p in sorted([ item for sublist in [ game.getKilled() for game in games ] for item in sublist ], key=lambda x:x.killedby.date, reverse=True)">
 						<li class="card" py:if="p.killedby and p.killedby.killer">
-							<span class="topleft"><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="red symbols">${game.getKillsCount(p.killedby.killer.player)*'&#10003;'}</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></span>
-							<span class="topright"><py:if test="p.killedby"><py:if test="len(games) &gt; 1"><strong>${game.id}</strong> </py:if><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></span>
+							<span class="topleft"><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player} <span class="red symbols">${p.player.game.getKillsCount(p.killedby.killer.player)*'&#10003;'}</span></py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></span>
+							<span class="topright"><py:if test="p.killedby"><py:if test="len(games) &gt; 1"><strong>${p.player.game.id}</strong> </py:if><span class="circle" style="background-color:${colorlist[p.round.name]};">${p.round.name}</span></py:if></span>
 							<h3>${p.player.name}</h3><span>${p.player.info}</span>
 							<p py:if="p.killedby" style="font-size:${max(180-len(p.killedby.reason)/1.7, 100.0)}%">${p.killedby.reason}</p>
 							<span class="big symbols bottomleft">
-								<img py:for="g in range(game.getDeathsCount(p))" src='/static/images/skull.png'></img>
+								<img py:for="g in range(p.player.game.getDeathsCount(p))" src='/static/images/skull.png'></img>
 							</span> 
 							<span class="bottomright"><py:if test="p.killedby">${utils.dateformat(p.killedby.date, format="%a")}&nbsp;${utils.dateformat(p.killedby.date, format="%d.%m. %H:%M")}</py:if></span>
 						</li>
 				</py:for>
-			</py:if>
-			</py:for>
 			<py:if test="sum([len(game.getKilled()) for game in games]) &lt; 72">
 				<?python 
 					game = games[0]

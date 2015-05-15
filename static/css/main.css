@@ -5,12 +5,14 @@
 body {
 	font: 9pt black;
 	background-color:#c01;
-	padding: 0;
+	padding: 4em 0 0 0;
 	margin: 0;
 }
 
 body > h1 {
-	padding-left:0.5em;
+	padding-left:1em;
+	position: fixed;
+	top: 0;
 }
 
 h1 {
@@ -472,23 +474,23 @@ ul.tabs > li > a {
 }
 .overlay {
 	z-index: 1000;
-	background: #ddd;
+	background: url(/static/images/graphgen.gif) no-repeat 50% 50% #ddd;
 }
 .overlay img {
 	background: white;
 }
 .overlay > .closeoverlay {
-  position: fixed;
-  display: block;
-  top: 1em;
-  right: 1em;
-  width: 3em;
-  height: 3em;
-  line-height: 3em;
-  vertical-align: middle;
-  border-radius: 1.5em;
-  background: #aaa;
-  z-index: 2000;
+	position: fixed;
+	display: block;
+	top: 1em;
+	right: 1em;
+	width: 3em;
+	height: 3em;
+	line-height: 3em;
+	vertical-align: middle;
+	border-radius: 1.5em;
+	background: #aaa;
+	z-index: 2000;
 }
 .overlay a:link {
 	text-decoration:none;
