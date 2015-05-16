@@ -1,10 +1,10 @@
 <div xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:py="http://genshi.edgewall.org/"
-      lang="en">
+	xmlns:py="http://genshi.edgewall.org/"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	lang="en">
     <div id="inner-content">
-	<div id="gameinfo" class="left half">
-		<h2>Spiel: ${game.name}</h2>
-		<dl>
+	<div id="gameinfo" class="left half gameinfo listplayers">
+<!--		<dl>
 			<dt>Status</dt><dd>${game.status}</dd>
 			<dt>ID</dt><dd>${game.id}</dd>
 			<dt>Twitter</dt><dd><a href="https://twitter.com/search?q=%23${game.id}">#${game.id}</a></dd>
@@ -15,6 +15,38 @@
 			<py:if test="game.status != 'OPEN'"><dt>Massenmörder</dt><dd>${game.getMassMurdererString()}</dd></py:if>
 			<py:if test="game.status != 'OPEN' and len(game.rounds) > 1"><dt>nach Punkten</dt><dd>${game.getHighScoreString()}</dd></py:if>
 		</dl>
+-->
+	<div class="card">
+		<h2>Spiel: ${game.name}</h2>
+	<p py:if="game.desc is not None and len(game.desc) > 3">
+		${game.desc}
+	</p>
+	<table>
+		<tr>
+			<td>Status</td><td>${game.status}</td>
+			<td>ID</td><td>${game.id}</td>
+		</tr>
+		<tr py:if="False">
+			<td>Twitter</td><td><a href="https://twitter.com/search?q=%23${game.id}">#${game.id}</a></td>
+			<td>Wall</td><td><a href="/wall/${game.id}">${game.id}</a></td>
+		</tr>
+		<tr>
+			<td>Spieler</td><td>${len(game.players)}</td>
+			<td>Morde</td><td>${len(list(game.getKilled()))}</td>
+		</tr>
+		<tr py:if="len(game.rounds) > 1 and game.status == 'OPEN'">
+			<td>Kreise</td><td colspan="3">${len(game.rounds)} Leben, ${len(game.rounds)} Aufträge, ${len(game.rounds)} Mörder...</td>
+		</tr>
+		<tr py:if="game.status != 'OPEN'">
+			<td>Massenmörder</td><td colspan="3">${game.getMassMurdererString()}</td>
+		</tr>
+		<tr py:if="game.status != 'OPEN' and len(game.rounds) > 1">
+			<td>nach Punkten</td><td colspan="3">${game.getHighScoreString()}</td>
+		</tr>
+	</table>
+	<p class="small">Updates auf Twitter: Folge <a href="https://twitter.com/moerderbot">@moerderbot</a> oder <a href="https://twitter.com/search?q=%23${game.id}">#${game.id}</a></p>
+	<p class="small">Dauerupdatesendung: <a href="/wall/${game.id}">Mörderspielwall ${game.id}</a></p>
+	</div>
 	</div>
 	<div id="makeakill" class="box right half alwayscollapse" py:if="game.status == 'RUNNING'">
 		<h3>Erfolgreichen Mord melden!</h3>
@@ -180,8 +212,11 @@
 		</form>
 		<p>Die Generierung der PDFs kann mehrere Minuten dauern. Bitte habe Geduld!</p>
 	</div>
-	<div id="rules" class="box right half clear">
-		<h3><a href="/static/documents/moerderspielregeln.pdf">Regeln</a> (PDF)</h3>
+	<div id="rules" class="box right half clear alwayscollapse">
+		<h3>Regeln</h3>
+		<a href="/static/documents/moerderspielregeln.pdf">Regeln
+		als PDF</a>
+		<xi:include href="regeln.html"/>
 	</div>
 	<div id="listplayers">
 		<py:if test="game.status == 'OPEN'">
