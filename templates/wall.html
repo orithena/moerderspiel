@@ -1,12 +1,23 @@
 <div xmlns="http://www.w3.org/1999/xhtml"
       xmlns:py="http://genshi.edgewall.org/"
       lang="en">
+    	<?python
+    	l = []
+    	for a in xrange(0,300): l.append("@media (min-width: %sex) and (max-width: %sex) { p.remtest:before { content:'%s'; } }" % (a, a+1, a))
+    	?>    	
     <style>
     	#bgcontainer {
     		max-width: 100%;
     	}
+    	p.remtest {
+    		display: none; /* for testing card width and grid: comment this */
+    	}
+    	<py:for each="s in l">
+    		$s
+    	</py:for>
     </style>
     <div id="inner-content">
+    <p class="remtest">ex</p>
 	<div id="listplayers">
 		<ul class="cardlist">
 		    	<py:for each="game in games">
@@ -156,7 +167,8 @@
 		</py:for>
     	<py:for each="game in games">
 		<div py:if="game.status == 'OPEN'" class="teaser listplayers">
-			<a name="game-${game.name}"><h1>Das Mörderspiel lädt zur Teilnahme ein!</h1></a>
+			<h1>Das Mörderspiel lädt zur Teilnahme ein!</h1>
+			<a name="game-${game.name}"></a>
 			<ul class="cardlist">
 				<li class="card gameinfo">
 					<table>
@@ -165,7 +177,7 @@
 						<tr><td>Kreise</td><td>${len(game.rounds.keys())}</td></tr>
 						<tr><td>Spieler</td><td>${len(game.players)}</td></tr>
 					</table>
-				<h2>Mitspielen?<br/><a href="${game.url}">${game.url}</a><br/>...oder QR-Code scannen:</h2>
+				<h2>Mitspielen?<br/><a href="${game.url}">${game.url.replace('http://', '')}</a><br/>...oder QR-Code scannen:</h2>
 				</li>
 				<li class="card">
 					<img src="data:image/png;base64,${utils.qrdata(game.url, version=3)}"></img>
@@ -198,7 +210,7 @@ var mousemovetimeout;
 function runAnimation(duration) {
 	var anchors = $('a[name]')
 	if( anchors.length > 0 ) {
-		var timeslot = ((duration-8)*1000.0)/((anchors.length*2)+1)
+		var timeslot = ((duration-8)*1000.0)/((anchors.length*2))
 		anchors.each(function(i, element) {
 			$('html, body').delay(timeslot).animate({
 				scrollTop: element.offsetTop

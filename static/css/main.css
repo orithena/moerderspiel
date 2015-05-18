@@ -2,8 +2,10 @@
 	font-family: Droid Sans, sans-serif;
 }
 
+html, body {
+	font: 13px black;
+}
 body {
-	font: 9pt black;
 	background-color:#c01;
 	padding: 4em 0 0 0;
 	margin: 0;
@@ -537,14 +539,14 @@ ul.tabs > li > a {
 	clear:both;
 	margin: 1em auto;
 	text-align:center;
-	zoom:0.9;
+/*	zoom:0.9; */
 }
 .card {
 	border: 1px solid #c01;
 	border-radius: 0.4em;
 	box-shadow: 2px 2px 8px gray;
-	min-width: 18rem;
-	max-width: 36rem;
+	min-width: 20rem;
+	max-width: 50rem;
 	height: 11em;
 	margin: 0.3em;
 	padding: 3em 0.2em 1em;
@@ -555,69 +557,77 @@ ul.tabs > li > a {
 }
 .small .card {
 	min-width: 9rem;
-	max-width: 18rem;
+	max-width: 24rem;
 	zoom: 0.8;
 	height: 12em;
 }
 .card.rules {
-	border:none;
+	border:1px solid transparent;
 	box-shadow: 1px 1px 5px gray;
 	padding-top: 1em;
 	height: 13em;
 }
-@media (max-width: 18rem) {
+@media (min-width: 0) and (max-width: 36ex) {
 	.small .card {
-		width: 46.1%;
+		width: 45.5%;
 	}
 }
-@media (max-width: 45rem) {
+@media (min-width: 0) and (max-width: 100ex) {
 	.card {
 		width: 96%;
 	}
 }
-@media (min-width: 18rem) and (max-width: 36rem) {
+@media (min-width: 36ex) and (max-width: 72ex) {
 	.small .card {
+		width: 45.5%;
+	}
+}
+@media (min-width: 100ex) and (max-width: 140ex) {
+	.card {
 		width: 46.1%;
 	}
 }
-@media (min-width: 45rem) and (max-width: 60rem) {
-	.card {
-		width: 48.1%;
-	}
-}
-@media (min-width: 36rem) and (max-width: 60rem) {
+@media (min-width: 72ex) and (max-width: 120ex) {
 	.small .card {
-		width: 31.0%;
+		width: 30.6%;
 	}
 }
-@media (min-width: 60rem) and (max-width: 85rem) {
+@media (min-width: 140ex) and (max-width: 190ex) {
 	.card {
-		width: 31.6%;
+		width: 31.1%;
 	}
+}
+@media (min-width: 120ex) and (max-width: 170ex) {
 	.small .card {
 		width: 23.1%;
 	}
 }
-@media (min-width: 85rem) and (max-width: 102rem) {
+@media (min-width: 190ex) and (max-width: 240ex) {
 	.card {
-		width: 23.7%;
+		width: 23.4%;
 	}
+}
+@media (min-width: 170ex) and (max-width: 204ex) {
 	.small .card {
 		width: 18.5%;
 	}
 }
-@media (min-width: 102rem) and (max-width: 122rem) {
+@media (min-width: 240ex) and (max-width: 290ex) {
 	.card {
-		width: 18.9%;
+		width: 18.5%;
 	}
+}
+@media (min-width: 204ex) and (max-width: 244ex) {
 	.small .card {
 		width: 15.0%;
 	}
 }
-@media (min-width: 122rem) and (max-width: 142rem) {
+@media (min-width: 290ex) {
 	.card {
 		width: 15.5%;
 	}
+}
+@media (min-width: 244ex) and (max-width: 284ex) {
 	.small .card {
 		width: 15.0%;
 	}
@@ -634,8 +644,8 @@ div.card {
 .gameinfo.card {
 	padding: 1em 0.2em;
 	height:12em;
-	border: none;
 	box-shadow: none;
+	border: 1px solid transparent;
 }
 /*
 #gameinfo.card+.card{
@@ -788,3 +798,4 @@ span.red {
 .teaser .card table tr td:nth-child(2n+0) {
 	font-size: 2.6vw !important;
 }
+
