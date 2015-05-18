@@ -684,6 +684,11 @@ div.card {
 	bottom: 0.2em;
 	right: 0.2em;
 }
+.card .bottomright img {
+	transform: translateY(0.4rem);
+	height: 2.5rem;
+	opacity: 0.6;
+}
 .card .bottomleft {
 	position: absolute;
 	display: block;
