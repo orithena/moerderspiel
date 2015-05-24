@@ -151,7 +151,7 @@
 				</li>
 			</py:if>
 		</ul>
-	    	<py:for each="game in games" py:if="len(games) == 1">
+	    	<py:for each="game in games" py:if="False and len(games) == 1">
 		<py:if test="game.status == 'OPEN'">
 			<h3>Liste der Mitspieler</h3>
 			<table>

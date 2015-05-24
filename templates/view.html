@@ -132,7 +132,7 @@
 						</p>
 					</td>
 				</tr>
-				<tr py:if="game.id.find('kif') > -1 or game.id.find('koma') > -1">
+				<tr py:if="game.id.find('kif') > -1 or game.id.find('koma') > -1 or game.id.find('zkk') > -1">
 					<th>Hochschule:</th>
 					<td>
 						<input type="text" name="zusatzinfo" size="20"/>
@@ -142,7 +142,7 @@
 						</p>
 					</td>
 				</tr>
-				<tr py:if="game.id.find('kif') == -1 and game.id.find('koma') == -1">
+				<tr py:if="game.id.find('kif') == -1 and game.id.find('koma') == -1 and game.id.find('zkk') == -1">
 					<th>Gruppe:</th>
 					<td>
 						<input type="text" name="zusatzinfo" size="20"/>
@@ -155,6 +155,14 @@
 						<br/>Ist dies egal, kann das Feld beliebig genutzt werden, bspw. Nachname, Spitzname,
 						Adresse, Heimatstadt, Eigenschaften, oder einfach gar nichts. In jedem Fall wird es auf den Aufträgen vermerkt.
 						</p>
+					</td>
+				</tr>
+				<tr py:if="game.games">
+					<th>Konferenz</th>
+					<td>
+						<py:for each="i, g in enumerate(game.games.values())"> 
+							<input type="radio" name="subgame" value="${g.id}" checked="checked">${g.name}</input><br/>
+						</py:for>
 					</td>
 				</tr>
 				<tr>

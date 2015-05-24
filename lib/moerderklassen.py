@@ -429,6 +429,8 @@ class Game:
 			for c in list(id):
 				if c in 'abcdefghijklmnopqrstuvwxyz0123456789-_.':
 					self.id += c
+			if len(rundenid) <= 2:
+				self.id = wordconstruct.WordGenerator().generate(7)
 		else:
 			self.id = wordconstruct.WordGenerator().generate(7)
 		self.mastercode = wordconstruct.WordGenerator().generate(6)
@@ -716,6 +718,139 @@ class Game:
 						listfile.write(u"%s hat kein Opfer mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
 				else:
 					listfile.write(u"%s lebt nicht mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
+		listfile.close()
+		cwd = os.getcwd()
+		os.chdir(tmptexdir)
+		os.system("xelatex moerder.tex")
+		os.chdir(cwd)
+		pdfpath = os.path.join(self.savegamedir, "%s.pdf" % fname)
+		shutil.copyfile(tmptexdir + "/moerder.pdf", pdfpath)
+		return pdfpath
+
+
+
+class MultiGame(Game):
+	def __init__(self, name, rounds, enddate, url, rundenid='', desc=None):
+		Game.__init__(self, name, rounds, enddate, url, rundenid, desc)
+		self.games = {}
+		self.roundcount = rounds
+		r = {}
+		self.myrounds = []
+		for k,v in self.rounds.iteritems():
+			v.name = "%s-%s" % (self.id, k)
+			r[v.name] = v
+			self.myrounds.append(v.name) 
+		self.rounds = r
+			
+	def __str__(self):
+		return u'MultiSpiel: %s\nid: %s\nstatus: %s\nmastercode: %s\nenddate: %s\nplayers: %s\nrounds: %s' % (self.name, self.id, self.status, self.mastercode, self.enddate, self.players, self.rounds)
+	
+	def addPlayer(self, name, info, email='', subgame=''):
+		"""Add a player to the player list using the given name and info.
+		The info text is dedicated to any additional information for identifying
+		a player in case of name clashes.
+		
+		Raises a GameError if the registration phase is over or the name length
+		is 1 or lower.
+		"""
+		try:
+			Game.addPlayer(self, name, info, email)
+			self.players[-1].subgame = subgame
+		except:
+			raise
+	
+	def addGame(self, mastercode, rundenid, name, desc=''):
+		if self.status == 'OPEN' and mastercode == self.mastercode:
+			gameid = ''
+			if len(rundenid) > 2 and len(rundenid) < 12:
+				id = rundenid.lower().strip()
+				for c in list(id):
+					if c in 'abcdefghijklmnopqrstuvwxyz0123456789-_.':
+						gameid += c
+				if len(gameid) <= 2:
+					gameid = wordconstruct.WordGenerator().generate(7)
+			else:
+				gameid = wordconstruct.WordGenerator().generate(7)
+			subgame = Game(name, self.roundcount, self.enddate, self.url, gameid, desc)
+			for k,v in subgame.rounds.iteritems():
+				v.name = "%s-%s" % (subgame.id, k)
+				self.rounds[v.name] = v
+			subgame.players = self.players
+			self.games[gameid] = subgame
+		else:
+			raise GameError(u'Das war nicht der Mastercode')
+	
+	def start(self, mastercode):
+		"""Starts the game. Needs the Mastercode.
+		"""
+		if mastercode == self.mastercode:
+			for roundid,round in self.rounds.iteritems():
+				round.start( [ p for p in self.players if roundid.startswith(p.subgame) or roundid in self.myrounds ], self.rounds )
+			self.status = 'RUNNING'
+			for game in self.games.values():
+				game.status = 'RUNNING'
+			for p in self.players:
+				p.sendemail()
+		else:
+			raise GameError(u'Das war nicht der Mastercode')
+	
+	def stop(self, mastercode):
+		"""Stops the game.
+		"""
+		Game.stop(self, mastercode)
+		for game in self.games.values():
+			game.status = 'OVER'
+		
+	def pdfgen(self, players = None):
+		fname = self.id
+		if( players is None ):
+			players = self.players
+		if( len(players) == 0 ):
+			return
+		elif( len(players) == 1 ):
+			fname = self.id + '_' + players[0].public_id
+		tmptexdir = "/tmp/moerder_" + fname
+		if not os.path.isdir(tmptexdir):
+			os.mkdir(tmptexdir)
+		tmplfile = "moerder.tex"
+		if( len(self.rounds) % 2 == 0 and len(players) > 1 ):
+			tmplfile = "moerder2.tex"
+		shutil.copyfile(os.path.join(self.templatedir, tmplfile), os.path.join(tmptexdir, "moerder.tex"))
+		listfile = codecs.open(os.path.join(tmptexdir, "list.tex"), "w", "utf-8")
+		#for roundid,round in self.rounds.iteritems():
+		#	for participant in round.participants:
+		#		killer = participant.player
+		#		victim = round.getInitialVictim(participant).player
+		for killer in sorted(players, key=lambda x: x.name):
+			assignments = 0
+			for roundid,round in self.rounds.iteritems():
+				participant = round.getParticipant(killer)
+				if participant is not None and participant.alive():
+					victim = round.getCurrentVictim(killer)
+					if victim is not None:
+						roundname = round.name if len(self.rounds) > 1 else ''
+						#listfile.write("\Auftrag{Gamename}{Gameid}{Victim}{Killer}{Signaturecode}{Spielende}{URL}\n")
+						listfile.write(u"\\Auftrag{%s}{%s}{%s\\\\%s}{%s\\\\%s}{%s}{%s}{%s}{%s}\n" % 
+							(
+								utils.latexEsc(self.name),
+								utils.latexEsc(self.id), 
+								utils.latexEsc(victim.player.name), 
+								utils.latexEsc(victim.player.info), 
+								utils.latexEsc(killer.name), 
+								utils.latexEsc(killer.info), 
+								utils.latexEsc(victim.id), 
+								utils.latexEsc(self.enddate.strftime("%d.%m.%Y %H:%M")), 
+								utils.latexEsc(self.url), 
+								utils.latexEsc(roundname)
+							)
+						)
+						assignments += 1
+					elif len(players) == 1:
+						listfile.write(u"%s hat kein Opfer mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
+				elif len(players) == 1:
+					listfile.write(u"%s lebt nicht mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
+			if assignments > 3:
+				listfile.write(u"\\pagebreak\n")
 		listfile.close()
 		cwd = os.getcwd()
 		os.chdir(tmptexdir)

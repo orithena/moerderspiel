@@ -54,7 +54,7 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 	# we need to keep some of the nodes in mind
 	prev_node = first_node = node = None
 	# make a copy of the participant list so we don't jumble up the original list
-	participants = game.rounds.values()[0].participants[:]
+	participants = sorted(rounds, key=lambda x: len(x.participants))[-1].participants[:]
 	gmnode = G.add_node('Game Master')
 	gmnode.label = 'Game Master'
 	gmnode.fontsize = nodefontsize
