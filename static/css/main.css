@@ -547,19 +547,19 @@ ul.tabs > li > a {
 	box-shadow: 2px 2px 8px gray;
 	min-width: 20rem;
 	max-width: 50rem;
-	height: 11em;
+	min-height: 13em;
 	margin: 0.3em;
-	padding: 3em 0.2em 1em;
+	padding: 1em 0.2em 1em;
 	position: relative;
 	overflow: hidden;
 	display: inline-block;
 	text-align:center;
 }
 .small .card {
-	min-width: 9rem;
-	max-width: 24rem;
+	min-width: 28ex;
+	max-width: 48ex;
 	zoom: 0.8;
-	height: 12em;
+	min-height: 12em;
 }
 .card.rules {
 	border:1px solid transparent;
@@ -654,6 +654,68 @@ div.card {
 	max-width:37.7rem;
 }
 */
+.mirrored {
+	-moz-transform: scale(-2.5, 2.5) rotate(-70deg);
+	-webkit-transform: scale(-2.5, 2.5) rotate(-70deg);
+	-o-transform: scale(-2.5, 2.5) rotate(-70deg);
+	-ms-transform: scale(-2.5, 2.5) rotate(-70deg);
+	transform: scale(-2.5, 2.5) rotate(-70deg);
+	display: inline-block;
+	position: relative;
+	z-index: 1;
+}
+
+.card .player {
+	display: inline-block;
+	box-shadow: 2px 2px 5px -2px #999;
+	background: #eee;
+	padding: 0.3em;
+	width: 40%;
+	position: relative;
+	z-index:0;
+}
+.card .player::before {
+	position: absolute;
+	font-size: 2.0em;
+	z-index: -1;
+}
+.card .player.killer::before {
+	content: "\1F52A";
+	left: 0;
+	color: #999;
+	transform: rotate(180deg);
+	top: -0.4em;
+	letter-spacing: -0.6em;
+	left: 0.65em;
+}
+.card .player.killer.c0::before { content: ""; }
+.card .player.killer.c1::before { content: "\1F52A"; }
+.card .player.killer.c2::before { content: "\1F52A\1F52A"; }
+.card .player.killer.c3::before { content: "\1F52A\1F52A\1F52A"; }
+.card .player.killer.c4::before { content: "\1F52A\1F52A\1F52A\1F52A"; }
+.card .player.killer.c5::before { content: "\1F52A\1F52A\1F52A\1F52A\1F52A"; }
+.card .player.killer.c6::before { content: "\1F52A\1F52A\1F52A\1F52A\1F52A\1F52A"; }
+.card .player.killer.c7::before { content: "\1F52A\1F52A\1F52A\1F52A\1F52A\1F52A\1F52A"; }
+.card .player.killer.c8::before { content: "\1F52A\1F52A\1F52A\1F52A\1F52A\1F52A\1F52A\1F52A"; }
+.card .player.killer.c9::before { content: "\1F52A\1F52A\1F52A\1F52A\1F52A\1F52A\1F52A\1F52A\1F52A"; }
+
+.card .player.victim::before {
+	content: "\1F480";
+	right: 0;
+	color: #999;
+	transform: scale(-1,1);
+	bottom: -0.55em;
+}
+.card .player.victim.c0::before { content: ""; }
+.card .player.victim.c1::before { content: "\1F480"; }
+.card .player.victim.c2::before { content: "\1F480\1F480"; }
+.card .player.victim.c3::before { content: "\1F480\1F480\1F480"; }
+.card .player.victim.c4::before { content: "\1F480\1F480\1F480\1F480"; }
+.card .player.victim.c5::before { content: "\1F480\1F480\1F480\1F480\1F480"; }
+.card .player.victim.c6::before { content: "\1F480\1F480\1F480\1F480\1F480\1F480"; letter-spacing: -0.15em; }
+.card .player.victim.c7::before { content: "\1F480\1F480\1F480\1F480\1F480\1F480\1F480"; letter-spacing: -0.3em; }
+.card .player.victim.c8::before { content: "\1F480\1F480\1F480\1F480\1F480\1F480\1F480\1F480"; letter-spacing: -0.35em; }
+.card .player.victim.c9::before { content: "\1F480\1F480\1F480\1F480\1F480\1F480\1F480\1F480\1F480"; letter-spacing: -0.42em; }
 .card h3 {
 	text-align: center;
 	margin:0;
@@ -667,7 +729,7 @@ div.card {
 	vertical-align: middle;
 }
 .card p {
-	margin: 0.5em 1em;
+	margin: 1em 1em 0.5em;
 	font-size:120%;
 	z-index:999;
 	position:relative;
