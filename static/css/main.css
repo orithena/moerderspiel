@@ -556,8 +556,8 @@ ul.tabs > li > a {
 	text-align:center;
 }
 .small .card {
-	min-width: 9rem;
-	max-width: 24rem;
+	min-width: 28ex;
+	max-width: 48ex;
 	zoom: 0.8;
 	min-height: 12em;
 }
