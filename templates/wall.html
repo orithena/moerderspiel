@@ -22,6 +22,18 @@
 		<ul class="cardlist">
 		    	<py:for each="game in games">
 			<py:if test="game.status != 'OPEN'">
+				<py:if test="game.games">
+				<py:for each="subgame in game.games.values()">
+					<li class="card gameinfo">
+						<table>
+							<tr><td>Spiel</td><td colspan="3">${subgame.name}</td></tr>
+							<tr><td>Spieler</td><td>${len(subgame.rounds.values()[0].participants)}</td><td>Morde</td><td>${len(list(subgame.getKilled()))}</td></tr>
+							<tr py:if="subgame.status != 'OPEN'"><td>Massenmörder</td><td colspan="3">${subgame.getMassMurdererString()}</td></tr>
+							<tr py:if="subgame.status != 'OPEN' and len(subgame.rounds) > 1"><td>nach Punkten</td><td colspan="3">${subgame.getHighScoreString()}</td></tr>
+						</table>
+					</li>
+				</py:for>
+				</py:if>
 				<li class="card gameinfo">
 					<table>
 						<tr><td>Spiel</td><td colspan="3">${game.name}</td></tr>
