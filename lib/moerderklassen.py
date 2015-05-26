@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import wordconstruct
-import os
+import os, sys
 import shutil
 import random
 import codecs
@@ -394,7 +394,7 @@ class Round:
 		# matrix equals true, do a reshuffle.
 		# the len comparison is a safeguard to avoid an infinite shuffling loop 
 		if len(roundstocheck)+5 < len(players):
-			while True in flatten([ [ round.canKill(k.player, self.getInitialVictim(k).player) for k in self.participants ] for round in roundstocheck ]):
+			while True in flatten([ [ canKill(k.player, self.getInitialVictim(k).player) for k in self.participants if k in round.participants ] for round in roundstocheck ]):
 				self.participants = self.shuffle(self.participants)
 
 

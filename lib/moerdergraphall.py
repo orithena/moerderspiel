@@ -80,6 +80,7 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 		name = participant.player.name
 		if len(participant.player.info) > 0:
 			name += "\\n" + participant.player.info
+		name = utils.dotescape(name)
 		node = G.add_node(participant.player.public_id)
 		node.label = name.encode('utf-8')
 		node.fontsize = nodefontsize

@@ -58,7 +58,7 @@ class Bunch(object):
 		self.__dict__.update(kwds)
 tmp = Bunch()
 
-def latexEsc(str):
+def latexEsc(s):
 	translations = dict((
 		(u'\\', u'\\textbackslash{}'),
 		(u'{', u'\\{'),
@@ -75,9 +75,20 @@ def latexEsc(str):
 	))
 	keys = translations.keys()
 	out = list()
-	for c in str:
+	for c in s:
 		if c in keys:
 			out.append(translations[c])
+		else:
+			out.append(c)
+	if len(out) < 1:
+		out.append('~')
+	return ''.join(out)
+	
+def dotescape(s):
+	out = list()
+	for c in s:
+		if c in ['"', "'", '$', '%', '/', '*']:
+			out.append("\\%s" % c)
 		else:
 			out.append(c)
 	if len(out) < 1:
