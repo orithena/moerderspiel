@@ -272,7 +272,7 @@ class Round:
 		#		killer = k
 		if self.canKill(killer, victim):
 			victim.kill(killer, date, reason)
-		elif killer is None:
+		elif killer_public_id is None:
 			victim.kill(None, date, reason)
 		else:
 			raise GameError(u"%s muss %s in Runde %s gar nicht umbringen!" % (killer.player.name, victim.player.name, self.name))
@@ -337,11 +337,14 @@ class Round:
 		"""
 		if killer is None:
 			return True
-		for participant in self.getParticipantsStartingWith(killer)[1:]:
-			if not participant.alive():
-				continue
-			else:
-				return (participant.alive() and (participant.id == victim.id or participant.player.id == victim.id))
+		p = self.getParticipantsStartingWith(killer)
+		if p is not None:
+			for participant in p[1:]:
+				if not participant.alive():
+					continue
+				else:
+					return (participant.alive() and (participant.id == victim.id or participant.player.id == victim.id))
+		return False
 	
 	def canRevert(self, victim):
 		"""Returns True if the victim's death can be reverted, i.e. the kill
