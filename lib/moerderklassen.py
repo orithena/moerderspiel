@@ -525,7 +525,10 @@ class Game:
 			for key,round in self.rounds.iteritems():
 				try:
 					round.kill(killer_public_id, victim_id, date, reason)
-					self.findPlayer(killer_public_id).sendemail()
+					if killer_public_id is not None:
+						self.findPlayer(killer_public_id).sendemail()
+					elif round.hasParticipant(victim_id):
+						round.getCurrentKiller(round.getParticipant(victim_id)).player.sendemail()							
 					round.getParticipant(victim_id).player.sendemail()
 					twitkill(round.getParticipant(victim_id))
 				except GameError as e:

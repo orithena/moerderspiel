@@ -14,6 +14,7 @@ Dein aktueller Auftrag:
 {% end %}
 
 {% for rnd in game.rounds.values() %}
+{% if rnd.getParticipant(player) is not None %}
 {% if len(game.rounds) > 1 %}
 ---  Auftrag in Kreis ${rnd.name}  ---
 {% end %}
@@ -26,6 +27,7 @@ Dein aktueller Auftrag:
     Kein Auftrag. Du bist tot.
 {% end %}
 
+{% end %}
 {% end %}
 
 Zeige den Auftrag nach einem Mord deinem Opfer zum Beweis und melde den 
