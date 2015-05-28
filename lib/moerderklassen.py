@@ -146,7 +146,7 @@ class Player:
 		return self.game.getDeathsCount(self)
 		
 	def score(self):
-		return len(self.game.rounds) - self.deathscount() + self.killcount()
+		return len([ r for r in self.game.rounds.values() if r.hasParticipant(self) ]) - self.deathscount() + self.killcount()
 	
 	def pdfgen(self):
 		return self.game.pdfgen(players = [self])
