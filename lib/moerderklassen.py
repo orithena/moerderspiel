@@ -203,6 +203,9 @@ class Participant:
 	def getCurrentVictim(self):
 		return self.round.getCurrentVictim(self)
 	
+	def getCurrentKiller(self):
+		return self.round.getCurrentKiller(self)
+	
 	def canRevert(self):
 		if self.killedby:
 			return self.round.canRevert(self)
@@ -675,8 +678,11 @@ class Game:
 			self.status = 'OVER'
 		else:
 			raise GameError(u'Das war nicht der Mastercode')
+			
+	def generate_all_gamemasterkill_substitutes(self):
+		self.pdfgen(participants = [ item.getCurrentKiller() for l in [ r.getDeadParticipants() for r in g.rounds.values() ] for item in l if item.killedby.killer is None ] )
 		
-	def pdfgen(self, players = None):
+	def pdfgen(self, players = None, participants = None):
 		fname = self.id
 		if( players is None ):
 			players = self.players
@@ -684,6 +690,8 @@ class Game:
 			return
 		elif( len(players) == 1 ):
 			fname = self.id + '_' + players[0].public_id
+		if participants is not None:
+			fname = self.id + '_gamemaster'
 		tmptexdir = "/tmp/moerder_" + fname
 		if not os.path.isdir(tmptexdir):
 			os.mkdir(tmptexdir)
@@ -696,9 +704,11 @@ class Game:
 		#	for participant in round.participants:
 		#		killer = participant.player
 		#		victim = round.getInitialVictim(participant).player
-		for killer in players:
+		for killer in sorted(players, key=lambda x: x.name):
+			assignments = 0
 			for roundid,round in self.rounds.iteritems():
-				if round.getParticipant(killer).alive():
+				participant = round.getParticipant(killer)
+				if participant is not None and participant.alive() and (participants is None or participant in participants):
 					victim = round.getCurrentVictim(killer)
 					if victim is not None:
 						roundname = round.name if len(self.rounds) > 1 else ''
@@ -717,10 +727,14 @@ class Game:
 								utils.latexEsc(roundname)
 							)
 						)
-					else:
+						assignments += 1
+					elif len(players) == 1:
 						listfile.write(u"%s hat kein Opfer mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
-				else:
-					listfile.write(u"%s lebt nicht mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
+				elif len(players) == 1:
+					#listfile.write(u"%s lebt nicht mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
+					pass
+			if assignments > 3:
+				listfile.write(u"\\pagebreak\n")
 		listfile.close()
 		cwd = os.getcwd()
 		os.chdir(tmptexdir)
@@ -729,7 +743,6 @@ class Game:
 		pdfpath = os.path.join(self.savegamedir, "%s.pdf" % fname)
 		shutil.copyfile(tmptexdir + "/moerder.pdf", pdfpath)
 		return pdfpath
-
 
 
 class MultiGame(Game):
@@ -804,64 +817,6 @@ class MultiGame(Game):
 		for game in self.games.values():
 			game.status = 'OVER'
 		
-	def pdfgen(self, players = None):
-		fname = self.id
-		if( players is None ):
-			players = self.players
-		if( len(players) == 0 ):
-			return
-		elif( len(players) == 1 ):
-			fname = self.id + '_' + players[0].public_id
-		tmptexdir = "/tmp/moerder_" + fname
-		if not os.path.isdir(tmptexdir):
-			os.mkdir(tmptexdir)
-		tmplfile = "moerder.tex"
-		if( len(self.rounds) % 2 == 0 and len(players) > 1 ):
-			tmplfile = "moerder2.tex"
-		shutil.copyfile(os.path.join(self.templatedir, tmplfile), os.path.join(tmptexdir, "moerder.tex"))
-		listfile = codecs.open(os.path.join(tmptexdir, "list.tex"), "w", "utf-8")
-		#for roundid,round in self.rounds.iteritems():
-		#	for participant in round.participants:
-		#		killer = participant.player
-		#		victim = round.getInitialVictim(participant).player
-		for killer in sorted(players, key=lambda x: x.name):
-			assignments = 0
-			for roundid,round in self.rounds.iteritems():
-				participant = round.getParticipant(killer)
-				if participant is not None and participant.alive():
-					victim = round.getCurrentVictim(killer)
-					if victim is not None:
-						roundname = round.name if len(self.rounds) > 1 else ''
-						#listfile.write("\Auftrag{Gamename}{Gameid}{Victim}{Killer}{Signaturecode}{Spielende}{URL}\n")
-						listfile.write(u"\\Auftrag{%s}{%s}{%s\\\\%s}{%s\\\\%s}{%s}{%s}{%s}{%s}\n" % 
-							(
-								utils.latexEsc(self.name),
-								utils.latexEsc(self.id), 
-								utils.latexEsc(victim.player.name), 
-								utils.latexEsc(victim.player.info), 
-								utils.latexEsc(killer.name), 
-								utils.latexEsc(killer.info), 
-								utils.latexEsc(victim.id), 
-								utils.latexEsc(self.enddate.strftime("%d.%m.%Y %H:%M")), 
-								utils.latexEsc(self.url), 
-								utils.latexEsc(roundname)
-							)
-						)
-						assignments += 1
-					elif len(players) == 1:
-						listfile.write(u"%s hat kein Opfer mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
-				elif len(players) == 1:
-					listfile.write(u"%s lebt nicht mehr in Kreis %s.\\\\~\\\\~" % (utils.latexEsc(killer.name), round.name))
-			if assignments > 3:
-				listfile.write(u"\\pagebreak\n")
-		listfile.close()
-		cwd = os.getcwd()
-		os.chdir(tmptexdir)
-		os.system("xelatex moerder.tex")
-		os.chdir(cwd)
-		pdfpath = os.path.join(self.savegamedir, "%s.pdf" % fname)
-		shutil.copyfile(tmptexdir + "/moerder.pdf", pdfpath)
-		return pdfpath
 
 
 
