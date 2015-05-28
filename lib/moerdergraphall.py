@@ -65,6 +65,19 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 	hnode = inode = G.add_node('invisible')
 	inode.style = 'invisible'
 	inode.pos = (0.0, 0.0)
+	if len(participants) > 120:
+		sorrynode = G.add_node('Sorry, zu viele Nodes in diesem Graph...')
+		# do the layout math and save to file
+		if graph.__dict__.has_key('_yapgvb_py'):
+			# if yapgvb works in python-only mode
+			rc = MyRenderingContext()
+			G.layout(graph.engines.dot, rendering_context=rc)
+			G.render(filename, rendering_context=rc)
+		else:
+			# if yapgvb has libboost support compiled in
+			G.layout(graph.engines.dot)
+			G.render(filename)
+		return
 	massmurderers = game.getMassMurderer()
 	massmurdererlist = [ player.public_id for player in massmurderers['killers'] ] if len(massmurderers) > 0 else []
 

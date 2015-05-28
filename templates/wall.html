@@ -202,7 +202,6 @@
 					<table>
 						<tr><td>Spiel</td><td>${game.name}</td></tr>
 						<tr py:if="game.desc"><td colspan="2"><strong>${game.desc}</strong></td></tr>
-						<tr><td>Kreise</td><td>${len(game.rounds.keys())}</td></tr>
 						<tr><td>Spieler</td><td>${len(game.players)}</td></tr>
 					</table>
 				<h2>Mitspielen?<br/><a href="${game.url}">${game.url.replace('http://', '')}</a><br/>...oder QR-Code scannen:</h2>
