@@ -4,7 +4,7 @@
 import sys
 import os.path
 import yapgvb as graph
-from yapgvb import RenderingContext
+from yapgvb import RenderingContext, CLIRenderError
 import textwrap
 import math
 import colorsys
@@ -31,7 +31,7 @@ class MyRenderingContext(RenderingContext):
 		cmd = "%s -Gsize=100,50 -T%s -o%s %s" % (self._engine_executable, output_type, filename, temp)
 		ier = os.system(cmd)
 		if ier:
-			check_graphviz_working()
+			#check_graphviz_working()
 			raise CLIRenderError("Error code %s rendering %s" % (ier, temp))
 		#os.remove(temp)
 
@@ -165,7 +165,7 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 				# set edge label to kill description
 				label = utils.dateformat(participant.killedby.date) + ":\\n"
 				maxlinelen = max(24, math.trunc(math.ceil(math.sqrt(6 * len(participant.killedby.reason)))))
-				label += "\\n".join(textwrap.wrap(participant.killedby.reason, maxlinelen)).replace('"', "'")
+				label += "\\n".join(textwrap.wrap(''.join([ c for c in participant.killedby.reason if ord(c) < 2048]), maxlinelen)).replace('"', "'")
 				edge.label = label.encode('utf-8')
 				edge.fontsize = edgefontsize
 				edge.fontname = 'arial'

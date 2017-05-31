@@ -129,8 +129,9 @@ def sendemail(templatedir, filename, subject, sender, receiver, game, player, pd
 		s.sendmail(sender, [receiver], outer.as_string())
 		s.quit()
 	except Exception as e:
-		print "ERROR: Cannot send mail to receiver %s" % receiver
-		print e
+		#print "ERROR: Cannot send mail to receiver %s" % receiver
+		#print e
+		pass
 
 def colorgen(starthue, format='#RGBA'):
 	PHI = 1.0 / ((1.0 + math.sqrt(5)) / 2.0)
