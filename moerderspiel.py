@@ -250,7 +250,7 @@ def wall(id, msg = "", ajax=0):
 	return stream.render('xhtml')
 
 @route('/error')
-def error(msg = "", returnurl = "index"):
+def gameerror(msg = "", returnurl = "index", gameid=None, mastercode=None):
 	#game = _loadgame(id, False)
 	stream = _mainstream('error.html', errormsg = msg, returnurl = returnurl)
 	return stream.render('xhtml')
@@ -304,9 +304,9 @@ def gamegraphall(id, roundid='', mastercode=''):
 			time.sleep(0.01)
 			tries += 1
 	adminview = (mastercode == game.mastercode or game.status == 'OVER')
-	fname = os.path.join(G.savegamedir, '%s_%s%s%s.svg' % (game.id, roundid, 'full', '-admin' if adminview else ''))
+	fname = os.path.join(G.savegamedir, '%s_%s%s%s%s.svg' % (game.id, roundid, 'full', '-admin' if adminview else '', '-over' if game.status == 'OVER' else ''))
 	tries = 0
-	while tries < 10:
+	while tries < 10 and ( (game.status != 'OVER') or (game.status == 'OVER' and not os.path.isfile(fname)) ) :
 		try:
 			if len(roundid) < 1:
 				moerdergraphall(game, fname, adminview)
@@ -374,7 +374,7 @@ def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None):
 		try:
 			gameid = _savegame(game, True)
 		except Exception as e:
-			return error(req, e.__str__())
+			return gameerror(req, e.__str__())
 	stream = _mainstream('creategame.html', gameid = game.id, url = _url(req, 'view', id=game.id), mastercode = game.mastercode)
 	return stream.render('xhtml')
 
@@ -384,7 +384,7 @@ def startgame(gameid, mastercode):
 	try:
 		game.start(mastercode)
 	except GameError as e:
-		return error(req, e.__str__(), _url(req, "view", gameid))
+		return gameerror(req, _url(req, "view", id=gameid, errormsg=e.__str__()))
 	gameid = _savegame(game)
 	try:
 		_pdfgen(game)
@@ -400,7 +400,7 @@ def endgame(gameid, mastercode):
 	try:
 		game.stop(mastercode)
 	except GameError as e:
-		return error(req, e.__str__(), _url(req, "view", gameid))
+		return gameerror(req, e.__str__(), _url(req, "view", id=gameid))
 	gameid = _savegame(game)
 	stream = _mainstream('view.html', game = game, errormsg = u'Spiel beendet')
 	return stream.render('xhtml')
@@ -485,14 +485,14 @@ def pdfdownload(id, mastercode, publicid):
 	filename = os.path.join(G.savegamedir, "%s_%s.pdf" % (game.id, publicid))
 	if mastercode == game.mastercode:
 		if not os.path.isfile(filename):
-			return error(req, u"Da gibt es kein passendes PDF")
+			return gameerror(req, u"Da gibt es kein passendes PDF")
 		else:
 			pdf = file(filename, 'r')
 			ret = pdf.read()
 			pdf.close()
 			return _response(ret, 'application/pdf')
 	else:
-		return error(req, u"Das war nicht der richtige Mastercode")
+		return gameerror(req, u"Das war nicht der richtige Mastercode")
 
 @route('/pdfget', '/pdfget/<id>/<mastercode>/<int:count>')
 def pdfget(id, mastercode, count=0):
@@ -506,7 +506,7 @@ def pdfget(id, mastercode, count=0):
 				try:
 					_pdfblankgen(req, int(count), game)
 				except:
-					return error(req, u"Das war keine Zahl...")
+					return gameerror(req, u"Das war keine Zahl...")
 		pdf = file(filename, 'r')
 		ret = pdf.read()
 		pdf.close()
@@ -514,7 +514,7 @@ def pdfget(id, mastercode, count=0):
 			os.unlink(filename)
 		return _response(ret, 'application/pdf')
 	else:
-		return error(req, u"Das war nicht der richtige Mastercode!")
+		return gameerror(req, u"Das war nicht der richtige Mastercode!")
 
 @route('/htmlget', '/htmlget/<id>/<mastercode>')
 def htmlget(id, mastercode):
@@ -524,7 +524,7 @@ def htmlget(id, mastercode):
 		stream = _stream('auftrag.html', game = game)
 		return stream.render('xhtml')
 	else:
-		return error(req, u"Das war nicht der richtige Mastercode!")
+		return gameerror(req, u"Das war nicht der richtige Mastercode!")
 
 @route('/admin')
 def admin(id=None, mastercode=None, action=None, round=None, killer=None, victim=None, datum=None, reason=None, ajax=0, spielername=None, zusatzinfo=None, email=''):
