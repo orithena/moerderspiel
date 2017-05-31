@@ -666,6 +666,8 @@ class Game:
 		"""
 #		if self.status == 'OPEN' and mastercode == self.mastercode:
 		if mastercode == self.mastercode:
+			if len(self.players) < 3:
+				raise GameError(u'Das Spiel startet nicht mit weniger als 3 Spielern.')
 			for ro in self.rounds:
 				self.rounds[ro].start( self.players, self.rounds )
 			self.status = 'RUNNING'
@@ -803,6 +805,8 @@ class MultiGame(Game):
 		"""Starts the game. Needs the Mastercode.
 		"""
 		if mastercode == self.mastercode:
+			if len(self.players) < 3:
+				raise GameError(u'Das Spiel startet nicht mit weniger als 3 Spielern.')
 			for roundid,round in self.rounds.iteritems():
 				round.start( [ p for p in self.players if roundid.startswith(p.subgame) or roundid in self.myrounds ], self.rounds )
 			self.status = 'RUNNING'
