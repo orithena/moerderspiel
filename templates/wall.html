@@ -22,7 +22,7 @@
 		<ul class="cardlist">
 		    	<py:for each="game in games">
 			<py:if test="game.status != 'OPEN'">
-				<py:if test="game.games">
+				<py:if test="hasattr(game, 'games')">
 				<py:for each="subgame in game.games.values()">
 					<li class="card gameinfo">
 						<table>

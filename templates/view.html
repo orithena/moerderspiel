@@ -34,7 +34,7 @@
 			<td>Spieler</td><td>${len(game.players)}</td>
 			<td>Morde</td><td>${len(list(game.getKilled()))}</td>
 		</tr>
-		<tr py:if="len(game.rounds) > 1 and game.status == 'OPEN' and not game.games">
+		<tr py:if="len(game.rounds) > 1 and game.status == 'OPEN' and not hasattr(game, 'games')">
 			<td>Kreise</td><td colspan="3">${len(game.rounds)} Leben, ${len(game.rounds)} Aufträge, ${len(game.rounds)} Mörder...</td>
 		</tr>
 		<tr py:if="game.status != 'OPEN'">
@@ -157,7 +157,7 @@
 						</p>
 					</td>
 				</tr>
-				<tr py:if="game.games">
+				<tr py:if="hasattr(game, 'games')">
 					<th>Konferenz</th>
 					<td>
 						<py:for each="i, g in enumerate(game.games.values())"> 
@@ -243,7 +243,7 @@
 			<h3>Spielgraphen</h3>
 			<py:if test="len(game.rounds) > 1">
 				<ul class="tabs">
-					<li py:if="False"><a href="${ utils.url_for('gamegraphall', id=game.id )}" onclick="return imgoverlay('#graphimage', '#gamegraph', this);">Alle Kreise</a></li>
+					<li py:if="True"><a href="${ utils.url_for('gamegraphall', id=game.id )}" onclick="return imgoverlay('#graphimage', '#gamegraph', this);">Alle Kreise</a></li>
 					<py:for each="round in sorted(game.rounds.values(), key=lambda k: k.name)">
 						<li><a href="${ utils.url_for('gamegraphall', id=game.id, roundid=round.name) }" onclick="return imgoverlay('#graphimage', '#gamegraph', this);">Kreis ${round.name}</a></li>
 					</py:for>
@@ -340,6 +340,23 @@
 
 			</ul>
 		</py:if>
+		<py:for each="round in sorted(game.rounds)" py:if="game.status == 'OVER'">
+			<h3 py:if="len(game.rounds) > 1">Kreis: ${game.rounds[round].name}</h3>
+			<table>
+				<tr><th>Name</th><th>Ermordet von</th><th>Wann?</th><th>Tathergang</th><th></th></tr>
+				<py:for each="p in game.rounds[round].participants">
+					<tr>
+						<td>${p.player}</td>
+						<td><py:if test="p.killedby and p.killedby.killer">${p.killedby.killer.player}</py:if><py:if test="p.killedby and not p.killedby.killer">Game Master</py:if></td>
+						<td><py:if test="p.killedby">${utils.dateformat(p.killedby.date)}</py:if></td>
+						<td><py:if test="p.killedby">${p.killedby.reason}</py:if></td>
+					</tr>
+				</py:for>
+			</table>
+			<!-- div style="width:96%; height:300px; overflow:auto; border:1px solid black; text-align:center;">
+				<img src="${ utils.url_for('gamegraphall', id=game.id, roundid=round, mastercode=game.mastercode) }" />
+			</div -->
+		</py:for>
 	</div>
 	</div>
 </div>
