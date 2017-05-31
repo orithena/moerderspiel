@@ -635,9 +635,9 @@ class Game:
 		return ret
 
 	def getHighScoreList(self):
-		playerlist = sorted(self.players, key=lambda q: q.score(), reverse=True)
-		highscore = playerlist[0].score()
-		return sorted([ p for p in playerlist if p.score() == highscore ], key=lambda q: q.name+q.info)
+		playerlist = sorted(flatten([p.player for p in [r for r in self.rounds.values()].pop().participants]), key=lambda q: self.getScore(q), reverse=True)
+		highscore = self.getScore(playerlist[0])
+		return sorted([ p for p in playerlist if self.getScore(p) == highscore ], key=lambda q: q.name+q.info)
 			
 	def getHighScoreString(self, maxlen=45):
 		hs = self.getHighScoreList()
@@ -649,9 +649,11 @@ class Game:
 			ret = u'%s Spieler (%s Punkte)' % (len(hs), hs[0].score())
 		return ret
 		
-	
+	def getScore(self, player):
+		return len([ r for r in self.rounds.values() if r.hasParticipant(player) ]) - self.getDeathsCount(player) + self.getKillsCount(player)
+		
 	def getKilled(self):
-		return sorted(flatten([r.getDeadParticipants() for r in self.rounds.values()]), key=lambda r: str(r.killedby.date), reverse=True)
+		return sorted(flatten([[ p for p in r.getDeadParticipants() if p.killedby.killer is not None] for r in self.rounds.values() ]), key=lambda r: str(r.killedby.date), reverse=True)
 	
 	def getKillsCount(self, player_or_participant_or_id):
 		id = self.findPlayer(player_or_participant_or_id)
@@ -801,6 +803,44 @@ class MultiGame(Game):
 		else:
 			raise GameError(u'Das war nicht der Mastercode')
 	
+	def getMassMurderer(self):
+		"""Returns a dict consisting of a high score and a list of Players
+		that met this high score:
+			{ 'kills' : int, 'killers' : list(Player) }
+		This will at times result in returning all players, none of whom have 
+		scored any kill.
+		"""
+		##import ipdb; ipdb.set_trace()
+		allparticipants = flatten([ r.participants for r in self.rounds.values() if r.name in self.myrounds ])
+		kills = [ p.killedby for p in allparticipants if p.killedby is not None ]
+		killlist = [ k.killer for k in kills if k.killer is not None]
+		killerlist = [ k.player for k in killlist ]
+		c = {}
+		for i in killerlist:
+			c[i] = c.get(i,0) + 1
+		sortedlist = sorted([ (freq,word) for word, freq in c.items() ], reverse=True)
+		massmurdererlist = [ p for p in sortedlist if p[0] == sortedlist[0][0] ]
+		if len(massmurdererlist) > 0:
+			return dict(kills=sortedlist[0][0], killers=[ i[1] for i in massmurdererlist ])
+		else:
+			return []
+
+	def getScore(self, player):
+		return len([ r for r in self.rounds.values() if r.hasParticipant(player) and r.name in self.myrounds ]) - self.getDeathsCount(player) + self.getKillsCount(player)
+
+	def getHighScoreList(self):
+		playerlist = sorted(flatten([p.player for p in [r for r in self.rounds.values() if r.name in self.myrounds].pop().participants]), key=lambda q: self.getScore(q), reverse=True)
+		highscore = self.getScore(playerlist[0])
+		return sorted([ p for p in playerlist if self.getScore(p) == highscore ], key=lambda q: q.name+q.info)
+			
+	def getKillsCount(self, player_or_participant_or_id):
+		id = self.findPlayer(player_or_participant_or_id)
+		return len( [ p for p in flatten([ r.getDeadParticipants() for r in self.rounds.values() if r.name in self.myrounds ]) if p.killedby.killer and p.killedby.killer.player.id == id.id ] )
+	
+	def getDeathsCount(self, player_or_participant_or_id):
+		id = self.findPlayer(player_or_participant_or_id).id
+		return len( [ p for p in flatten([ r.participants for r in self.rounds.values() if r.name in self.myrounds ]) if p.killedby and p.player.id == id ])
+
 	def start(self, mastercode):
 		"""Starts the game. Needs the Mastercode.
 		"""
@@ -824,6 +864,3 @@ class MultiGame(Game):
 		for game in self.games.values():
 			game.status = 'OVER'
 		
-
-
-
