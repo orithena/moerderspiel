@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os, glob
 import sys
 workdir = '.'
 modpath = os.path.join(workdir,"lib")
 sys.path.insert(0,modpath)
 import pickle
-import os
 import codecs
 import os.path
 import shutil
@@ -60,3 +59,10 @@ def _loadgame(gameid, lock=True):
 		del G.lockfile
 	return ret
 
+def ldgame(gameid):
+        G.fname = G.savegamedir + '/' + gameid + '.pkl'
+	input = open(G.savegamedir + '/' + gameid + '.pkl', 'rd')
+	ret = pickle.load(input)
+	input.close()
+	return ret
+                                        
