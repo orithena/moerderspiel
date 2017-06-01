@@ -129,7 +129,8 @@ class Player:
 		
 	def sendemail(self, templatefilename='auftraege.txt', subject='Auftraege im Spiel "%s"', attachauftrag=None):
 		if attachauftrag is None:
-			attachauftrag = (self.game.status == 'RUNNING')
+			# TODO: Check whether 'OPEN' is necessary here. Including it for now in case the game is not 'RUNNING' when the first notifications are sent.
+			attachauftrag = (self.game.status in ('RUNNING', 'OPEN'))
 		pdfpath = None
 		if attachauftrag:
 			pdfpath = self.game.pdfgen(players = [self])
