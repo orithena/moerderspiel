@@ -103,7 +103,7 @@ def texttemplate(templatedir, filename):
 def mailstream(templatedir, filename, **args):
 	return texttemplate(templatedir, filename).generate(**args)
 
-def sendemail(templatedir, filename, subject, sender, receiver, game, player, pdfpath):
+def sendemail(templatedir, templatefile, subject, sender, receiver, game, player, pdfpath=None):
 	try:
 		outer = MIMEMultipart()
 		outer['Subject'] = subject
@@ -112,19 +112,22 @@ def sendemail(templatedir, filename, subject, sender, receiver, game, player, pd
 		outer['Date'] = email.utils.formatdate()
 		outer['Message-Id'] = email.utils.make_msgid('hades')
 		outer.preamble = ''
-		ctype, encoding = mimetypes.guess_type(pdfpath)
-		if ctype is None or encoding is not None:
-			ctype = 'application/octet-stream'
-		maintype, subtype = ctype.split('/', 1)
-		fp = open(pdfpath, 'rb')
-		text = MIMEText( str(mailstream(templatedir, filename, game=game, player=player)), 'plain', 'utf-8')
+		text = MIMEText( str(mailstream(templatedir, templatefile, game=game, player=player)), 'plain', 'utf-8')
 		outer.attach(text)
-		attach = MIMEBase(maintype, subtype)
-		attach.set_payload(fp.read())
-		fp.close()
-		encoders.encode_base64(attach)
-		attach.add_header('Content-Disposition', 'attachment', filename='auftrag.pdf')
-		outer.attach(attach)
+		
+		if pdfpath is not None:
+			ctype, encoding = mimetypes.guess_type(pdfpath)
+			if ctype is None or encoding is not None:
+				ctype = 'application/octet-stream'
+			maintype, subtype = ctype.split('/', 1)
+			fp = open(pdfpath, 'rb')
+			attach = MIMEBase(maintype, subtype)
+			attach.set_payload(fp.read())
+			fp.close()
+			encoders.encode_base64(attach)
+			attach.add_header('Content-Disposition', 'attachment', filename='auftrag.pdf')
+			outer.attach(attach)
+		
 		s = smtplib.SMTP('localhost')
 		s.sendmail(sender, [receiver], outer.as_string())
 		s.quit()

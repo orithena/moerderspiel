@@ -127,18 +127,23 @@ class Player:
 			ret = self.name
 		return utils.htmlescape(ret)
 		
-	def sendemail(self):
-		pdfpath = self.game.pdfgen(players = [self])
+	def sendemail(self, templatefilename='auftraege.txt', subject='Auftraege im Spiel "%s"', attachauftrag=None):
+		if attachauftrag is None:
+			attachauftrag = (self.game.status == 'RUNNING')
+		pdfpath = None
+		if attachauftrag:
+			pdfpath = self.game.pdfgen(players = [self])
 		utils.sendemail(
 			self.game.templatedir,
-			'auftraege.txt', 
-			'Auftraege im Spiel "%s"' % self.game.id,
+			templatefilename, 
+			subject % self.game.id,
 			'hades@moerderspiel.org',
 			self.email,
 			self.game,
 			self,
 			pdfpath
 		)
+		
 	def killcount(self):
 		return self.game.getKillsCount(self)
 	
@@ -465,13 +470,14 @@ class Game:
 		Raises a GameError if the registration phase is over or the name length
 		is 1 or lower.
 		"""
-		if self.status == 'OPEN':
-			if len(name) > 0:
-				self.players.append(Player(name, info, self, email))
-			else:
-				raise GameError(u'Der Spieler sollte auch einen Namen haben')
-		else:
+		if self.status != 'OPEN':
 			raise GameError(u'Spiel ist nicht (mehr) in der Registrierungsphase')
+
+		if len(name) == 0:
+			raise GameError(u'Der Spieler sollte auch einen Namen haben')
+			
+
+		self.players.append(Player(name, info, self, email))
 	
 	def removePlayer(self, player_id):
 		"""Removes a player using the player's ID/Code.
