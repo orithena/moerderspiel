@@ -734,6 +734,10 @@ div.card {
 	z-index:999;
 	position:relative;
 }
+.card.rules p {
+	margin: 0.2em 1em 0.2em;
+	font-size:105%;
+}
 .card p.small {
 	margin: 0.5em 1em;
 	font-size:90%;
