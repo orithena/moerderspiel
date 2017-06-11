@@ -466,6 +466,7 @@ class Game:
 		self.gamemastermail = gamemastermail
 		for a in range(rounds):
 			self.rounds[str(a+1)] = Round(str(a+1))
+		self.sendgamemastermail()
 	def __str__(self):
 		return u'Spiel: %s\nid: %s\nstatus: %s\nmastercode: %s\nenddate: %s\nplayers: %s\nrounds: %s' % (self.name, self.id, self.status, self.mastercode, self.enddate, self.players, self.rounds)
 	def __setstate__(self, state):

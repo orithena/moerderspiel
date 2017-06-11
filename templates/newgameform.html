@@ -3,8 +3,15 @@
 	xmlns:py="http://genshi.edgewall.org/"
 	xmlns:xi="http://www.w3.org/2001/XInclude"
 	lang="en">
-	<input type="hidden" name="action" value="create"/> 
+	<input type="hidden" name="action" value="create"/>
   	<table>
+  		<tr style="display:none;">
+			<th>Nicht ausfüllen!</th>
+			<td style="width:20em;">
+				<input type="text" name="name" maxlength="30" size="30"/>
+				<p class="hint">Dies ist das Spammerfeld. Wird es ausgefüllt, wird Spam angenommen.</p>
+			</td>
+		</tr>
   		<tr>
 			<th>Name des Spiels</th>
 			<td style="width:20em;">
@@ -19,6 +26,15 @@
 				<p class="hint">
 				Eine maschinenlesbare ID für das Spiel. Darf nur Ziffern und die Kleinbuchstaben "a" bis "z" (ohne Umlaute!) enthalten.
 				Muss eindeutig sein, soll leicht zu merken sein. Wird als Twitter-Hashtag verwendet. Wird automatisch generiert, wenn nicht angegeben.
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<th>Mailadresse des Game Masters (d.h. DU)</th>
+			<td style="width:20em;">
+				<input type="text" name="gamemastermail" maxlength="100" size="30"/>
+				<p class="hint">
+				Gib eine Mailadresse an, um den Game Master Code auch per Mail zugeschickt zu bekommen.
 				</p>
 			</td>
 		</tr>

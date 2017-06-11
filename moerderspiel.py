@@ -250,7 +250,7 @@ def wall(id, msg = "", ajax=0):
 	return stream.render('xhtml')
 
 @route('/error')
-def gameerror(msg = "", returnurl = "index", gameid=None, mastercode=None):
+def gameerror(msg = "", returnurl = "index", gameid=None, mastercode=None, **kwargs):
 	#game = _loadgame(id, False)
 	stream = _mainstream('error.html', errormsg = msg, returnurl = returnurl)
 	return stream.render('xhtml')
@@ -358,7 +358,9 @@ def addplayer(gameid, spielername, zusatzinfo, email='', email2='', subgame='', 
 		return redirect(_url(req, 'view', gameid, err))
 
 @route('/creategame')
-def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None):
+def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None, name="", gamemastermail=None):
+	if name != "":
+		return gameerror(msg=u"I think you're a spammer. Oder dein Autofill hat ein verstecktes Feld zu viel ausgefüllt.")
 	game = moerderklassen.Game(
 		G.u8(rundenname), 
 		int(kreiszahl), 
@@ -368,13 +370,14 @@ def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None):
 		G.u8(desc)
 	)
 	game.url = _url(req, 'view', game.id)
+	game.gamemastermail = gamemastermail
 	G.fname = os.path.join(G.savegamedir, '%s.pkl' % game.id)
 	if not os.path.exists(G.fname):
 		G.lockfile = filelock.FileLock(G.fname + '.lock')
 		try:
 			gameid = _savegame(game, True)
 		except Exception as e:
-			return gameerror(req, e.__str__())
+			return gameerror(msg=e.__str__())
 	stream = _mainstream('creategame.html', gameid = game.id, url = _url(req, 'view', id=game.id), mastercode = game.mastercode)
 	return stream.render('xhtml')
 
