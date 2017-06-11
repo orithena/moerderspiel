@@ -325,7 +325,10 @@ class Round:
 		"""Returns the victim of the given Participant or Player as a
 		Participant object.
 		"""
-		return self.getParticipantsStartingWith(participant_or_player)[1]
+		preparedlist = self.getParticipantsStartingWith(participant_or_player)
+		if preparedlist is None:
+			return None
+		return preparedlist[1]
 	
 	def getCurrentVictim(self, participant_or_player):
 		for p in self.getParticipantsStartingWith(participant_or_player)[1:]:
@@ -340,7 +343,10 @@ class Round:
 		return None
 	
 	def getInitialKiller(self, participant_or_player):
-		return self.getParticipantsStartingWith(participant_or_player)[-1]		
+		preparedlist = self.getParticipantsStartingWith(participant_or_player)
+		if preparedlist is None:
+			return None
+		return preparedlist[-1]
 	
 	def canKill(self, killer, victim):
 		"""Returns true if killer.getInitialVictim() == victim or the killer is None
@@ -354,7 +360,8 @@ class Round:
 				if not participant.alive():
 					continue
 				else:
-					return (participant.alive() and (participant.id == victim.id or participant.player.id == victim.id))
+					ret = (participant.alive() and (participant.id == victim.id or participant.player.id == victim.id))
+					return ret
 		return False
 	
 	def canRevert(self, victim):
@@ -387,6 +394,7 @@ class Round:
 					ret.insert(a, lst.pop())
 		participants = ret
 		return participants
+		
 	
 	def start(self, players, rounds):
 		"""Starts the Round. Called by Game.start(). Calling it from elsewhere 
@@ -402,14 +410,26 @@ class Round:
 		# shuffle own list
 		self.participants = self.shuffle(self.participants)
 		# check if any players would have to kill the same other player in multiple rounds.
-		# the double list comprehension returns a matrix of booleans indicating whether
-		# any player from this round has to kill the same player in all other rounds. 
-		# this matrix is flattened and as long as any of the booleans in the 
-		# matrix equals true, do a reshuffle.
 		# the len comparison is a safeguard to avoid an infinite shuffling loop 
 		if len(roundstocheck)+5 < len(players):
-			while True in flatten([ [ canKill(k.player, self.getInitialVictim(k).player) for k in self.participants if k in round.participants ] for round in roundstocheck ]):
-				self.participants = self.shuffle(self.participants)
+			iterations = 1
+			while iterations < (len(players)):
+				reshuffles = []
+				for k in self.participants:
+					for round in roundstocheck:
+						if round.getInitialVictim(k.player) is not None and self.getInitialVictim(k.player).player.id == round.getInitialVictim(k.player).player.id:
+							reshuffles.append(k)
+				for k in self.participants:
+					if self.getInitialVictim(k).player.info == k.player.info:
+						reshuffles.append(k)
+				if len(reshuffles) == 0:
+					break
+				for k in reshuffles:
+					self.participants.remove(k)
+				for k in reshuffles:
+					self.participants.insert( random.randint(0, len(self.participants)-1), k )
+				iterations += 1
+
 
 
 class Config:

@@ -65,4 +65,9 @@ def ldgame(gameid):
 	ret = pickle.load(input)
 	input.close()
 	return ret
-                                        
+
+def resetrounds(game):
+        for ro in game.rounds:
+                for participant in game.rounds[ro].participants:
+                        participant.killedby = None
+                game.rounds[ro].participants = []                        
