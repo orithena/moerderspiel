@@ -103,7 +103,7 @@ def texttemplate(templatedir, filename):
 def mailstream(templatedir, filename, **args):
 	return texttemplate(templatedir, filename).generate(**args)
 
-def sendemail(templatedir, templatefile, subject, sender, receiver, game, player, pdfpath=None):
+def sendemail(templatedir, templatefile, subject, sender, receiver, game, player=None, pdfpath=None):
 	try:
 		outer = MIMEMultipart()
 		outer['Subject'] = subject

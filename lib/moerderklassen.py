@@ -118,7 +118,7 @@ class Player:
 			return "%s (%s)" % (self.name, self.info)
 		else:
 			return self.name
-
+			
 	def html(self):
 		ret = ""
 		if self.info and len(self.info) > 0:
@@ -128,6 +128,8 @@ class Player:
 		return utils.htmlescape(ret)
 		
 	def sendemail(self, templatefilename='auftraege.txt', subject='Auftraege im Spiel "%s"', attachauftrag=None):
+		if self.email is None or len(self.email) < 5:
+			return
 		if attachauftrag is None:
 			# TODO: Check whether 'OPEN' is necessary here. Including it for now in case the game is not 'RUNNING' when the first notifications are sent.
 			attachauftrag = (self.game.status in ('RUNNING', 'OPEN'))
@@ -412,8 +414,17 @@ class Round:
 
 class Config:
 	def __init__(self):
-		self.timezone = "Europe/Berlin"
-		self.twitter = True
+		self.__setstate__({})
+	def __setstate__(self, state):
+		"""Upgrade old pickles/init defaults."""
+		for (key, default) in [
+				('timezone', "Europe/Berlin"),
+				('twitter', True),
+				('adminisplaying', False)
+			]:
+			if not state.has_key(key):
+				state[key] = default
+		self.__dict__.update(state)
 
 class Game:
 	"""Main Class and API entrance for a Moerderspiel Game. Each game on a
@@ -432,7 +443,7 @@ class Game:
 		* ``rounds``: dictionary containing the rounds (key = round name)
 		* ``players``: list of Players in this Game.
 	"""
-	def __init__(self, name, rounds, enddate, url, rundenid='', desc=None):
+	def __init__(self, name, rounds, enddate, url, rundenid='', desc=None, gamemastermail=None):
 		self.status = 'OPEN'
 		self.name = name
 		self.id = ''
@@ -451,16 +462,21 @@ class Game:
 		self.players = []
 		self.url = url
 		self.desc = desc
+		self.config = Config()
+		self.gamemastermail = gamemastermail
 		for a in range(rounds):
 			self.rounds[str(a+1)] = Round(str(a+1))
 	def __str__(self):
 		return u'Spiel: %s\nid: %s\nstatus: %s\nmastercode: %s\nenddate: %s\nplayers: %s\nrounds: %s' % (self.name, self.id, self.status, self.mastercode, self.enddate, self.players, self.rounds)
 	def __setstate__(self, state):
 		"""Upgrade old pickles."""
-		if not state.has_key('config'):
-			state['config'] = Config()
-		if not state.has_key('desc'):
-			state['desc'] = None
+		for (key, default) in [
+				('config', Config()),
+				('desc', None),
+				('gamemastermail', None)
+			]:
+			if not state.has_key(key):
+				state[key] = default
 		self.__dict__.update(state)
 	
 	def addPlayer(self, name, info, email=''):
@@ -477,8 +493,29 @@ class Game:
 		if len(name) == 0:
 			raise GameError(u'Der Spieler sollte auch einen Namen haben')
 			
-
+		if len(email) > 0 and email in [ p.email for p in self.players ]:
+			raise GameError(u'Sorry, diese Emailadresse ist schon drin...')
+			
+		if len(email) < 5 and game.config.adminisplaying:
+			raise GameError(u'Sorry, da der Game Master mitspielt, können wir nicht auf Email verzichten.')
+			
+		if (name, info) in [ (p.name, p.info) for p in self.players ]:
+			raise GameError(u'Dieser Name in Verbindung mit der Zusatzinfo ist schon drin... also, wenn da wirklich zwei mit exakt dem selben Namen sind, bitte beim Spielleiter melden!')
+			
 		self.players.append(Player(name, info, self, email))
+	
+	def sendgamemastermail(self, templatefilename="welcomegamemaster.txt", subject=u"Mörderspiel %s wurde eröffnet!"):
+		if self.gamemastermail is None or len(self.gamemastermail) < 5:
+			return
+		utils.sendemail(
+			self.game.templatedir,
+			templatefilename, 
+			subject % self.game.id,
+			'hades@moerderspiel.org',
+			self.gamemastermail,
+			self
+		)
+		
 	
 	def removePlayer(self, player_id):
 		"""Removes a player using the player's ID/Code.
@@ -537,7 +574,8 @@ class Game:
 					elif round.hasParticipant(victim_id):
 						round.getCurrentKiller(round.getParticipant(victim_id)).player.sendemail()							
 					round.getParticipant(victim_id).player.sendemail()
-					twitkill(round.getParticipant(victim_id))
+					if self.config.twitter:
+						twitkill(round.getParticipant(victim_id))
 				except GameError as e:
 					errors += 1
 			if errors == len(self.rounds):
@@ -760,8 +798,8 @@ class Game:
 
 
 class MultiGame(Game):
-	def __init__(self, name, rounds, enddate, url, rundenid='', desc=None):
-		Game.__init__(self, name, rounds, enddate, url, rundenid, desc)
+	def __init__(self, name, rounds, enddate, url, rundenid='', desc=None, gamemastermail=None):
+		Game.__init__(self, name, rounds, enddate, url, rundenid, desc, gamemastermail)
 		self.games = {}
 		self.roundcount = rounds
 		r = {}
@@ -801,7 +839,7 @@ class MultiGame(Game):
 					gameid = wordconstruct.WordGenerator().generate(7)
 			else:
 				gameid = wordconstruct.WordGenerator().generate(7)
-			subgame = Game(name, self.roundcount, self.enddate, self.url, gameid, desc)
+			subgame = Game(name, self.roundcount, self.enddate, self.url, gameid, desc, None)
 			for k,v in subgame.rounds.iteritems():
 				v.name = "%s-%s" % (subgame.id, k)
 				self.rounds[v.name] = v

@@ -1,0 +1,12 @@
+Hallo ${player}
+
+Dies ist eine Nachricht vom Mörderbot.
+
+Es geht um das Mörderspiel "${game.name}". Du kannst dir den aktuellen Stand 
+des Spiels unter ${game.url} ansehen.
+Das Spiel ist in der Registrierungsphase und du wurdest soeben angemeldet.
+
+Viel Spaß und Erfolg!
+   Dein Mörderbot
+
+
