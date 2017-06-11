@@ -22,8 +22,12 @@
 </head>
 <body>
 	<h1>Das Mörderspiel</h1>
+        <py:if test="len(errormsg) != 0">
+                <div id="errormessage" class="box contentwidth center gray clear ontop">
+                        <p>${errormsg}</p>
+                </div>
+        </py:if>
 	<div id="bgcontainer">
-		<div class="error" id="errormessage">${errormsg}</div>
 		<div id="content">${content}</div>
 		<div id="background"></div>
 	</div>

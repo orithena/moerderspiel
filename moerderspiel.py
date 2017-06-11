@@ -13,6 +13,7 @@ from genshi.template import TemplateLoader
 from genshi import Stream
 from genshi.input import XML
 from genshi.core import QName
+from werkzeug.urls import url_quote_plus
 import time
 import pickle
 import codecs
@@ -626,7 +627,7 @@ def killplayer(gameid, victimid, killerpublicid, datum, reason, ajax=0):
 		return stream.render('xhtml')
 
 def _url(req, action, id=None, errormsg=""):
-	if id is not None and action == 'view':
+	if id is not None and action == 'view' and len(errormsg) < 2:
 		# I can do this because .htaccess has this line: 
 		# RewriteRule ^([a-z0-9]+)$ /moerderspiel/view?id=$1 [R=302]
 		return "%s%s" % (req.host_url, id)
@@ -635,9 +636,9 @@ def _url(req, action, id=None, errormsg=""):
 		if id != None:
 			url += '?id=' + id
 		if len(errormsg) > 1 and id == None:
-			url +=  '?msg=' + errormsg
+			url +=  '?msg=' + url_quote_plus(errormsg)
 		elif len(errormsg) > 1:
-			url +=  '&msg=' + errormsg
+			url +=  '&msg=' + url_quote_plus(errormsg)
 		return url
 
 @route('/redir', '/redir/<gameid>')

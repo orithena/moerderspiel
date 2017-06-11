@@ -171,6 +171,21 @@ div.box > h3 {
 div.half {
 	width:48%;
 }
+div.contentwidth {
+	max-width:80em;
+}
+div.white {
+	background-color: white;
+	color: black;
+}
+div.gray {
+	background-color: lightgray;
+	color: black;
+}
+div.center {
+	margin-left: auto;
+	margin-right:auto;
+}
 div.full {
 	width:100%;
 }
@@ -492,6 +507,9 @@ ul.tabs > li > a {
 .overlay {
 	z-index: 1000;
 	background: url(/static/images/graphgen.gif) no-repeat 50% 50% #ddd;
+}
+.ontop {
+	z-index:1001;
 }
 .overlay img {
 	background: white;
