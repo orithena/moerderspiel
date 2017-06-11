@@ -1,0 +1,77 @@
+Hallo Game Master!
+
+Dies ist eine Nachricht vom Mörderbot.
+
+Es geht um das soeben eröffnete Mörderspiel "${game.name}". 
+Du kannst dir den aktuellen Stand des Spiels unter ${game.url} ansehen.
+
+Du bist Game Master. Das heißt, du kannst das Spiel administrieren mittels
+dieses Game Master Codes: ${game.mastercode}.
+
+{% if game.config.adminisplaying %}
+Dieses Spiel ist so eingestellt, dass auch du als Game Master mitspielen
+kannst. Das heißt allerdings, dass du nur eingeschränkt administrieren
+kannst, z.B. wirst du keine Aufträge auf Papier ausgeben können. Damit ist
+dieses Spiel nur durchführbar, wenn alle Spielenden online sind!
+Vergiß nicht, dich selbst auch regulär zum Spiel anzumelden!
+{% end %}
+{% if not game.config.adminisplaying %}
+Dieses Spiel ist so eingestellt, dass du als Game Master nicht mitspielen
+kannst. Aber du weißt, wer wen umbringen muss und kannst das Spiel amüsiert
+beobachten.Es ist also möglich, dieses Spiel offline durchzuführen -- dann
+musst du als Game Master aber die Aufträge auf Papier verteilen.
+{% end %}
+Diese Einstellung kann derzeit nicht geändert werden (Dave hat die UI noch
+nicht fertig).
+
+Merke dir den Game Master Code und halte ihn vor den anderen Spielern
+geheim. Du wirst ihn benötigen, um das Spiel zu starten und die
+Spielerlisten einzusehen.
+
+Wollt ihr ein Spiel komplett online durchführen (d.h. alle Spielenden haben
+immer Zugriff auf ihre Emails, z.B. per eigenem Smartphone), sind dies deine 
+nächsten Aufgaben:
+ 1. Den potentiellen Spielern die Spiel-ID/URL mitteilen, so dass sie sich 
+    anmelden können (oder diese selbst alle eintragen).
+ 2. Sind alle angemeldet: Das Spiel starten (siehe Spiel-URL).
+ 3. Zum Ende des Spiels: Das Spiel per Hand beenden! 
+    (du als Game Master weißt am besten, wann alle kurz-vor-Spielende-Morde 
+    eingetragen sind).
+
+Wollt ihr ein Spiel semi-online durchführen (d.h. mindestens einer der
+Spielenden ist nicht mit einem eigenen Smartphone daueronline), sind dies 
+deine nächsten Aufgaben:
+ 1. Den potentiellen Spielern die Spiel-ID/URL mitteilen, so dass sie sich 
+    anmelden können (oder diese selbst alle eintragen). Allen klarmachen,
+    dass die Papieraufträge Vorrang haben und die Emailbenachrichtigungen
+    nur informativen Charakter haben!
+ 2. Sind alle angemeldet: Das Spiel starten (siehe Spiel-URL).
+ 3a. (Game Master spielt nicht!) Gehe auf die Admin-Seite, drucke das PDF
+     mit den Aufträgen aus, schneide es und verteile es an die Spieler. 
+ 3b. (Game Master darf mitspielen) Da die Spieler ihre Aufträge auch als 
+     Email erhalten, könnten sie diese es auch selbst ausdrucken. 
+ 4. Zum Ende des Spiels: Das Spiel per Hand beenden! 
+    (du als Game Master weißt am besten, wann alle kurz-vor-Spielende-Morde 
+    eingetragen sind).
+
+Wollt ihr ein Spiel komplett offline durchführen (d.h. kein Drucker und nur 
+Internet für den Game Master am Spielort), sind dies deine nächsten Aufgaben:
+ 0. Vor der Abreise zum Spielort: Gehe auf die Spiel-URL und lasse dir 
+    Blankoaufträge generieren. Drucke diese aus.
+ 1. Am Spielort: Verteile die Blankoaufträge unter den Spielern. Sie sollen 
+    ihren eigenen Namen ganz oben auf dem Blatt eintragen.
+ 2. Hast du die Anmeldungen wieder eingesammelt, suche dir kurz einen 
+    Internetzugang und trage alle Spieler ein. Starte das Spiel.
+ 3. Gehe auf die Admin-Seite und lade dir das PDF mit den Aufträgen. 
+    Übertrage die Namen auf den Aufträgen auf die Anmeldezettel und
+    verteile die Aufträge.
+ 4. Bereite eine Wand vor, wo die Spieler ihre erledigten Aufträge
+    eintragen/anpinnen können.
+ 5. Optional: Wenn du wieder Internet hast, kannst du die Morde von der 
+    Wand eintragen und so den Spielern das Ergebnis online präsentieren.
+
+
+Viel Spaß und Erfolg!
+   Dein Mörderbot
+
+
