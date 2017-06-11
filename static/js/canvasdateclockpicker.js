@@ -404,6 +404,10 @@ $(canvas).bind('mousewheel DOMMouseScroll', function (e) {
     }, 300);
     return false;
 });
+
+if( config.date == null ) {
+    config.date = new Date();
+}
 drawClock(c, config.date.getHours(), config.date.getMinutes(), config.date.getDay(), 0);
 
 };
