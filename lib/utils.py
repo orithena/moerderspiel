@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+import sys
+
 import datetime
 import smtplib
 import mimetypes
@@ -25,6 +28,9 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+def errprint(*args, **kwargs):
+	print(*args, file=sys.stderr, **kwargs)
+
 def now(format='%d.%m.%Y %H:%M'):
 	return datetime.datetime.now().strftime(format)
 	
@@ -34,7 +40,7 @@ def dateformat(dt, format='%a %d.%m. %H:%M'):
 	except:
 		return dt
 
-def future(format='%d.%m.%Y %H:%M', **kwargs):
+def future_date(format='%d.%m.%Y %H:%M', **kwargs):
 	return (datetime.datetime.now() + datetime.timedelta(**kwargs)).strftime(format)
 
 def u8(s):
@@ -132,8 +138,8 @@ def sendemail(templatedir, templatefile, subject, sender, receiver, game, player
 		s.sendmail(sender, [receiver], outer.as_string())
 		s.quit()
 	except Exception as e:
-		#print "ERROR: Cannot send mail to receiver %s" % receiver
-		#print e
+		errprint("ERROR: Cannot send mail to receiver %s" % receiver)
+		errprint(e)
 		pass
 
 def colorgen(starthue, format='#RGBA'):

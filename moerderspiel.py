@@ -378,6 +378,8 @@ def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None, n
 			gameid = _savegame(game, True)
 		except Exception as e:
 			return gameerror(msg=e.__str__())
+	game.templatedir = G.templatedir
+	game.sendgamemastermail()
 	stream = _mainstream('creategame.html', gameid = game.id, url = _url(req, 'view', id=game.id), mastercode = game.mastercode)
 	return stream.render('xhtml')
 
