@@ -107,7 +107,7 @@
 			</td></tr></table>
 		</form>
 	</div>
-	<div id="addplayer" class="box right half" py:if="game.status == 'OPEN'">
+	<div id="addplayer" class="box right half" py:if="game.status == 'OPEN' and not hasattr(game, 'games')">
 		<h3>Spieler hinzufügen</h3>
 		<form action="admin" method="post" accept-charset="utf8" onsubmit="return ajaxsubmit(this);">
 			<input type="hidden" name="id" value="${game.id}"/>

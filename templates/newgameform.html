@@ -60,7 +60,8 @@
 				<p class="hint">
 				Sollen die Spieler mehr als ein Leben haben, werden entsprechend viele "Kreise" eröffnet. Jeder Spieler ist in jedem Kreis genau 
 				einmal vertreten; man kann jeden Kreis als ein weiteres, parallel laufendes Spiel betrachten, in dem genau die gleichen Leute mitspielen.
-				In jedem Kreis hat man ein Leben; erst wenn man in allen Kreisen ermordet wurde, ist man raus aus dem ganzen Spiel.
+				In jedem Kreis hat man ein Leben; erst wenn man in allen Kreisen ermordet wurde, ist man raus aus dem ganzen Spiel. (In einem Multispiel
+				gibt dies die Kreise pro Unterspiel an!)
 				</p>
                         </td>
 		</tr>
@@ -70,7 +71,13 @@
 		</tr>
 		<tr>
 			<th></th>
-			<td><input type="submit" value="Spiel eröffnen!"/></td>
+			<td><input type="checkbox" name="createmultigame" /><label for="createmultigame">Multispiel erstellen</label>
+				<p class="hint">Ein Multispiel sind mehrere normale Spiele mit disjunkten Mitspielergruppen plus ein übergreifendes Spiel, in dem alle vertreten sind.</p>
+			</td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><input type="submit" value="Spiel eröffnen!" /></td>
 		</tr>
 	</table>
 		<script type="text/javascript">

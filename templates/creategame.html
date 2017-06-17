@@ -1,12 +1,48 @@
-<div>
+<div xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:py="http://genshi.edgewall.org/"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	lang="en">
 	<h2>Das Mörderspiel wurde eröffnet!</h2>
-	<div class="box half left nocollapse">
-		<h3>Infos für alle</h3>
-		<p>Diese Informationen müssen an alle potentiellen Mitspieler verbreitet werden. Es ist Aufgabe des Game Masters, dies zu tun. Auf welchem Wege auch immer.</p>
-		<p><strong>ID dieser Runde</strong>: <span class="id_display">$gameid</span></p>
-		<p><strong>Direkte URL dieser Runde</strong>: <span class="url"><a href="$url">$url</a></span></p>
-		<p>Bei der Verbreitung dieser Informationen sollte erwähnt werden, was unter "Gruppe" bei der Anmeldung eingetragen werden soll. Kein Spieler wird einen anderen Spieler aus der gleichen Gruppe als erstes Opfer erhalten (sofern möglich). Eine Gruppe von Spielern, die sich bereits kennen, sollen hier also den gleichen Gruppennamen eintragen. <em>Das heißt nicht, dass sie ein Team bilden!</em> Ist dies egal, kann das Feld beliebig genutzt werden, bspw. Nachname, Spitzname, Adresse, Heimatstadt, Eigenschaften, oder einfach gar nichts. In jedem Fall wird es auf den Aufträgen vermerkt.</p>
-		<p>Diese Runde ist nun offen zur Registrierung. Jeder, der die ID oder die direkte URL zu dieser Runde kennt, kann sich für dieses Spiel eintragen.</p>
+	<div class="box half left alwayscollapse" py:if="game.__dict__.has_key('games')">
+		<h3>Unterspiel zum Multispiel hinzufügen</h3>
+		<form action="addtomultigame" method="POST">
+			<input type="hidden" name="action" value="addtomultigame" />
+			<input type="hidden" name="gameid" value="$gameid" />
+			<input type="hidden" name="mastercode" value="$mastercode" />
+			<table>
+				<tr>
+					<th>Name des Unterspiels</th>
+					<td style="width:20em;">
+						<input type="text" name="subgamename" maxlength="30" size="30"/>
+						<p class="hint">Eine Überschrift für das Unterspiel. Wird auf den Aufträgen und der Übersichtsseite verwendet.</p>
+					</td>
+				</tr>
+				<tr>
+					<th>Spiel-ID (optional)</th>
+					<td style="width:20em;">
+						<input type="text" name="subgameid" maxlength="10" size="10"/>
+						<p class="hint">
+						Eine maschinenlesbare ID für das Unterspiel. Darf nur Ziffern und die Kleinbuchstaben "a" bis "z" (ohne Umlaute!) enthalten.
+						Muss eindeutig sein, soll leicht zu merken sein. Wird als Twitter-Hashtag verwendet. Wird automatisch generiert, wenn nicht angegeben.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th>Beschreibungstext</th>
+					<td style="width:20em;">
+						<textarea name="desc" rows="4" cols="33"></textarea>
+						<p class="hint">
+						Ein Beschreibungstext für das Spiel. Wird
+						den Spielern bei Anmeldung etc. angezeigt.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th></th>
+					<td><input type="submit" value="Unterspiel hinzufügen" /></td>
+				</tr>
+			</table>
+		</form>
 	</div>
 	<div class="box half right nocollapse">
 		<h3>Infos für den Game Master</h3>
@@ -30,5 +66,13 @@
 				<li>Optional: Wenn du wieder Internet hast, kannst du die Morde von der Wand eintragen und so den Spielern das Ergebnis online präsentieren.</li>
 			</ol>
 		</p>
+	</div>
+	<div class="box half left nocollapse">
+		<h3>Infos für alle</h3>
+		<p>Diese Informationen müssen an alle potentiellen Mitspieler verbreitet werden. Es ist Aufgabe des Game Masters, dies zu tun. Auf welchem Wege auch immer.</p>
+		<p><strong>ID dieser Runde</strong>: <span class="id_display">$gameid</span></p>
+		<p><strong>Direkte URL dieser Runde</strong>: <span class="url"><a href="$url">$url</a></span></p>
+		<p>Bei der Verbreitung dieser Informationen sollte erwähnt werden, was unter "Gruppe" bei der Anmeldung eingetragen werden soll. Kein Spieler wird einen anderen Spieler aus der gleichen Gruppe als erstes Opfer erhalten (sofern möglich). Eine Gruppe von Spielern, die sich bereits kennen, sollen hier also den gleichen Gruppennamen eintragen. <em>Das heißt nicht, dass sie ein Team bilden!</em> Ist dies egal, kann das Feld beliebig genutzt werden, bspw. Nachname, Spitzname, Adresse, Heimatstadt, Eigenschaften, oder einfach gar nichts. In jedem Fall wird es auf den Aufträgen vermerkt.</p>
+		<p>Diese Runde ist nun offen zur Registrierung. Jeder, der die ID oder die direkte URL zu dieser Runde kennt, kann sich für dieses Spiel eintragen.</p>
 	</div>
 </div>

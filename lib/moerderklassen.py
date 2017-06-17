@@ -841,6 +841,8 @@ class MultiGame(Game):
 		Raises a GameError if the registration phase is over or the name length
 		is 1 or lower.
 		"""
+		if not subgame in self.games.keys():
+			raise GameError("Kein existentes Unterspiel angegeben.")
 		try:
 			Game.addPlayer(self, name, info, email)
 			self.players[-1].subgame = subgame

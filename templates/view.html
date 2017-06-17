@@ -158,10 +158,12 @@
 					</td>
 				</tr>
 				<tr py:if="hasattr(game, 'games')">
-					<th>Konferenz</th>
+					
+					<th py:if="game.id.find('kif') > -1 or game.id.find('koma') > -1 or game.id.find('zkk') > -1">Konferenz</th>
+					<th py:if="game.id.find('kif') == -1 and game.id.find('koma') == -1 and game.id.find('zkk') == -1">Unterspiel</th>
 					<td>
 						<py:for each="i, g in enumerate(game.games.values())"> 
-							<input type="radio" name="subgame" value="${g.id}" checked="checked">${g.name}</input><br/>
+							<input type="radio" name="subgame" value="${g.id}">${g.name}</input><br/>
 						</py:for>
 					</td>
 				</tr>

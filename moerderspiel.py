@@ -359,17 +359,28 @@ def addplayer(gameid, spielername, zusatzinfo, email='', email2='', subgame='', 
 		return redirect(_url(req, 'view', gameid, err))
 
 @route('/creategame')
-def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None, name="", gamemastermail=None):
+def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None, name="", gamemastermail=None, createmultigame=False):
 	if name != "":
 		return gameerror(msg=u"I think you're a spammer. Oder dein Autofill hat ein verstecktes Feld zu viel ausgefüllt.")
-	game = moerderklassen.Game(
-		G.u8(rundenname), 
-		int(kreiszahl), 
-		enddate, 
-		_url(req, 'view',  rundenid), 
-		rundenid,
-		G.u8(desc)
-	)
+	game = None
+	if createmultigame:
+		game = moerderklassen.MultiGame(
+			G.u8(rundenname), 
+			int(kreiszahl), 
+			enddate, 
+			_url(req, 'view',  rundenid), 
+			rundenid,
+			G.u8(desc)
+		)
+	else:
+		game = moerderklassen.Game(
+			G.u8(rundenname), 
+			int(kreiszahl), 
+			enddate, 
+			_url(req, 'view',  rundenid), 
+			rundenid,
+			G.u8(desc)
+		)
 	game.url = _url(req, 'view', game.id)
 	game.gamemastermail = gamemastermail
 	G.fname = os.path.join(G.savegamedir, '%s.pkl' % game.id)
@@ -381,7 +392,18 @@ def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None, n
 			return gameerror(msg=e.__str__())
 	game.templatedir = G.templatedir
 	game.sendgamemastermail()
-	stream = _mainstream('creategame.html', gameid = game.id, url = _url(req, 'view', id=game.id), mastercode = game.mastercode)
+	stream = _mainstream('creategame.html', gameid = game.id, url = _url(req, 'view', id=game.id), mastercode = game.mastercode, game = game)
+	return stream.render('xhtml')
+
+@route('/addtomultigame')
+def addtomultigame(action, gameid, mastercode, subgamename="", subgameid='', desc=''):
+
+	game = _loadgame(gameid)
+	if action == 'addtomultigame':
+		game.addGame(mastercode, subgameid, subgamename, desc)
+		_savegame(game)
+
+	stream = _mainstream('creategame.html', gameid = game.id, url = _url(req, 'view', id=game.id), mastercode = game.mastercode, game = game)
 	return stream.render('xhtml')
 
 @route('/startgame', '/startgame/<gameid>/<mastercode>')
