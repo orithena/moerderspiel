@@ -165,8 +165,8 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 				# set edge label to kill description
 				label = utils.dateformat(participant.killedby.date) + ":\\n"
 				maxlinelen = max(24, math.trunc(math.ceil(math.sqrt(6 * len(participant.killedby.reason)))))
-				label += "\\n".join(textwrap.wrap(''.join([ c for c in participant.killedby.reason if ord(c) < 2048]), maxlinelen)).replace('"', "'")
-				edge.label = label.encode('utf-8')
+				label += "\\n".join(textwrap.wrap(participant.killedby.reason, maxlinelen)).replace('"', "'")
+				edge.label = ''.join([ c for c in label.encode('utf-8') if ord(c) < 2048])
 				edge.fontsize = edgefontsize
 				edge.fontname = 'arial'
 	# do the layout math and save to file
