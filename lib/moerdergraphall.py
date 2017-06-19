@@ -66,7 +66,15 @@ def moerdergraphall(game, filename, alledges=False, nodefontsize=8.0, edgefontsi
 	inode.style = 'invisible'
 	inode.pos = (0.0, 0.0)
 	if len(participants) > 120:
-		sorrynode = G.add_node('Sorry, zu viele Nodes in diesem Graph...')
+		sorrynode = G.add_node(u'Sorry, zu viele Nodes in diesem Graph...')
+		sorrynode.label = u'Sorry, zu viele Nodes in diesem Graph...'
+		sorrynode.style = 'rounded,filled'
+		sorrynode.fontsize = nodefontsize
+		sorrynode.style = 'rounded,filled'
+		sorrynode.penwidth = 2
+		sorrynode.color = '#00003380'
+		sorrynode.fillcolor = '#FFFFFF00'
+		sorrynode.margin = 0.01
 		# do the layout math and save to file
 		if graph.__dict__.has_key('_yapgvb_py'):
 			# if yapgvb works in python-only mode
