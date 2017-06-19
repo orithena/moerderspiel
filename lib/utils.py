@@ -10,6 +10,7 @@ import os
 import os.path
 import math
 import colorsys
+import random
 
 from genshi.template import NewTextTemplate
 from genshi.template import TemplateLoader
@@ -192,3 +193,73 @@ def qrdata(text, **kwargs):
 	jpeg_image_buffer = cStringIO.StringIO()
 	im.save(jpeg_image_buffer)
 	return base64.b64encode(jpeg_image_buffer.getvalue())
+
+namelist = [
+ 'Gavin Gasser',
+ 'Natashia Norton',
+ 'Natalia Nam',
+ 'Arnetta Abboud',
+ 'Lael Luong',
+ 'Rachell Ralston',
+ 'Steffanie Steedley',
+ 'Napoleon Neumeister',
+ 'Sarina Schumann',
+ 'Tamesha Tafoya',
+ 'Rudy Reiman',
+ 'Jackeline Jarrells',
+ 'Sina Shofner',
+ 'Delma Demaio',
+ 'Chun Carini',
+ 'Layne Lipsky',
+ 'Marlon Mccardle',
+ 'Hyun Hansford',
+ 'Bobette Broadwater',
+ 'Richard Rikard',
+ 'Lera Lamberton',
+ 'Tresa Truett',
+ 'Soila Skelly',
+ 'Irena Ishibashi',
+ 'Jone Jasso',
+ 'Janey Judah',
+ 'Ricki Repka',
+ 'Lawanna Lorenzo',
+ 'Barrie Boyd',
+ 'Connie Crone',
+ 'Leanora Lamy',
+ 'Cliff Caldwell',
+ 'Rubye Redeker',
+ 'Micaela Manfredi',
+ 'Pamala Popek',
+ 'Vannessa Vandeventer',
+ 'Abdul Aker',
+ 'Annemarie Andrea',
+ 'Taylor Tank',
+ 'Sunshine Steller',
+ 'Maryln Master',
+ 'Amy Almon',
+ 'Tonia Taormina',
+ 'Cathi Caplan',
+ 'Scarlett Sandberg',
+ 'Aura Ashbrook',
+ 'Darlena Dorfman',
+ 'Ivory Ikard',
+ 'Leilani Landreth',
+ 'Myrl Mchugh']
+
+infolist = [
+ 'Hyderabad',
+ 'Durban',
+ 'Hamburg',
+ 'Bonn',
+ 'Berlin',
+ 'Luxemburg',
+ 'Shenzhen',
+ 'Waldkirchen',
+ 'Mir doch egal',
+ 'Johannesburg',
+ 'Amsterdam',
+ 'Venedig'
+]
+
+def random_playerdata(num=10):
+	return [ (u8(name), u8(random.sample(infolist, 1)[0])) for name in random.sample(namelist, num) ]

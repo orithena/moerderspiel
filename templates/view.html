@@ -344,6 +344,9 @@
 		</py:if>
 		<py:for each="round in sorted(game.rounds)" py:if="game.status == 'OVER'">
 			<h3 py:if="len(game.rounds) > 1">Kreis: ${game.rounds[round].name}</h3>
+			<p>Jeder in dieser Liste musste ursprünglich den
+			jeweils nächsten in dieser Liste umbringen (und der
+			letzte den ersten).</p>
 			<table>
 				<tr><th>Name</th><th>Ermordet von</th><th>Wann?</th><th>Tathergang</th><th></th></tr>
 				<py:for each="p in game.rounds[round].participants">

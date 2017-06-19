@@ -7,7 +7,7 @@ import random
 import codecs
 import utils as utils
 from twitmord import twitkill
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 from collections import defaultdict
@@ -414,14 +414,14 @@ class Round:
 		if len(roundstocheck)+5 < len(players):
 			iterations = 1
 			while iterations < (len(players)):
-				reshuffles = []
+				reshuffles = set()
 				for k in self.participants:
 					for round in roundstocheck:
 						if round.getInitialVictim(k.player) is not None and self.getInitialVictim(k.player).player.id == round.getInitialVictim(k.player).player.id:
-							reshuffles.append(k)
+							reshuffles.add(k)
 				for k in self.participants:
 					if self.getInitialVictim(k).player.info == k.player.info:
-						reshuffles.append(k)
+						reshuffles.add(k)
 				if len(reshuffles) == 0:
 					break
 				for k in reshuffles:
@@ -486,6 +486,8 @@ class Game:
 		self.gamemastermail = gamemastermail
 		for a in range(rounds):
 			self.rounds[str(a+1)] = Round(str(a+1))
+		if rundenid.startswith("test") and not isinstance(self, MultiGame):
+			self.addTestPlayers()
 	def __str__(self):
 		return u'Spiel: %s\nid: %s\nstatus: %s\nmastercode: %s\nenddate: %s\nplayers: %s\nrounds: %s' % (self.name, self.id, self.status, self.mastercode, self.enddate, self.players, self.rounds)
 	def __setstate__(self, state):
@@ -498,6 +500,17 @@ class Game:
 			if not state.has_key(key):
 				state[key] = default
 		self.__dict__.update(state)
+	
+	def addTestPlayers(self):
+		for name, info in utils.random_playerdata(20):
+			self.addPlayer(name, info)
+			
+	def makeTestKills(self):
+		for round in self.rounds.values():
+			killtime = datetime.now() - timedelta(minutes=len(round.participants)*5)
+			for participant in random.sample(round.participants, random.randint(len(round.participants)/8, len(round.participants)/2)):
+				killtime = killtime + timedelta(minutes=random.randint(0,10))
+				participant.kill(round.getCurrentKiller(participant), killtime, u"Aus Gründen umgebracht.")
 	
 	def addPlayer(self, name, info, email=''):
 		"""Add a player to the player list using the given name and info.
@@ -516,7 +529,7 @@ class Game:
 		if len(email) > 0 and email in [ p.email for p in self.players ]:
 			raise GameError(u'Sorry, diese Emailadresse ist schon drin...')
 			
-		if len(email) < 5 and game.config.adminisplaying:
+		if len(email) < 5 and self.config.adminisplaying:
 			raise GameError(u'Sorry, da der Game Master mitspielt, können wir nicht auf Email verzichten.')
 			
 		if (name, info) in [ (p.name, p.info) for p in self.players ]:
@@ -742,6 +755,8 @@ class Game:
 				p.sendemail()
 		else:
 			raise GameError(u'Das war nicht der Mastercode')
+		if self.id.startswith('test'):
+			self.makeTestKills()
 	
 	def stop(self, mastercode):
 		"""Stops the game.
@@ -829,10 +844,18 @@ class MultiGame(Game):
 			r[v.name] = v
 			self.myrounds.append(v.name) 
 		self.rounds = r
+		if rundenid.startswith("test"):
+			for gameid,gamename in [('subgame1', "Unterspiel1"), ('subgame2', "Unterspiel2"), ('subgame3', "Unterspiel3")]:
+				self.addGame(self.mastercode, gameid, gamename)
+			self.addTestPlayers()
 			
 	def __str__(self):
 		return u'MultiSpiel: %s\nid: %s\nstatus: %s\nmastercode: %s\nenddate: %s\nplayers: %s\nrounds: %s' % (self.name, self.id, self.status, self.mastercode, self.enddate, self.players, self.rounds)
 	
+	def addTestPlayers(self):
+		for name, info in utils.random_playerdata(40):
+			self.addPlayer(name, info, subgame=random.sample(self.games.keys(), 1)[0])
+
 	def addPlayer(self, name, info, email='', subgame=''):
 		"""Add a player to the player list using the given name and info.
 		The info text is dedicated to any additional information for identifying
@@ -852,7 +875,7 @@ class MultiGame(Game):
 	def addGame(self, mastercode, rundenid, name, desc=''):
 		if self.status == 'OPEN' and mastercode == self.mastercode:
 			gameid = ''
-			if len(rundenid) > 2 and len(rundenid) < 12:
+			if len(rundenid) > 2 and len(rundenid) < 21:
 				id = rundenid.lower().strip()
 				for c in list(id):
 					if c in 'abcdefghijklmnopqrstuvwxyz0123456789-_.':
@@ -925,6 +948,8 @@ class MultiGame(Game):
 				p.sendemail()
 		else:
 			raise GameError(u'Das war nicht der Mastercode')
+		if self.id.startswith('test'):
+			self.makeTestKills()
 	
 	def stop(self, mastercode):
 		"""Stops the game.

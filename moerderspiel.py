@@ -25,6 +25,7 @@ import moerderklassen
 import logging
 import time
 import locale
+import wordconstruct
 from moerderklassen import GameError
 from moerdergraph import moerdergraph
 from moerdergraphall import moerdergraphall
@@ -359,10 +360,12 @@ def addplayer(gameid, spielername, zusatzinfo, email='', email2='', subgame='', 
 		return redirect(_url(req, 'view', gameid, err))
 
 @route('/creategame')
-def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None, name="", gamemastermail=None, createmultigame=False):
+def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None, name="", gamemastermail=None, createmultigame=False, createtestgame=False):
 	if name != "":
 		return gameerror(msg=u"I think you're a spammer. Oder dein Autofill hat ein verstecktes Feld zu viel ausgefüllt.")
 	game = None
+	if createtestgame:
+		rundenid = 'test' + wordconstruct.WordGenerator().generate(6)
 	if createmultigame:
 		game = moerderklassen.MultiGame(
 			G.u8(rundenname), 
@@ -390,6 +393,8 @@ def creategame(action, rundenname, kreiszahl, enddate, rundenid='', desc=None, n
 			gameid = _savegame(game, True)
 		except Exception as e:
 			return gameerror(msg=e.__str__())
+	else:
+		return gameerror(msg="Spiel %s existiert bereits!" % game.id)
 	game.templatedir = G.templatedir
 	game.sendgamemastermail()
 	stream = _mainstream('creategame.html', gameid = game.id, url = _url(req, 'view', id=game.id), mastercode = game.mastercode, game = game)
