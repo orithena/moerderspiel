@@ -467,7 +467,7 @@ class Game:
 		self.status = 'OPEN'
 		self.name = name
 		self.id = ''
-		if len(rundenid) > 2 and len(rundenid) < 12:
+		if len(rundenid) > 2 and len(rundenid) < 21:
 			id = rundenid.lower().strip()
 			for c in list(id):
 				if c in 'abcdefghijklmnopqrstuvwxyz0123456789-_.':
