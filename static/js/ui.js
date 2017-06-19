@@ -6,11 +6,15 @@ function imgurl(id, link) {
 	return false;
 }
 function imgoverlay(overlayid, imgid, link) {
+	$(imgid).attr('src', "/static/images/loading.gif");
 	$(imgid).attr('src', link.href);
 	$(overlayid).removeClass('overlay-hidden').addClass('overlay');
 	return false;
 }
 function closeoverlay(overlayid) {
+	if( window.panzoom ) {
+		window.panzoom[0].style = "";
+	}
 	$(overlayid).removeClass('overlay').addClass('overlay-hidden');
 	return false;
 }

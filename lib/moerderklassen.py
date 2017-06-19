@@ -878,7 +878,7 @@ class MultiGame(Game):
 		scored any kill.
 		"""
 		##import ipdb; ipdb.set_trace()
-		allparticipants = flatten([ r.participants for r in self.rounds.values() if r.name in self.myrounds ])
+		allparticipants = flatten([ r.participants for r in self.rounds.values() ])
 		kills = [ p.killedby for p in allparticipants if p.killedby is not None ]
 		killlist = [ k.killer for k in kills if k.killer is not None]
 		killerlist = [ k.player for k in killlist ]
@@ -893,20 +893,22 @@ class MultiGame(Game):
 			return []
 
 	def getScore(self, player):
-		return len([ r for r in self.rounds.values() if r.hasParticipant(player) and r.name in self.myrounds ]) - self.getDeathsCount(player) + self.getKillsCount(player)
+		if player is not Player:
+			player = self.findPlayer(player)
+		return len([ r for r in self.rounds.values() if r.hasParticipant(player) ]) - self.getDeathsCount(player) + self.getKillsCount(player)
 
 	def getHighScoreList(self):
-		playerlist = sorted(flatten([p.player for p in [r for r in self.rounds.values() if r.name in self.myrounds].pop().participants]), key=lambda q: self.getScore(q), reverse=True)
+		playerlist = sorted(flatten([p.player for p in [r for r in self.rounds.values() ].pop().participants]), key=lambda q: self.getScore(q), reverse=True)
 		highscore = self.getScore(playerlist[0])
 		return sorted([ p for p in playerlist if self.getScore(p) == highscore ], key=lambda q: q.name+q.info)
 			
 	def getKillsCount(self, player_or_participant_or_id):
-		id = self.findPlayer(player_or_participant_or_id)
-		return len( [ p for p in flatten([ r.getDeadParticipants() for r in self.rounds.values() if r.name in self.myrounds ]) if p.killedby.killer and p.killedby.killer.player.id == id.id ] )
+		player = self.findPlayer(player_or_participant_or_id)
+		return len( [ p for p in flatten([ r.getDeadParticipants() for r in self.rounds.values() ]) if p.killedby.killer and p.killedby.killer.player.id == player.id ] )
 	
 	def getDeathsCount(self, player_or_participant_or_id):
 		id = self.findPlayer(player_or_participant_or_id).id
-		return len( [ p for p in flatten([ r.participants for r in self.rounds.values() if r.name in self.myrounds ]) if p.killedby and p.player.id == id ])
+		return len( [ p for p in flatten([ r.participants for r in self.rounds.values() ]) if p.killedby and p.player.id == id ])
 
 	def start(self, mastercode):
 		"""Starts the game. Needs the Mastercode.

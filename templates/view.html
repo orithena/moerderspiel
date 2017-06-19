@@ -254,14 +254,14 @@
 			<div class="overlay-hidden" id="graphimage">
 				<a class="closeoverlay" href="#" onclick="return closeoverlay('#graphimage');">X</a>
 				<!-- img id="gamegraph" src="${ utils.url_for('gamegraphall', id=game.id, roundid=game.rounds.values()[0].name) }" / -->
-				<img id="gamegraph" src="" />
+				<img id="gamegraph" src="/static/images/graphgen.gif" />
 			</div>
 
 			<script type="text/javascript">
 			// <![CDATA[
 			(function() {
-				var panzoom = $('#gamegraph').panzoom();
-				panzoom.parent().on('mousewheel.focal', function( e ) {
+				window.panzoom = $('#gamegraph').panzoom();
+				window.panzoom.parent().on('mousewheel.focal', function( e ) {
 					e.preventDefault();
 					var delta = e.delta || e.originalEvent.wheelDelta;
 					var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
@@ -288,7 +288,7 @@
 				?>
 				<py:for each="p in sorted(game.getKilled(), key=lambda x:x.killedby.date, reverse=True)">
 					<li class="card" py:if="p.killedby and p.killedby.killer">
-						<div class="player killer c${p.player.game.getKillsCount(p.killedby.killer.player)}">
+						<div class="player killer c${game.getKillsCount(p.killedby.killer.player)}">
 							<py:if test="p.killedby and p.killedby.killer">
 								<h3>${p.killedby.killer.player.name}</h3>
 								<span>${p.killedby.killer.player.info}</span>
@@ -297,7 +297,7 @@
 							<!-- <span class="red symbols">${p.player.game.getKillsCount(p.killedby.killer.player)*'&#10003;'}</span> -->
 						</div>
 						<span class="mirrored">&#128298;</span>
-						<div class="player victim c${p.player.game.getDeathsCount(p)}">
+						<div class="player victim c${game.getDeathsCount(p)}">
 							<h3>${p.player.name}</h3>
 							<span>${p.player.info}</span>
 							<!-- <img py:for="g in range(p.player.game.getDeathsCount(p))" src='/static/images/skull.png'></img> -->
