@@ -420,14 +420,15 @@ class Round:
 						if round.getInitialVictim(k.player) is not None and self.getInitialVictim(k.player).player.id == round.getInitialVictim(k.player).player.id:
 							reshuffles.add(k)
 				for k in self.participants:
-					if self.getInitialVictim(k).player.info == k.player.info:
+					# TODO: analyze info buckets. if not enough buckets, it shouldn't be a constraint.
+					if len(k.player.info) > 1 and self.getInitialVictim(k).player.info == k.player.info:
 						reshuffles.add(k)
 				if len(reshuffles) == 0:
 					break
 				for k in reshuffles:
 					self.participants.remove(k)
 				for k in reshuffles:
-					self.participants.insert( random.randint(0, len(self.participants)-1), k )
+					self.participants.insert( max(len(self.participants)-1, random.randint(0, len(self.participants))), k )
 				iterations += 1
 
 
